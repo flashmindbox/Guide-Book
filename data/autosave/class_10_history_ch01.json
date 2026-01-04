@@ -1,0 +1,187 @@
+{
+  "chapter_data": {
+    "class_num": 10,
+    "subject": "history",
+    "chapter_number": 1,
+    "chapter_title": "The Rise of Nationalism in Europe",
+    "subtitle": null,
+    "weightage": "4-5 Marks",
+    "map_work": "No",
+    "importance": "High",
+    "pyq_frequency": "Every Year",
+    "syllabus_alert_enabled": false,
+    "syllabus_alert_text": "",
+    "learning_objectives": "•\tUnderstand how nationalism emerged and developed in Europe during the 19th century\n•\tAnalyse the role of the French Revolution in spreading ideas of nationalism\n•\tExplain the process of unification of Germany and Italy\n•\tDescribe the role of culture, language, and romanticism in developing national identity\n•\tEvaluate how nationalist tensions in the Balkans led to the First World War",
+    "qr_practice_questions_url": "https://studytab.in/",
+    "qr_practice_with_answers_url": "https://studytab.com/",
+    "part_descriptions": {
+      "A": "10-year data with predictions and syllabus note",
+      "B": "Core topics with memory tricks and exam-focused explanations",
+      "C": "Examiner-approved answers with marking scheme",
+      "D": "MCQs, AR, SA, LA, HOTS, CBQs with answer hints",
+      "E": "CBSE prescribed locations and marking tips",
+      "F": "One-page summary, memory tricks compilation, key dates",
+      "G": "Time management, marking scheme insights, last-minute tips"
+    },
+    "pyq_year_range": "2015-2024",
+    "pyq_items": [
+      {
+        "question": "Briefly trace the process of German unification.",
+        "marks": "5M",
+        "years": "2012, 2013, 2015, 2017, 2019, 2020, 2021, 2022, 2024"
+      },
+      {
+        "question": "What steps did French revolutionaries take to create a sense of collective identity?",
+        "marks": "3M",
+        "years": "2012, 2015, 2016, 2017, 2020, 2021, 2023, 2024"
+      },
+      {
+        "question": "Who were Marianne and Germania? What was the importance of the way they were portrayed?",
+        "marks": "3M",
+        "years": "2016, 2018, 2020, 2022, 2023, 2024"
+      },
+      {
+        "question": "How did culture play an important role in creating the idea of the nation?",
+        "marks": "5M",
+        "years": "2013, 2015, 2016, 2018, 2021, 2023"
+      }
+    ],
+    "pyq_prediction": "German Unification (5M) + French Revolution (3M) + Marianne/Germania (3M)",
+    "pyq_syllabus_note": "This chapter has remained unchanged since 2015. During COVID-19 (2020-21), CBSE reduced 30% syllabus but Chapter 1 was NOT deleted. Only Political Science chapters (Democracy & Diversity, Gender-Religion-Caste, Popular Struggles) were removed. Hence, 10-year PYQ analysis is fully valid for this chapter.",
+    "concepts": [
+      {
+        "number": 1,
+        "title": "The French Revolution and the Idea of the Nation",
+        "content": "France was a full-fledged territorial state in 1789 under an absolute monarch. The political and constitutional changes led to the transfer of sovereignty from the monarchy to a body of French citizens.\nMeasures taken by French Revolutionaries:\n1.\tIdeas of la patrie (the fatherland) and le citoyen (the citizen) — united community with equal rights\n2.\tNew tricolour flag replaced the royal standard\n3.\tEstates General renamed National Assembly\n4.\tNew hymns, oaths, martyrs commemorated in name of nation\n5.\tCentralised administrative system with uniform laws\n6.\tInternal customs duties abolished; uniform weights and measures\n7.\tRegional dialects discouraged; French became common language\n",
+        "ncert_line": "The first clear expression of nationalism came with the French Revolution in 1789.",
+        "memory_trick": "Memory Trick: FLAT-CUN — Flag, Language, Assembly, Taxes abolished, Centralised admin, Uniform laws, Nation hymns",
+        "did_you_know": "When news of French Revolution reached Europe, students and educated middle classes set up Jacobin clubs. In places like Holland, Switzerland, Brussels, Mainz, Milan and Warsaw, French armies were welcomed as \"harbingers of liberty\" — but initial enthusiasm soon turned to hostility."
+      },
+      {
+        "number": 2,
+        "title": "The Napoleonic Code (Civil Code of 1804)",
+        "content": "Napoleon introduced the Civil Code of 1804 (Napoleonic Code) in regions under French control — Dutch Republic, Switzerland, Italy and Germany.\nKey Features:\n1.\tProperty rights secured\n2.\tEquality before law established\n3.\tAll privileges based on birth abolished\n4.\tFeudal system abolished; peasants freed from serfdom and manorial dues\n5.\tGuild restrictions removed in towns; transport and communication improved\n",
+        "ncert_line": null,
+        "memory_trick": "Memory Trick: PEACE — Property, Equality, Abolished privileges, Cleared feudalism, Economic freedom",
+        "did_you_know": "The Napoleonic Code reduced women to the status of a minor, subject to authority of fathers and husbands. Women could not vote and were denied suffrage rights throughout 19th century."
+      }
+    ],
+    "comparison_tables": [],
+    "common_mistakes": [],
+    "important_dates": [],
+    "model_answers": [],
+    "examiner_tips": null,
+    "mcqs": [],
+    "assertion_reason": [],
+    "source_based": [],
+    "case_study": [],
+    "picture_based": [],
+    "short_answer": [],
+    "long_answer": [],
+    "hots": [],
+    "value_based": [],
+    "competency_based": [],
+    "map_work_na": false,
+    "map_items": [],
+    "map_image_path": null,
+    "map_tips": null,
+    "revision_key_points": [],
+    "revision_key_terms": [],
+    "revision_timeline": [],
+    "revision_memory_tricks": [],
+    "time_allocation": [],
+    "common_mistakes_exam": [],
+    "examiner_pro_tips": [],
+    "self_assessment_checklist": [],
+    "enabled_parts": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G"
+    ],
+    "custom_parts": [],
+    "qr_practice_url": null,
+    "qr_answers_url": null,
+    "page_size": "A4",
+    "add_page_numbers": true,
+    "page_number_position": "Bottom Center",
+    "created_at": "2026-01-02T16:53:55.493164",
+    "updated_at": "2026-01-02T16:53:55.493169"
+  },
+  "part_manager": [
+    {
+      "id": "A",
+      "name": "PYQ Analysis",
+      "enabled": true,
+      "removable": false,
+      "order": 1,
+      "is_custom": false,
+      "description": "10-year data with predictions and syllabus note",
+      "icon": "📊"
+    },
+    {
+      "id": "B",
+      "name": "Key Concepts",
+      "enabled": true,
+      "removable": false,
+      "order": 2,
+      "is_custom": false,
+      "description": "Core topics with memory tricks and exam-focused explanations",
+      "icon": "📖"
+    },
+    {
+      "id": "C",
+      "name": "Model Answers",
+      "enabled": true,
+      "removable": true,
+      "order": 3,
+      "is_custom": false,
+      "description": "Examiner-approved answers with marking scheme",
+      "icon": "✅"
+    },
+    {
+      "id": "D",
+      "name": "Practice Questions",
+      "enabled": true,
+      "removable": true,
+      "order": 4,
+      "is_custom": false,
+      "description": "MCQs, AR, SA, LA, HOTS, CBQs with answer hints",
+      "icon": "📝"
+    },
+    {
+      "id": "E",
+      "name": "Map Work",
+      "enabled": true,
+      "removable": true,
+      "order": 5,
+      "is_custom": false,
+      "description": "CBSE prescribed locations and marking tips",
+      "icon": "🗺️"
+    },
+    {
+      "id": "F",
+      "name": "Quick Revision",
+      "enabled": true,
+      "removable": true,
+      "order": 6,
+      "is_custom": false,
+      "description": "One-page summary, memory tricks compilation, key dates",
+      "icon": "🔄"
+    },
+    {
+      "id": "G",
+      "name": "Exam Strategy",
+      "enabled": true,
+      "removable": true,
+      "order": 7,
+      "is_custom": false,
+      "description": "Time management, marking scheme insights, last-minute tips",
+      "icon": "🎯"
+    }
+  ],
+  "exported_at": "2026-01-03T19:58:06.551580"
+}

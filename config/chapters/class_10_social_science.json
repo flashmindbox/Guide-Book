@@ -1,0 +1,186 @@
+{
+  "history": [
+    {
+      "number": 1,
+      "title": "The Rise of Nationalism in Europe",
+      "weightage": "4-5 Marks",
+      "has_map_work": false,
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 2,
+      "title": "Nationalism in India",
+      "weightage": "4-5 Marks",
+      "has_map_work": true,
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 3,
+      "title": "The Making of a Global World",
+      "weightage": "3-4 Marks",
+      "has_map_work": false,
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    },
+    {
+      "number": 4,
+      "title": "The Age of Industrialisation",
+      "weightage": "3-4 Marks",
+      "has_map_work": false,
+      "importance": "Medium",
+      "pyq_frequency": "Moderate"
+    },
+    {
+      "number": 5,
+      "title": "Print Culture and the Modern World",
+      "weightage": "3-4 Marks",
+      "has_map_work": false,
+      "importance": "Medium",
+      "pyq_frequency": "Moderate"
+    }
+  ],
+  "geography": [
+    {
+      "number": 1,
+      "title": "Resources and Development",
+      "weightage": "4-5 Marks",
+      "has_map_work": true,
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 2,
+      "title": "Forest and Wildlife Resources",
+      "weightage": "2-3 Marks",
+      "has_map_work": true,
+      "importance": "Low-Medium",
+      "pyq_frequency": "Moderate"
+    },
+    {
+      "number": 3,
+      "title": "Water Resources",
+      "weightage": "3-4 Marks",
+      "has_map_work": true,
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    },
+    {
+      "number": 4,
+      "title": "Agriculture",
+      "weightage": "4-5 Marks",
+      "has_map_work": true,
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 5,
+      "title": "Minerals and Energy Resources",
+      "weightage": "4-5 Marks",
+      "has_map_work": true,
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 6,
+      "title": "Manufacturing Industries",
+      "weightage": "4-5 Marks",
+      "has_map_work": true,
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 7,
+      "title": "Lifelines of National Economy",
+      "weightage": "3-4 Marks",
+      "has_map_work": true,
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    }
+  ],
+  "political_science": [
+    {
+      "number": 1,
+      "title": "Power Sharing",
+      "weightage": "3-4 Marks",
+      "has_map_work": false,
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 2,
+      "title": "Federalism",
+      "weightage": "4-5 Marks",
+      "has_map_work": false,
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 3,
+      "title": "Gender, Religion and Caste",
+      "weightage": "3-4 Marks",
+      "has_map_work": false,
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    },
+    {
+      "number": 4,
+      "title": "Political Parties",
+      "weightage": "4-5 Marks",
+      "has_map_work": false,
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 5,
+      "title": "Outcomes of Democracy",
+      "weightage": "3-4 Marks",
+      "has_map_work": false,
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    }
+  ],
+  "economics": [
+    {
+      "number": 1,
+      "title": "Development",
+      "weightage": "3-4 Marks",
+      "has_map_work": false,
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 2,
+      "title": "Sectors of the Indian Economy",
+      "weightage": "4-5 Marks",
+      "has_map_work": false,
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 3,
+      "title": "Money and Credit",
+      "weightage": "4-5 Marks",
+      "has_map_work": false,
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 4,
+      "title": "Globalisation and the Indian Economy",
+      "weightage": "3-4 Marks",
+      "has_map_work": false,
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    },
+    {
+      "number": 5,
+      "title": "Consumer Rights",
+      "weightage": "3-4 Marks",
+      "has_map_work": false,
+      "importance": "Medium",
+      "pyq_frequency": "Moderate"
+    }
+  ]
+}
