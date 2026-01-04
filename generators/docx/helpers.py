@@ -534,8 +534,20 @@ class DocxHelpers:
 
     @staticmethod
     def add_page_break(document: Document):
-        """Add a page break."""
-        document.add_page_break()
+        """Add a page break only if document has existing content."""
+        # Check if document has any content (more than just the default empty paragraph)
+        has_content = False
+        for para in document.paragraphs:
+            if para.text.strip():
+                has_content = True
+                break
+        # Also check if there are any tables
+        if not has_content and len(document.tables) > 0:
+            has_content = True
+
+        # Only add page break if there's existing content
+        if has_content:
+            document.add_page_break()
 
     @staticmethod
     def add_numbered_list(document: Document, items: List[str],
