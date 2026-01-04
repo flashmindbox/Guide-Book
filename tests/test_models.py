@@ -2,13 +2,12 @@
 Tests for core data models.
 """
 
-import pytest
 from core.models.base import (
+    ChapterData,
     ConceptItem,
+    ModelAnswer,
     PYQItem,
     QuestionItem,
-    ModelAnswer,
-    ChapterData,
 )
 
 

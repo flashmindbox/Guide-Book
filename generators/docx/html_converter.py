@@ -4,8 +4,8 @@ Converts HTML preview to DOCX format for exact visual matching.
 """
 
 from io import BytesIO
+
 from docx import Document
-from docx.shared import Inches, Pt
 from htmldocx import HtmlToDocx
 
 from styles.theme import PageLayout

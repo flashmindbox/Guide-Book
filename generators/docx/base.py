@@ -3,15 +3,15 @@ Base document generator for Guide Book Generator.
 Orchestrates the generation of complete DOCX documents.
 """
 
-from typing import Optional
-from pathlib import Path
 from io import BytesIO
+from typing import Optional
+
 from docx import Document
 
 from core.models.base import ChapterData
 from core.models.parts import PartManager
+
 from .styles import DocxStyles, create_styled_document
-from .helpers import DocxHelpers
 
 
 class DocumentGenerator:

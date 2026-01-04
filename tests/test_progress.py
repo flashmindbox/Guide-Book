@@ -2,8 +2,7 @@
 Tests for ProgressTracker.
 """
 
-import pytest
-from core.models.base import ChapterData, ConceptItem, PYQItem, ModelAnswer, QuestionItem
+from core.models.base import ChapterData, ConceptItem, ModelAnswer, PYQItem, QuestionItem
 from core.models.parts import PartManager
 from core.progress import ProgressTracker
 

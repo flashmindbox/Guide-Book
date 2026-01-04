@@ -3,8 +3,9 @@ Part management models for Guide Book Generator.
 Handles dynamic part configuration (add/remove/reorder).
 """
 
-from typing import List, Optional, Dict, Any
-from pydantic import BaseModel, Field
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel
 
 
 class Part(BaseModel):

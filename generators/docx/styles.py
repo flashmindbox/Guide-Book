@@ -4,12 +4,11 @@ Defines all document styles to match the demo PDF exactly.
 """
 
 from docx import Document
-from docx.shared import Pt, Inches, RGBColor, Twips
-from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
-from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.enum.style import WD_STYLE_TYPE
-from docx.oxml.ns import qn
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
+from docx.shared import Inches, Pt
 
 from styles.theme import Colors, Fonts, PageLayout, Spacing
 

@@ -3,7 +3,6 @@ Application-wide constants for Guide Book Generator.
 """
 
 import logging
-import os
 from pathlib import Path
 
 # =============================================================================

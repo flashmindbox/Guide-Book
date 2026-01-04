@@ -9,8 +9,8 @@ consistency across the entire publication.
 Based on analysis of: Ch-1_History_CBSE_Class_10_FINAL.docx
 """
 
-from docx.shared import Pt, Inches, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.shared import Inches, Pt, RGBColor
 
 # =============================================================================
 # PAGE LAYOUT SPECIFICATION

@@ -4,10 +4,10 @@ Renders chapter data as styled HTML matching the DOCX output.
 """
 
 import streamlit as st
-from typing import Optional
+
 from core.models.base import ChapterData
 from core.models.parts import PartManager
-from styles.theme import Colors, Fonts, Icons, BoxStyles
+from styles.theme import Colors, Icons
 
 
 class PreviewRenderer:
@@ -513,13 +513,6 @@ class PreviewRenderer:
         """Render cover page section."""
         subject_display = data.subject.replace('_', ' ').title()
 
-        # Importance color
-        imp_class = 'importance-high'
-        if data.importance == 'Medium':
-            imp_class = 'importance-medium'
-        elif data.importance == 'Low':
-            imp_class = 'importance-low'
-
         # Use solid line character for decorative line (U+2500)
         decorative_line = '<div class="decorative-line">' + '─' * 50 + '</div>'
 
@@ -588,7 +581,7 @@ class PreviewRenderer:
 
         # QR Codes Section - using TABLE layout instead of flex (xhtml2pdf compatible)
         if data.qr_practice_questions_url or data.qr_practice_with_answers_url:
-            html += f'''
+            html += '''
             <div style="background: var(--bg-info); border: 1px solid var(--primary-blue); padding: 15px; margin: 15px 0;">
                 <div style="color: var(--primary-blue); font-weight: bold; margin-bottom: 10px; text-align: center;">
                     Scan QR Codes to Download Practice Materials
@@ -631,9 +624,10 @@ class PreviewRenderer:
     def _generate_qr_base64(cls, url: str) -> str:
         """Generate QR code as base64 string."""
         try:
-            import qrcode
             import base64
             from io import BytesIO
+
+            import qrcode
 
             qr = qrcode.QRCode(version=1, box_size=8, border=2)
             qr.add_data(url)
@@ -651,7 +645,7 @@ class PreviewRenderer:
     @classmethod
     def _render_part_a(cls, data: ChapterData) -> str:
         """Render Part A: PYQ Analysis."""
-        html = f'''
+        html = '''
         <div class="preview-part-header">
             <span class="preview-part-label">Part A: </span>
             <span class="preview-part-name">Previous Year Questions Analysis</span>
@@ -712,7 +706,7 @@ class PreviewRenderer:
     @classmethod
     def _render_part_b(cls, data: ChapterData) -> str:
         """Render Part B: Key Concepts."""
-        html = f'''
+        html = '''
         <div class="preview-part-header">
             <span class="preview-part-label">Part B: </span>
             <span class="preview-part-name">Key Concepts Explained</span>
@@ -776,7 +770,7 @@ class PreviewRenderer:
         # Common Mistakes
         if data.common_mistakes:
             html += f'<div class="preview-section-title" style="color: var(--accent-red);">{Icons.WRONG} Common Mistakes to Avoid</div>'
-            html += f'''
+            html += '''
             <div style="background: var(--bg-warning); border-left: 4px solid var(--border-warning); padding: 12px 15px; margin: 10px 0;">
                 <div style="color: var(--accent-red); font-style: italic; margin-bottom: 8px;">These mistakes cost students marks every year!</div>
             '''
@@ -804,7 +798,7 @@ class PreviewRenderer:
     @classmethod
     def _render_part_c(cls, data: ChapterData) -> str:
         """Render Part C: Model Answers."""
-        html = f'''
+        html = '''
         <div class="preview-part-header">
             <span class="preview-part-label">Part C: </span>
             <span class="preview-part-name">Model Answers</span>
@@ -837,7 +831,7 @@ class PreviewRenderer:
     @classmethod
     def _render_part_d(cls, data: ChapterData) -> str:
         """Render Part D: Practice Questions."""
-        html = f'''
+        html = '''
         <div class="preview-part-header">
             <span class="preview-part-label">Part D: </span>
             <span class="preview-part-name">Practice Questions</span>
@@ -1013,7 +1007,7 @@ class PreviewRenderer:
     @classmethod
     def _render_part_e(cls, data: ChapterData) -> str:
         """Render Part E: Map Work."""
-        html = f'''
+        html = '''
         <div class="preview-part-header">
             <span class="preview-part-label">Part E: </span>
             <span class="preview-part-name">Map Work</span>
@@ -1021,7 +1015,7 @@ class PreviewRenderer:
         '''
 
         if data.map_work_na or data.map_work == "No":
-            html += f'''
+            html += '''
             <div style="text-align: center; padding: 30px; background: var(--bg-neutral);">
                 <div style="font-size: 14pt; color: var(--body-text);">
                     &gt; No Map Work from this Chapter
@@ -1030,7 +1024,7 @@ class PreviewRenderer:
             '''
         else:
             if data.map_items:
-                html += f'<div class="preview-section-title">&gt; CBSE Prescribed Map Locations</div>'
+                html += '<div class="preview-section-title">&gt; CBSE Prescribed Map Locations</div>'
                 for idx, item in enumerate(data.map_items, 1):
                     html += f'<div class="preview-map-item">{idx}. {item}</div>'
 
@@ -1047,7 +1041,7 @@ class PreviewRenderer:
     @classmethod
     def _render_part_f(cls, data: ChapterData) -> str:
         """Render Part F: Quick Revision."""
-        html = f'''
+        html = '''
         <div class="preview-part-header">
             <span class="preview-part-label">Part F: </span>
             <span class="preview-part-name">Quick Revision</span>
@@ -1057,7 +1051,7 @@ class PreviewRenderer:
         # Key Points
         if data.revision_key_points:
             html += '<div class="preview-section-title">1. Key Points Summary</div>'
-            html += f'<div class="preview-concept-box">'
+            html += '<div class="preview-concept-box">'
             for idx, point in enumerate(data.revision_key_points, 1):
                 html += f'<div><span style="color: var(--primary-blue); font-weight:bold;">{idx}.</span> {cls._format_text(point)}</div>'
             html += '</div>'
@@ -1077,7 +1071,7 @@ class PreviewRenderer:
 
         # Memory Tricks
         if data.revision_memory_tricks:
-            html += f'''
+            html += '''
             <div class="preview-section-title">&gt; Memory Tricks Compilation</div>
             <div class="preview-memory-trick">
             '''
@@ -1090,7 +1084,7 @@ class PreviewRenderer:
     @classmethod
     def _render_part_g(cls, data: ChapterData) -> str:
         """Render Part G: Exam Strategy."""
-        html = f'''
+        html = '''
         <div class="preview-part-header">
             <span class="preview-part-label">Part G: </span>
             <span class="preview-part-name">Exam Strategy</span>
@@ -1099,7 +1093,7 @@ class PreviewRenderer:
 
         # Time Allocation
         if data.time_allocation:
-            html += f'<div class="preview-section-title">&gt; Time Allocation Guide</div>'
+            html += '<div class="preview-section-title">&gt; Time Allocation Guide</div>'
             html += '''<table class="preview-pyq-table">
                 <tr><th>Question Type</th><th>Marks</th><th>Time</th></tr>
             '''
@@ -1209,8 +1203,9 @@ def show_preview_panel(data: ChapterData, part_manager: PartManager = None,
         part_id: Specific part to preview (e.g., 'A', 'B', etc.)
         show_full: Whether to show full document preview
     """
-    import streamlit.components.v1 as components
     import base64
+
+    import streamlit.components.v1 as components
 
     with st.expander("👁️ Quick Preview", expanded=False):
         # Generate content HTML based on what to preview
@@ -1264,8 +1259,10 @@ def show_pdf_preview(data: ChapterData, part_manager: PartManager):
     Generate and display actual PDF preview.
     Uses HTML-to-PDF conversion for accurate preview matching.
     """
-    import streamlit.components.v1 as components
     import base64
+
+    import streamlit.components.v1 as components
+
     from generators.docx.base import DocumentGenerator
     from generators.pdf.converter import PDFConverter
 

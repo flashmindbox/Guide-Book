@@ -4,13 +4,14 @@ Creates a .dotx template with all custom styles defined.
 Uses values from styles/theme.py for consistency.
 """
 
-from docx import Document
-from docx.shared import Pt, Inches
-from docx.enum.style import WD_STYLE_TYPE
-from docx.enum.text import WD_ALIGN_PARAGRAPH
 from pathlib import Path
 
-from styles.theme import Colors, Fonts, Spacing, PageLayout
+from docx import Document
+from docx.enum.style import WD_STYLE_TYPE
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.shared import Inches
+
+from styles.theme import Colors, Fonts, PageLayout, Spacing
 
 
 def create_guide_book_template():

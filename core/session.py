@@ -3,11 +3,11 @@ Session state management for Guide Book Generator.
 Handles Streamlit session state for chapter data and app state.
 """
 
-import streamlit as st
-from typing import Optional, Any, Dict
-from datetime import datetime
 import json
-from pathlib import Path
+from datetime import datetime
+from typing import Any, Dict, Optional
+
+import streamlit as st
 
 from .models.base import ChapterData
 from .models.parts import PartManager

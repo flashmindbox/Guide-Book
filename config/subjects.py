@@ -3,9 +3,9 @@ Subject configurations for Guide Book Generator.
 Defines which parts are available for each subject and their specific settings.
 """
 
-from typing import Dict, List, Any
 import json
 from pathlib import Path
+from typing import Any, Dict, List
 
 # =============================================================================
 # SUBJECT CONFIGURATIONS

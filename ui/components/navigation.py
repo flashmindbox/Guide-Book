@@ -3,9 +3,9 @@ Navigation components for Guide Book Generator.
 Provides breadcrumb navigation, progress badges, and unsaved indicators.
 """
 
-import streamlit as st
-from typing import List, Tuple, Optional
+from typing import Optional
 
+import streamlit as st
 
 # Page definitions with labels and icons
 PAGE_INFO = {
@@ -218,7 +218,7 @@ def render_progress_badge(percentage: float) -> str:
     elif percentage >= 1:
         return f'<span class="progress-badge badge-partial">{percentage:.0f}%</span>'
     else:
-        return f'<span class="progress-badge badge-empty">0%</span>'
+        return '<span class="progress-badge badge-empty">0%</span>'
 
 
 def render_breadcrumb(current_page: str, chapter_title: Optional[str] = None):
@@ -335,7 +335,7 @@ def render_next_prev_buttons(current_page: str) -> Optional[str]:
 
 def render_section_header(title: str, icon: str, progress: Optional[float] = None):
     """Render a consistent section header with optional progress."""
-    header_html = f'<div class="section-header">'
+    header_html = '<div class="section-header">'
     header_html += f'<h1>{icon} {title}</h1>'
 
     if progress is not None:

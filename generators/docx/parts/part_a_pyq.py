@@ -4,11 +4,12 @@ Simplified design matching reference document style.
 """
 
 from docx import Document
-from docx.shared import Inches, Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.shared import Inches, Pt
 
 from core.models.base import ChapterData
 from styles.theme import Colors, Fonts
+
 from ..helpers import DocxHelpers
 
 
@@ -208,5 +209,5 @@ class PartAGenerator:
         try:
             end_year = int(self.data.pyq_year_range.split('-')[1])
             return str(end_year + 1)
-        except:
+        except (ValueError, IndexError, AttributeError):
             return "2025"

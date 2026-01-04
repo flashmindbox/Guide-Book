@@ -6,8 +6,8 @@ Implements throttled auto-save to prevent excessive disk writes.
 import json
 import time
 from pathlib import Path
-from typing import Optional
 from threading import Timer
+from typing import Optional
 
 
 class AutoSaveManager:

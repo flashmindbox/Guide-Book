@@ -2,7 +2,6 @@
 Tests for PartManager.
 """
 
-import pytest
 from core.models.parts import Part, PartManager
 
 
