@@ -69,10 +69,8 @@ class PartBGenerator:
 
     def _add_concept(self, concept):
         """Add a single concept with all its elements."""
-        # Concept title (numbered, blue)
-        para = self.document.add_paragraph(style='SectionTitle')
-        run = para.add_run(f"{concept.number}. {concept.title}")
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        # Concept title (numbered, blue) - BOOK STANDARD: Use HEADING_BLUE
+        DocxHelpers.add_section_header(self.document, f"{concept.number}. {concept.title}", level=2)
 
         # NCERT exact line box (if present)
         if concept.ncert_line:
@@ -197,14 +195,8 @@ class PartBGenerator:
         run.font.color.rgb = Colors.hex_to_rgb(Colors.BODY_TEXT)
 
     def _add_comparison_tables(self):
-        """Add comparison tables section with unified styling."""
-        para = self.document.add_paragraph()
-        para.paragraph_format.space_before = Pt(12)
-        run = para.add_run(f"{Icons.CHART} Comparison Tables")
-        run.font.name = Fonts.PRIMARY
-        run.font.size = Fonts.SIZE_SECTION_TITLE
-        run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        """Add comparison tables section with unified styling - BOOK STANDARD."""
+        DocxHelpers.add_section_header(self.document, f"{Icons.CHART} Comparison Tables", level=3)
 
         for table_data in self.data.comparison_tables:
             title = table_data.get('title', 'Comparison')
@@ -225,14 +217,8 @@ class PartBGenerator:
                 self.document.add_paragraph()
 
     def _add_common_mistakes(self):
-        """Add common mistakes section with WARNING styling."""
-        para = self.document.add_paragraph()
-        para.paragraph_format.space_before = Pt(12)
-        run = para.add_run(f"{Icons.WRONG} Common Mistakes to Avoid")
-        run.font.name = Fonts.PRIMARY
-        run.font.size = Fonts.SIZE_SECTION_TITLE
-        run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.ACCENT_RED)
+        """Add common mistakes section with WARNING styling - BOOK STANDARD."""
+        DocxHelpers.add_section_header(self.document, f"{Icons.WRONG} Common Mistakes to Avoid", level=3)
 
         # Create WARNING styled box
         table = self.document.add_table(rows=1, cols=1)
@@ -261,14 +247,8 @@ class PartBGenerator:
             DocxHelpers.add_formatted_text(para, mistake)
 
     def _add_important_dates(self):
-        """Add important dates timeline with improved styling."""
-        para = self.document.add_paragraph()
-        para.paragraph_format.space_before = Pt(12)
-        run = para.add_run(f"{Icons.CALENDAR} Important Dates Timeline")
-        run.font.name = Fonts.PRIMARY
-        run.font.size = Fonts.SIZE_SECTION_TITLE
-        run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        """Add important dates timeline with improved styling - BOOK STANDARD."""
+        DocxHelpers.add_section_header(self.document, f"{Icons.CALENDAR} Important Dates Timeline", level=3)
 
         # Create timeline table
         table = self.document.add_table(rows=len(self.data.important_dates), cols=2)
@@ -293,7 +273,7 @@ class PartBGenerator:
             run.font.name = Fonts.PRIMARY
             run.font.size = Fonts.SIZE_BODY
             run.font.bold = True
-            run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+            run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
             # Event cell - alternating background
             cell = table.cell(idx, 1)

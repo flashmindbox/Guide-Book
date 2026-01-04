@@ -61,7 +61,7 @@ class PartFGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_PART_HEADER
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         self.document.add_paragraph()  # Spacing
 
@@ -73,7 +73,7 @@ class PartFGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_SECTION_TITLE
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         # Box with numbered points
         table = self.document.add_table(rows=1, cols=1)
@@ -93,7 +93,7 @@ class PartFGenerator:
             run.font.name = Fonts.PRIMARY
             run.font.size = Fonts.SIZE_BODY
             run.font.bold = True
-            run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+            run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
             # Content with formatting
             DocxHelpers.add_formatted_text(para, point)
@@ -108,7 +108,7 @@ class PartFGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_SECTION_TITLE
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         # Create table
         table = self.document.add_table(rows=1, cols=2)
@@ -129,7 +129,7 @@ class PartFGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_TABLE_HEADER
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         cell = header_row.cells[1]
         DocxHelpers.set_cell_background(cell, Colors.TABLE_HEADER_BG)
@@ -139,7 +139,7 @@ class PartFGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_TABLE_HEADER
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         # Data rows with alternating background
         for idx, term_item in enumerate(self.data.revision_key_terms):
@@ -154,7 +154,7 @@ class PartFGenerator:
             run.font.name = Fonts.PRIMARY
             run.font.size = Fonts.SIZE_BODY
             run.font.bold = True
-            run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+            run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
             cell = row.cells[1]
             if idx % 2 == 1:
@@ -176,7 +176,7 @@ class PartFGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_SECTION_TITLE
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         # Create timeline table
         table = self.document.add_table(rows=len(self.data.revision_timeline), cols=2)
@@ -200,7 +200,7 @@ class PartFGenerator:
             run.font.name = Fonts.PRIMARY
             run.font.size = Fonts.SIZE_BODY
             run.font.bold = True
-            run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+            run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
             # Event cell - alternating background
             cell = row.cells[1]

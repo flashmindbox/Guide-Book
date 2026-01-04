@@ -63,7 +63,7 @@ class PartAGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_PART_HEADER
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         self.document.add_paragraph()  # Spacing
 
@@ -101,7 +101,7 @@ class PartAGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_BODY
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         # Prediction text
         run = para.add_run(self.data.pyq_prediction)
@@ -136,7 +136,7 @@ class PartAGenerator:
         run = para.add_run("Blue")
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_BODY_SMALL
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         run = para.add_run(" = 5 times   ")
         run.font.name = Fonts.PRIMARY

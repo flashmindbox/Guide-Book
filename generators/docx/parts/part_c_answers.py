@@ -30,7 +30,7 @@ class PartCGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_SECTION_TITLE
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         self.document.add_paragraph()  # Spacing
 
@@ -61,7 +61,7 @@ class PartCGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_PART_HEADER
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         self.document.add_paragraph()  # Spacing
 
@@ -100,7 +100,7 @@ class PartCGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_BODY
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         # Answer content with marking points
         if answer.marking_points:
@@ -146,7 +146,7 @@ class PartCGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_BODY
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         for tip in self.data.examiner_tips.split('\n'):
             tip = tip.strip()
