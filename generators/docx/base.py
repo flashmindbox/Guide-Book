@@ -1,9 +1,6 @@
 """
 Base document generator for Guide Book Generator.
 Orchestrates the generation of complete DOCX documents.
-
-This module now supports unified rendering for consistent output
-between HTML preview and DOCX generation.
 """
 
 from typing import Optional
@@ -16,51 +13,7 @@ from core.models.parts import PartManager
 from .styles import DocxStyles, create_styled_document
 from .helpers import DocxHelpers
 
-# Import unified rendering system
-from generators.unified import ContentBuilder, DocxRenderer
 
-
-class UnifiedDocumentGenerator:
-    """
-    Document generator using unified rendering system.
-    Ensures DOCX output matches HTML preview exactly.
-    Use this class for consistent rendering.
-    """
-
-    def __init__(self, chapter_data: ChapterData, part_manager: PartManager):
-        self.data = chapter_data
-        self.part_manager = part_manager
-
-    def generate(self) -> Document:
-        """Generate the complete document using unified system."""
-        builder = ContentBuilder(self.data, self.part_manager)
-        elements = builder.build_full_document()
-        renderer = DocxRenderer(self.data.page_size)
-        return renderer.render(elements)
-
-    def generate_to_bytes(self) -> bytes:
-        """Generate document and return as bytes."""
-        builder = ContentBuilder(self.data, self.part_manager)
-        elements = builder.build_full_document()
-        renderer = DocxRenderer(self.data.page_size)
-        return renderer.render_to_bytes(elements)
-
-    def generate_cover_only(self) -> Document:
-        """Generate only the cover page."""
-        builder = ContentBuilder(self.data, self.part_manager)
-        elements = builder.build_cover_only()
-        renderer = DocxRenderer(self.data.page_size)
-        return renderer.render(elements)
-
-    def generate_part_only(self, part_id: str) -> Document:
-        """Generate only a specific part."""
-        builder = ContentBuilder(self.data, self.part_manager)
-        elements = builder.build_part_only(part_id)
-        renderer = DocxRenderer(self.data.page_size)
-        return renderer.render(elements)
-
-
-# Legacy class - kept for backwards compatibility
 class DocumentGenerator:
     """
     Main document generator class.

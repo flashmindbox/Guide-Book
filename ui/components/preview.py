@@ -1,9 +1,6 @@
 """
 Live Preview Component for Guide Book Generator.
 Renders chapter data as styled HTML matching the DOCX output.
-
-This module now uses the unified rendering system to ensure
-HTML preview matches DOCX output exactly.
 """
 
 import streamlit as st
@@ -12,39 +9,9 @@ from core.models.base import ChapterData
 from core.models.parts import PartManager
 from styles.theme import Colors, Fonts, Icons, BoxStyles
 
-# Import unified rendering system
-from generators.unified import ContentBuilder, HtmlRenderer
-
 
 class PreviewRenderer:
-    """Renders chapter data as HTML preview using unified rendering system."""
-
-    @classmethod
-    def render_unified(cls, data: ChapterData, part_manager: PartManager) -> str:
-        """
-        Render using unified system (recommended).
-        This ensures HTML preview matches DOCX output exactly.
-        """
-        builder = ContentBuilder(data, part_manager)
-        elements = builder.build_full_document()
-        return HtmlRenderer.render(elements)
-
-    @classmethod
-    def render_unified_cover(cls, data: ChapterData, part_manager: PartManager) -> str:
-        """Render only cover page using unified system."""
-        builder = ContentBuilder(data, part_manager)
-        elements = builder.build_cover_only()
-        return HtmlRenderer.render(elements)
-
-    @classmethod
-    def render_unified_part(cls, data: ChapterData, part_manager: PartManager, part_id: str) -> str:
-        """Render a specific part using unified system."""
-        builder = ContentBuilder(data, part_manager)
-        elements = builder.build_part_only(part_id)
-        return HtmlRenderer.render(elements)
-
-    # Legacy methods below - kept for backwards compatibility
-    # These will be deprecated in future versions
+    """Renders chapter data as HTML preview."""
 
     # CSS styles - xhtml2pdf compatible (no flex, no border-radius, simple styles)
     CSS = f"""
