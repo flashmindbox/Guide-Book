@@ -1,12 +1,132 @@
 """
 Document parsers for importing chapter data from DOCX and PDF files.
+Enhanced with comprehensive section parsing and validation.
 """
 
+import json
 import re
 from io import BytesIO
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from .models.base import ChapterData
+
+
+class ImportResult:
+    """Result of an import operation with detailed feedback."""
+
+    def __init__(self):
+        self.success: bool = False
+        self.data: Optional[ChapterData] = None
+        self.errors: List[str] = []
+        self.warnings: List[str] = []
+        self.extracted_fields: Dict[str, bool] = {}
+        self.section_stats: Dict[str, int] = {}
+
+    def add_error(self, msg: str):
+        self.errors.append(msg)
+
+    def add_warning(self, msg: str):
+        self.warnings.append(msg)
+
+    def mark_field(self, field: str, extracted: bool):
+        self.extracted_fields[field] = extracted
+
+    def set_section_count(self, section: str, count: int):
+        self.section_stats[section] = count
+
+    def get_summary(self) -> str:
+        """Get a human-readable summary of what was imported."""
+        lines = []
+
+        # Count extracted fields
+        extracted_count = sum(1 for v in self.extracted_fields.values() if v)
+        total_fields = len(self.extracted_fields)
+
+        if extracted_count > 0:
+            lines.append(f"Extracted {extracted_count}/{total_fields} fields")
+
+        # Section stats
+        for section, count in self.section_stats.items():
+            if count > 0:
+                lines.append(f"  - {section}: {count} items")
+
+        if self.warnings:
+            lines.append(f"Warnings: {len(self.warnings)}")
+
+        return "\n".join(lines) if lines else "No data extracted"
+
+
+class JsonValidator:
+    """Validates JSON import data structure."""
+
+    REQUIRED_FIELDS = ['chapter_data']
+    CHAPTER_REQUIRED = ['class_num', 'subject', 'chapter_number']
+
+    @classmethod
+    def validate(cls, data: Dict) -> Tuple[bool, List[str]]:
+        """
+        Validate JSON import data structure.
+
+        Returns:
+            Tuple of (is_valid, list of error messages)
+        """
+        errors = []
+
+        # Check required top-level fields
+        for field in cls.REQUIRED_FIELDS:
+            if field not in data:
+                errors.append(f"Missing required field: '{field}'")
+
+        if 'chapter_data' in data:
+            chapter = data['chapter_data']
+
+            # Check required chapter fields
+            for field in cls.CHAPTER_REQUIRED:
+                if field not in chapter:
+                    errors.append(f"Missing required chapter field: '{field}'")
+
+            # Validate field types
+            if 'class_num' in chapter:
+                if not isinstance(chapter['class_num'], int):
+                    errors.append("'class_num' must be an integer")
+                elif chapter['class_num'] not in [9, 10, 11, 12]:
+                    errors.append("'class_num' must be 9, 10, 11, or 12")
+
+            if 'chapter_number' in chapter:
+                if not isinstance(chapter['chapter_number'], int):
+                    errors.append("'chapter_number' must be an integer")
+                elif chapter['chapter_number'] < 1:
+                    errors.append("'chapter_number' must be positive")
+
+            if 'subject' in chapter:
+                valid_subjects = ['history', 'geography', 'civics', 'economics']
+                if chapter['subject'] not in valid_subjects:
+                    errors.append(f"'subject' must be one of: {valid_subjects}")
+
+            # Validate list fields
+            list_fields = ['concepts', 'pyq_items', 'model_answers', 'mcqs',
+                           'short_answer', 'long_answer', 'map_items']
+            for field in list_fields:
+                if field in chapter and not isinstance(chapter[field], list):
+                    errors.append(f"'{field}' must be a list")
+
+        return len(errors) == 0, errors
+
+    @classmethod
+    def validate_json_string(cls, json_str: str) -> Tuple[bool, Dict, List[str]]:
+        """
+        Parse and validate a JSON string.
+
+        Returns:
+            Tuple of (is_valid, parsed_data, error messages)
+        """
+        try:
+            data = json.loads(json_str)
+        except json.JSONDecodeError as e:
+            return False, {}, [f"Invalid JSON: {str(e)}"]
+
+        is_valid, errors = cls.validate(data)
+        return is_valid, data, errors
 
 
 class DocxParser:
@@ -269,12 +389,126 @@ class DocxParser:
     @staticmethod
     def _parse_part_c_section(text: str) -> Dict[str, Any]:
         """Parse Part C: Model Answers data."""
-        return {}
+        data = {'model_answers': []}
+
+        # Find Part C section
+        part_c_match = re.search(
+            r'Part C[:\s]*Model Answers(.*?)(?=Part [D-G]|End of Chapter|$)',
+            text, re.DOTALL | re.IGNORECASE
+        )
+
+        if not part_c_match:
+            return data
+
+        part_c_text = part_c_match.group(1)
+
+        # Find questions with marks - patterns like "Q1. Question text [3M]" or "1. Question [3 Marks]"
+        question_patterns = [
+            r'Q?(\d+)[\.\)]\s*(.+?)\s*\[(\d+)\s*[Mm](?:arks?)?\]',
+            r'Q?(\d+)[\.\)]\s*(.+?)(?=\nAnswer|\nAns)',
+        ]
+
+        for pattern in question_patterns:
+            matches = list(re.finditer(pattern, part_c_text, re.DOTALL))
+            if matches:
+                for match in matches:
+                    num = match.group(1)
+                    question = match.group(2).strip()
+                    marks = match.group(3) if len(match.groups()) > 2 else '3'
+
+                    # Try to find the answer following this question
+                    answer = ''
+                    ans_match = re.search(
+                        rf'Q?{num}[\.\)].*?(?:Answer|Ans)[:\s]*(.+?)(?=Q?\d+[\.\)]|$)',
+                        part_c_text, re.DOTALL | re.IGNORECASE
+                    )
+                    if ans_match:
+                        answer = ans_match.group(1).strip()[:500]  # Limit answer length
+
+                    if question and len(question) > 10:
+                        data['model_answers'].append({
+                            'question': question[:200],  # Limit question length
+                            'answer': answer,
+                            'marks': int(marks) if marks.isdigit() else 3,
+                            'marking_points': []
+                        })
+                break
+
+        return data
 
     @staticmethod
     def _parse_part_d_section(text: str) -> Dict[str, Any]:
         """Parse Part D: Practice Questions data."""
-        return {}
+        data = {
+            'mcqs': [],
+            'short_answer': [],
+            'long_answer': [],
+            'assertion_reason': []
+        }
+
+        # Find Part D section
+        part_d_match = re.search(
+            r'Part D[:\s]*Practice Questions(.*?)(?=Part [E-G]|End of Chapter|$)',
+            text, re.DOTALL | re.IGNORECASE
+        )
+
+        if not part_d_match:
+            return data
+
+        part_d_text = part_d_match.group(1)
+
+        # Parse MCQs - look for questions with (a) (b) (c) (d) options
+        mcq_pattern = r'(\d+)[\.\)]\s*(.+?)\s*\n\s*\(a\)\s*(.+?)\n\s*\(b\)\s*(.+?)\n\s*\(c\)\s*(.+?)\n\s*\(d\)\s*(.+?)(?=\n\d+[\.\)]|\n\s*(?:Answer|Short|Long|$))'
+        mcq_matches = re.finditer(mcq_pattern, part_d_text, re.DOTALL | re.IGNORECASE)
+
+        for match in mcq_matches:
+            question = match.group(2).strip()
+            if question and len(question) > 5:
+                data['mcqs'].append({
+                    'question': question[:200],
+                    'options': [
+                        match.group(3).strip()[:100],
+                        match.group(4).strip()[:100],
+                        match.group(5).strip()[:100],
+                        match.group(6).strip()[:100]
+                    ],
+                    'answer': '',
+                    'difficulty': 'M'
+                })
+
+        # Parse Short Answer Questions (3 marks)
+        sa_section = re.search(
+            r'Short Answer.*?(?:3 [Mm]arks?)(.*?)(?=Long Answer|5 [Mm]arks?|Part [E-G]|$)',
+            part_d_text, re.DOTALL | re.IGNORECASE
+        )
+        if sa_section:
+            sa_questions = re.findall(r'(\d+)[\.\)]\s*(.+?)(?=\n\d+[\.\)]|$)', sa_section.group(1))
+            for _, q in sa_questions:
+                q = q.strip()
+                if q and len(q) > 10 and not q.startswith(('(', 'Answer')):
+                    data['short_answer'].append({
+                        'question': q[:200],
+                        'marks': 3,
+                        'hint': ''
+                    })
+
+        # Parse Long Answer Questions (5 marks)
+        la_section = re.search(
+            r'Long Answer.*?(?:5 [Mm]arks?)(.*?)(?=HOTS|Part [E-G]|$)',
+            part_d_text, re.DOTALL | re.IGNORECASE
+        )
+        if la_section:
+            la_questions = re.findall(r'(\d+)[\.\)]\s*(.+?)(?=\n\d+[\.\)]|$)', la_section.group(1))
+            for _, q in la_questions:
+                q = q.strip()
+                if q and len(q) > 10 and not q.startswith(('(', 'Answer')):
+                    data['long_answer'].append({
+                        'question': q[:300],
+                        'marks': 5,
+                        'hint': ''
+                    })
+
+        return data
 
     @staticmethod
     def _parse_part_e_section(text: str) -> Dict[str, Any]:
@@ -296,12 +530,151 @@ class DocxParser:
     @staticmethod
     def _parse_part_f_section(text: str) -> Dict[str, Any]:
         """Parse Part F: Quick Revision data."""
-        return {}
+        data = {
+            'revision_key_points': [],
+            'revision_key_terms': [],
+            'revision_memory_tricks': []
+        }
+
+        # Find Part F section
+        part_f_match = re.search(
+            r'Part F[:\s]*Quick Revision(.*?)(?=Part G|End of Chapter|$)',
+            text, re.DOTALL | re.IGNORECASE
+        )
+
+        if not part_f_match:
+            return data
+
+        part_f_text = part_f_match.group(1)
+
+        # Parse Key Points
+        key_points_section = re.search(
+            r'Key Points?(.*?)(?=Key Terms?|Memory|Timeline|$)',
+            part_f_text, re.DOTALL | re.IGNORECASE
+        )
+        if key_points_section:
+            points = re.findall(r'[\d\•\-\*]\s*(.+?)(?=[\n\d\•\-\*]|$)', key_points_section.group(1))
+            for point in points:
+                point = point.strip()
+                if point and len(point) > 10:
+                    data['revision_key_points'].append(point[:200])
+
+        # Parse Key Terms (Term: Definition format)
+        terms_section = re.search(
+            r'Key Terms?(.*?)(?=Memory|Timeline|Part G|$)',
+            part_f_text, re.DOTALL | re.IGNORECASE
+        )
+        if terms_section:
+            # Look for "Term: Definition" or "Term - Definition" patterns
+            term_matches = re.findall(
+                r'([A-Z][a-zA-Z\s]+?)[\s]*[:\-–]\s*(.+?)(?=\n[A-Z]|\n\n|$)',
+                terms_section.group(1)
+            )
+            for term, definition in term_matches:
+                term = term.strip()
+                definition = definition.strip()
+                if term and definition and len(term) > 2 and len(definition) > 5:
+                    data['revision_key_terms'].append({
+                        'term': term[:50],
+                        'definition': definition[:200]
+                    })
+
+        # Parse Memory Tricks
+        memory_section = re.search(
+            r'Memory Tricks?(.*?)(?=Part G|End of Chapter|$)',
+            part_f_text, re.DOTALL | re.IGNORECASE
+        )
+        if memory_section:
+            tricks = re.findall(r'[\d\•\-\*>]\s*(.+?)(?=[\n\d\•\-\*>]|$)', memory_section.group(1))
+            for trick in tricks:
+                trick = trick.strip()
+                if trick and len(trick) > 5:
+                    data['revision_memory_tricks'].append(trick[:150])
+
+        return data
 
     @staticmethod
     def _parse_part_g_section(text: str) -> Dict[str, Any]:
         """Parse Part G: Exam Strategy data."""
-        return {}
+        data = {
+            'time_allocation': [],
+            'common_mistakes_exam': [],
+            'examiner_pro_tips': [],
+            'self_assessment_checklist': []
+        }
+
+        # Find Part G section
+        part_g_match = re.search(
+            r'Part G[:\s]*Exam Strategy(.*?)(?=End of Chapter|$)',
+            text, re.DOTALL | re.IGNORECASE
+        )
+
+        if not part_g_match:
+            return data
+
+        part_g_text = part_g_match.group(1)
+
+        # Parse Time Allocation table
+        time_section = re.search(
+            r'Time Allocation(.*?)(?=Common Mistakes|What Loses|Pro Tips|$)',
+            part_g_text, re.DOTALL | re.IGNORECASE
+        )
+        if time_section:
+            # Look for "Question Type | Marks | Time" or similar patterns
+            time_matches = re.findall(
+                r'(MCQ|Short|Long|Map|Source|Case).*?(\d+)\s*[Mm]arks?.*?(\d+)\s*[Mm]in',
+                time_section.group(1), re.IGNORECASE
+            )
+            for q_type, marks, time in time_matches:
+                data['time_allocation'].append({
+                    'type': q_type.strip(),
+                    'marks': marks,
+                    'time': f"{time} min"
+                })
+
+        # Parse Common Mistakes
+        mistakes_section = re.search(
+            r'(?:Common Mistakes|What Loses Marks)(.*?)(?=Pro Tips|Examiner|Checklist|$)',
+            part_g_text, re.DOTALL | re.IGNORECASE
+        )
+        if mistakes_section:
+            # Look for "Mistake | Correction" or "X ... -> ..." patterns
+            mistake_matches = re.findall(
+                r'[✗❌\-]\s*(.+?)(?:→|->|:)\s*(.+?)(?=\n[✗❌\-]|\n\n|$)',
+                mistakes_section.group(1)
+            )
+            for mistake, correction in mistake_matches:
+                if mistake.strip() and correction.strip():
+                    data['common_mistakes_exam'].append({
+                        'mistake': mistake.strip()[:150],
+                        'correction': correction.strip()[:150]
+                    })
+
+        # Parse Pro Tips
+        tips_section = re.search(
+            r'(?:Pro Tips|Examiner.*?Tips)(.*?)(?=Checklist|Self.*?Assessment|$)',
+            part_g_text, re.DOTALL | re.IGNORECASE
+        )
+        if tips_section:
+            tips = re.findall(r'[✓✔\d\•\-\*]\s*(.+?)(?=[\n✓✔\d\•\-\*]|$)', tips_section.group(1))
+            for tip in tips:
+                tip = tip.strip()
+                if tip and len(tip) > 10:
+                    data['examiner_pro_tips'].append(tip[:200])
+
+        # Parse Self-Assessment Checklist
+        checklist_section = re.search(
+            r'(?:Self.*?Assessment|Checklist)(.*?)(?=End of|$)',
+            part_g_text, re.DOTALL | re.IGNORECASE
+        )
+        if checklist_section:
+            items = re.findall(r'[☐□\[\]\d\•\-]\s*(.+?)(?=[\n☐□\[\]\d\•\-]|$)', checklist_section.group(1))
+            for item in items:
+                item = item.strip()
+                if item and len(item) > 5:
+                    data['self_assessment_checklist'].append(item[:150])
+
+        return data
 
 
 class PdfParser:
