@@ -7,10 +7,7 @@ streamlit>=1.43.2  # CVE-2025-1684 fix
 # Document Generation
 python-docx>=1.1.0
 
-# PDF Conversion (requires MS Word on Windows)
-docx2pdf>=0.1.8
-
-# HTML to PDF (pure Python - no external dependencies)
+# HTML to PDF (pure Python - works on Streamlit Cloud)
 xhtml2pdf>=0.2.17  # CVE-2024-25885 fix
 
 # QR Code Generation
