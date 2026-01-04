@@ -3,8 +3,8 @@ Document parsers for importing chapter data from DOCX and PDF files.
 """
 
 import re
-from typing import Optional, Dict, Any
 from io import BytesIO
+from typing import Any, Dict, Optional
 
 from .models.base import ChapterData
 

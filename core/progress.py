@@ -4,6 +4,7 @@ Calculates completion percentages for each section and overall.
 """
 
 from typing import Dict, List, Tuple
+
 from .models.base import ChapterData
 from .models.parts import PartManager
 
@@ -45,7 +46,6 @@ class ProgressTracker:
     def calculate_part_a_progress(self) -> float:
         """Calculate Part A (PYQ Analysis) completion percentage."""
         score = 0
-        max_score = 100
 
         # PYQ items (60%)
         if self.data.pyq_items:
@@ -69,7 +69,6 @@ class ProgressTracker:
     def calculate_part_b_progress(self) -> float:
         """Calculate Part B (Key Concepts) completion percentage."""
         score = 0
-        max_score = 100
 
         # Concepts (70%)
         non_empty_concepts = [c for c in self.data.concepts if not c.is_empty()]

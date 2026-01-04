@@ -6,10 +6,9 @@ A Streamlit application for creating professionally formatted
 study guide chapters with DOCX and PDF export.
 """
 
-import streamlit as st
-from pathlib import Path
 import json
-from datetime import datetime
+
+import streamlit as st
 
 # Configure page
 st.set_page_config(
@@ -20,18 +19,14 @@ st.set_page_config(
 )
 
 # Import modules
-from config.constants import APP_NAME, APP_VERSION, AUTOSAVE_DIR
-from config.subjects import load_chapters, get_subject_config, SUBJECT_CONFIGS
-from core.models.base import ChapterData, ConceptItem, PYQItem, ModelAnswer, QuestionItem
-from core.models.parts import PartManager
-from core.session import SessionManager
+from config.constants import APP_VERSION, AUTOSAVE_DIR
+from config.subjects import load_chapters
+from core.models.base import ConceptItem, ModelAnswer, PYQItem, QuestionItem
 from core.progress import ProgressTracker
-from styles.theme import Colors, Weightage, Importance, PYQFrequency
-from ui.components.preview import PreviewRenderer, show_preview_panel, show_generate_docx_button
-from ui.components.navigation import (
-    inject_custom_css, render_breadcrumb, render_next_prev_buttons,
-    PAGE_INFO, WORKFLOW_ORDER
-)
+from core.session import SessionManager
+from styles.theme import Importance, PYQFrequency, Weightage
+from ui.components.navigation import inject_custom_css, render_breadcrumb, render_next_prev_buttons
+from ui.components.preview import show_generate_docx_button, show_preview_panel
 
 # File upload security constants
 ALLOWED_EXTENSIONS = {'json', 'docx', 'pdf'}
@@ -84,10 +79,10 @@ def render_sidebar():
         is_dirty = SessionManager.is_dirty()
         if is_dirty:
             st.markdown(
-                f'<h1 style="font-size: 1.5rem;">📚 Guide Book Generator '
-                f'<span style="display: inline-block; width: 10px; height: 10px; '
-                f'background-color: #EF4444; border-radius: 50%; margin-left: 8px;" '
-                f'title="Unsaved changes"></span></h1>',
+                '<h1 style="font-size: 1.5rem;">📚 Guide Book Generator '
+                '<span style="display: inline-block; width: 10px; height: 10px; '
+                'background-color: #EF4444; border-radius: 50%; margin-left: 8px;" '
+                'title="Unsaved changes"></span></h1>',
                 unsafe_allow_html=True
             )
         else:
@@ -515,8 +510,9 @@ def render_cover_page():
         with qr_col1:
             if data.qr_practice_questions_url:
                 try:
-                    import qrcode
                     from io import BytesIO
+
+                    import qrcode
                     qr = qrcode.QRCode(version=1, box_size=5, border=2)
                     qr.add_data(data.qr_practice_questions_url)
                     qr.make(fit=True)
@@ -530,8 +526,9 @@ def render_cover_page():
         with qr_col2:
             if data.qr_practice_with_answers_url:
                 try:
-                    import qrcode
                     from io import BytesIO
+
+                    import qrcode
                     qr = qrcode.QRCode(version=1, box_size=5, border=2)
                     qr.add_data(data.qr_practice_with_answers_url)
                     qr.make(fit=True)

@@ -5,10 +5,10 @@ Simplified design matching reference document style.
 
 from docx import Document
 from docx.shared import Inches, Pt
-from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 from core.models.base import ChapterData
 from styles.theme import Colors, Fonts
+
 from ..helpers import DocxHelpers
 
 

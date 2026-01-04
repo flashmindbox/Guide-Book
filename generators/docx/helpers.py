@@ -3,18 +3,18 @@ DOCX helper functions for Guide Book Generator.
 Provides utilities for creating tables, boxes, and formatted text.
 """
 
-from typing import List, Optional, Tuple, Dict, Any
-from docx import Document
-from docx.shared import Pt, Inches, RGBColor, Twips, Cm
-from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT
-from docx.enum.table import WD_TABLE_ALIGNMENT, WD_ROW_HEIGHT_RULE
-from docx.enum.style import WD_STYLE_TYPE
-from docx.oxml.ns import qn, nsmap
-from docx.oxml import OxmlElement
-from docx.table import Table, _Cell
 import re
+from typing import Dict, List, Optional, Tuple
 
-from styles.theme import Colors, Fonts, Spacing, Decorative, Icons, BoxStyles
+from docx import Document
+from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
+from docx.shared import Inches, Pt
+from docx.table import Table, _Cell
+
+from styles.theme import BoxStyles, Colors, Fonts, Spacing
 
 
 class DocxHelpers:
