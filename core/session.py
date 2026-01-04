@@ -201,28 +201,93 @@ class SessionManager:
         return None
 
     @classmethod
-    def import_from_json(cls, json_string: str) -> bool:
-        """Import chapter data from JSON string. Returns True if successful."""
+    def import_from_json(cls, json_string: str, show_preview: bool = False) -> Dict[str, Any]:
+        """
+        Import chapter data from JSON string with validation.
+
+        Args:
+            json_string: JSON string containing chapter data
+            show_preview: If True, validates but doesn't import (for preview)
+
+        Returns:
+            Dict with 'success', 'errors', 'warnings', 'summary' keys
+        """
+        from .parsers import JsonValidator
+
+        result = {
+            'success': False,
+            'errors': [],
+            'warnings': [],
+            'summary': {},
+            'data': None
+        }
+
+        # Validate JSON structure
+        is_valid, parsed_data, errors = JsonValidator.validate_json_string(json_string)
+
+        if not is_valid:
+            result['errors'] = errors
+            return result
+
+        # If just previewing, return validation success and data summary
+        if show_preview:
+            result['success'] = True
+            result['data'] = parsed_data
+            if 'chapter_data' in parsed_data:
+                ch = parsed_data['chapter_data']
+                result['summary'] = {
+                    'chapter_title': ch.get('chapter_title', 'Untitled'),
+                    'chapter_number': ch.get('chapter_number', 0),
+                    'subject': ch.get('subject', 'unknown'),
+                    'class_num': ch.get('class_num', 10),
+                    'concepts_count': len(ch.get('concepts', [])),
+                    'pyq_count': len(ch.get('pyq_items', [])),
+                    'mcq_count': len(ch.get('mcqs', [])),
+                    'model_answers_count': len(ch.get('model_answers', []))
+                }
+            return result
+
+        # Actually import the data
         try:
-            import_data = json.loads(json_string)
-
-            if 'chapter_data' in import_data:
-                chapter_data = ChapterData.from_autosave_dict(import_data['chapter_data'])
+            if 'chapter_data' in parsed_data:
+                chapter_data = ChapterData.from_autosave_dict(parsed_data['chapter_data'])
                 cls.set_chapter_data(chapter_data)
+            else:
+                result['errors'].append("No chapter data found in file")
+                return result
 
-            if 'part_manager' in import_data:
-                part_manager = PartManager.from_dict(import_data['part_manager'])
+            if 'part_manager' in parsed_data:
+                part_manager = PartManager.from_dict(parsed_data['part_manager'])
                 cls.set_part_manager(part_manager)
+            else:
+                # Use default part manager if not provided
+                cls.set_part_manager(PartManager())
+                result['warnings'].append("No part configuration found, using defaults")
 
             # Update current selection based on imported data
             data = cls.get_chapter_data()
             if data:
                 cls.set_current_selection(data.class_num, data.subject, data.chapter_number)
+                result['summary'] = {
+                    'chapter_title': data.chapter_title,
+                    'chapter_number': data.chapter_number,
+                    'subject': data.subject,
+                    'class_num': data.class_num
+                }
 
-            return True
+            result['success'] = True
+            return result
+
+        except ValueError as e:
+            result['errors'].append(f"Data validation error: {str(e)}")
+        except TypeError as e:
+            result['errors'].append(f"Data type error: {str(e)}")
+        except KeyError as e:
+            result['errors'].append(f"Missing required field: {str(e)}")
         except Exception as e:
-            st.error(f"Failed to import data: {str(e)}")
-            return False
+            result['errors'].append(f"Import failed: {str(e)}")
+
+        return result
 
     @classmethod
     def get_session_info(cls) -> Dict[str, Any]:
