@@ -551,7 +551,7 @@ def render_cover_page():
 
     # Generate DOCX button
     st.divider()
-    show_generate_docx_button(data, SessionManager.get_part_manager())
+    show_generate_docx_button(data, SessionManager.get_part_manager(), part_id='cover')
 
     # Next/Previous navigation
     st.divider()
@@ -651,7 +651,7 @@ def render_part_a():
 
     # Generate DOCX button
     st.divider()
-    show_generate_docx_button(data, SessionManager.get_part_manager())
+    show_generate_docx_button(data, SessionManager.get_part_manager(), part_id='A')
 
     # Next/Previous navigation
     st.divider()
@@ -734,7 +734,7 @@ def render_part_b():
 
     # Generate DOCX button
     st.divider()
-    show_generate_docx_button(data, SessionManager.get_part_manager())
+    show_generate_docx_button(data, SessionManager.get_part_manager(), part_id='B')
 
     # Next/Previous navigation
     st.divider()
@@ -805,7 +805,7 @@ def render_part_c():
 
     # Generate DOCX button
     st.divider()
-    show_generate_docx_button(data, SessionManager.get_part_manager())
+    show_generate_docx_button(data, SessionManager.get_part_manager(), part_id='C')
 
     # Next/Previous navigation
     st.divider()
@@ -849,7 +849,7 @@ def render_part_d():
 
     # Generate DOCX button
     st.divider()
-    show_generate_docx_button(data, SessionManager.get_part_manager())
+    show_generate_docx_button(data, SessionManager.get_part_manager(), part_id='D')
 
     # Next/Previous navigation
     st.divider()
@@ -1007,7 +1007,7 @@ def render_part_e():
 
     # Generate DOCX button
     st.divider()
-    show_generate_docx_button(data, SessionManager.get_part_manager())
+    show_generate_docx_button(data, SessionManager.get_part_manager(), part_id='E')
 
     # Next/Previous navigation
     st.divider()
@@ -1075,7 +1075,7 @@ def render_part_f():
 
     # Generate DOCX button
     st.divider()
-    show_generate_docx_button(data, SessionManager.get_part_manager())
+    show_generate_docx_button(data, SessionManager.get_part_manager(), part_id='F')
 
     # Next/Previous navigation
     st.divider()
@@ -1170,7 +1170,7 @@ def render_part_g():
 
     # Generate DOCX button
     st.divider()
-    show_generate_docx_button(data, SessionManager.get_part_manager())
+    show_generate_docx_button(data, SessionManager.get_part_manager(), part_id='G')
 
     # Next/Previous navigation
     st.divider()
