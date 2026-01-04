@@ -1428,3 +1428,52 @@ def clear_preview_cache():
     for key in keys_to_clear:
         if key in st.session_state:
             del st.session_state[key]
+
+
+def show_generate_docx_button(data: ChapterData, part_manager: PartManager = None):
+    """
+    Show a Generate DOCX button with download functionality.
+    Can be placed on any page for quick document generation.
+
+    Args:
+        data: Chapter data to generate
+        part_manager: Part manager (uses default if not provided)
+    """
+    from core.models.parts import PartManager as PM
+    from generators.docx.base import DocumentGenerator
+
+    if part_manager is None:
+        part_manager = PM()
+
+    col1, col2, col3 = st.columns([1, 2, 1])
+
+    with col2:
+        if st.button("📥 Generate DOCX", type="primary", use_container_width=True,
+                     key=f"gen_docx_{st.session_state.get('current_page', 'unknown')}"):
+            with st.spinner("Generating DOCX..."):
+                try:
+                    generator = DocumentGenerator(data, part_manager)
+                    docx_bytes = generator.generate_to_bytes()
+
+                    # Store in session state for download
+                    st.session_state['quick_docx'] = docx_bytes
+                    st.session_state['quick_docx_ready'] = True
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Error generating DOCX: {str(e)}")
+
+        # Show download button if DOCX is ready
+        if st.session_state.get('quick_docx_ready') and st.session_state.get('quick_docx'):
+            safe_title = "".join(c for c in data.chapter_title[:20] if c.isalnum() or c in (' ', '-', '_')).strip()
+            safe_title = safe_title.replace(' ', '_') if safe_title else 'Chapter'
+            filename = f"Ch{data.chapter_number}_{data.subject}_{safe_title}.docx"
+
+            st.download_button(
+                "⬇️ Download DOCX",
+                data=st.session_state['quick_docx'],
+                file_name=filename,
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                use_container_width=True,
+                key=f"download_docx_{st.session_state.get('current_page', 'unknown')}"
+            )
+            st.success("✅ DOCX generated! Click above to download.")
