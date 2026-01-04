@@ -63,7 +63,7 @@ class CoverPageGenerator:
         para.paragraph_format.space_after = Pt(6)
         run = para.add_run('─' * 50)  # Solid horizontal line character (U+2500)
         run.font.size = Pt(11)
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
     def _add_chapter_title(self):
         """Add chapter number and title."""
@@ -75,7 +75,7 @@ class CoverPageGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_PART_HEADER  # 16pt
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         # Chapter title - Large, bold, blue
         para = self.document.add_paragraph()
@@ -84,7 +84,7 @@ class CoverPageGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_CHAPTER_TITLE  # 24pt
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         # Thin underline below title
         para = self.document.add_paragraph()
@@ -174,7 +174,7 @@ class CoverPageGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_BODY
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         # Subtitle
         para = cell.add_paragraph()
@@ -226,7 +226,7 @@ class CoverPageGenerator:
             run.font.name = Fonts.PRIMARY
             run.font.size = Fonts.SIZE_BODY
             run.font.bold = True
-            run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+            run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
             # Description in body text
             run = para.add_run(description)
@@ -255,7 +255,7 @@ class CoverPageGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_BODY
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         # Create inner table for QR codes side by side with spacer column
         qr_table = cell.add_table(rows=2, cols=3)

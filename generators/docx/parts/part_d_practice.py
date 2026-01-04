@@ -78,7 +78,7 @@ class PartDGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_PART_HEADER
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         self.document.add_paragraph()  # Spacing
 
@@ -91,7 +91,7 @@ class PartDGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_SECTION_TITLE
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         if count:
             run = para.add_run(f" ({count})")
@@ -311,7 +311,7 @@ class PartDGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_BODY
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         run = para.add_run(f'"{source_text}"')
         run.font.name = Fonts.PRIMARY
@@ -358,7 +358,7 @@ class PartDGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_BODY
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         # Passage box
         table = self.document.add_table(rows=1, cols=1)

@@ -61,7 +61,7 @@ class PartGGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_PART_HEADER
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         self.document.add_paragraph()  # Spacing
 
@@ -73,7 +73,7 @@ class PartGGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_SECTION_TITLE
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         # Create table
         table = self.document.add_table(rows=1, cols=3)
@@ -99,7 +99,7 @@ class PartGGenerator:
             run.font.name = Fonts.PRIMARY
             run.font.size = Fonts.SIZE_TABLE_HEADER
             run.font.bold = True
-            run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+            run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         # Data rows with alternating background
         for idx, item in enumerate(self.data.time_allocation):
@@ -125,7 +125,7 @@ class PartGGenerator:
             run.font.name = Fonts.PRIMARY
             run.font.size = Fonts.SIZE_BODY
             run.font.bold = True
-            run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+            run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
             cell = row.cells[2]
             if idx % 2 == 1:
@@ -269,7 +269,7 @@ class PartGGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_SECTION_TITLE
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         # NEUTRAL styled box
         table = self.document.add_table(rows=1, cols=1)
@@ -287,7 +287,7 @@ class PartGGenerator:
             run = para.add_run("☐ ")
             run.font.name = Fonts.PRIMARY
             run.font.size = Fonts.SIZE_BODY
-            run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+            run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
             run = para.add_run(item)
             run.font.name = Fonts.PRIMARY
@@ -315,4 +315,4 @@ class PartGGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_BODY
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD

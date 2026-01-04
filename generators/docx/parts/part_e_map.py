@@ -64,7 +64,7 @@ class PartEGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Fonts.SIZE_PART_HEADER
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         self.document.add_paragraph(style='BodyText')  # Spacing
 
@@ -107,7 +107,7 @@ class PartEGenerator:
         """Add map work items list."""
         para = self.document.add_paragraph(style='SectionTitle')
         run = para.add_run(f"{Decorative.ICON_MAP} CBSE Prescribed Map Locations")
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
 
         for idx, item in enumerate(self.data.map_items, 1):
             para = self.document.add_paragraph(style='BodyText')
