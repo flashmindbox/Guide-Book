@@ -1,23 +1,23 @@
 """
 Part E: Map Work generator for Guide Book Generator.
+Simplified design matching reference document style.
 """
 
 from docx import Document
-from docx.shared import Inches
+from docx.shared import Inches, Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 from core.models.base import ChapterData
-from styles.theme import Colors, Fonts, Decorative
+from styles.theme import Colors, Fonts
 from ..helpers import DocxHelpers
 
 
 class PartEGenerator:
-    """Generates Part E: Map Work."""
+    """Generates Part E: Map Work with clean styling."""
 
     def __init__(self, document: Document, data: ChapterData):
         self.document = document
         self.data = data
-        self.styles = document.styles
 
     def generate(self):
         """Generate Part E: Map Work."""
@@ -42,56 +42,33 @@ class PartEGenerator:
             self._add_map_tips()
 
     def _add_part_header(self):
-        """Add the part header."""
-        table = self.document.add_table(rows=1, cols=1)
-        table.alignment = 1
-        table.columns[0].width = Inches(6.5)
+        """Add simple part header."""
+        para = self.document.add_paragraph()
+        para.paragraph_format.space_after = Pt(12)
 
-        cell = table.cell(0, 0)
-        DocxHelpers.set_cell_background(cell, Colors.WHITE)
-        DocxHelpers.set_cell_borders(cell, Colors.DARK_GRAY)
-        DocxHelpers.set_cell_padding(cell, 100)
-
-        para = cell.paragraphs[0]
-
-        run = para.add_run("Part E: ")
+        run = para.add_run("Part E: Map Work")
         run.font.name = Fonts.PRIMARY
-        run.font.size = Fonts.SIZE_PART_HEADER
+        run.font.size = Pt(16)
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.DANGER_RED)
-
-        run = para.add_run("Map Work")
-        run.font.name = Fonts.PRIMARY
-        run.font.size = Fonts.SIZE_PART_HEADER
-        run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
-
-        self.document.add_paragraph(style='BodyText')  # Spacing
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)
 
     def _add_na_notice(self):
         """Add N/A notice for chapters without map work."""
-        table = self.document.add_table(rows=1, cols=1)
-        table.alignment = 1
-        table.columns[0].width = Inches(6.5)
-
-        cell = table.cell(0, 0)
-        DocxHelpers.set_cell_background(cell, Colors.BG_LIGHT_GRAY)
-        DocxHelpers.set_cell_borders(cell, Colors.BORDER_GRAY)
-        DocxHelpers.set_cell_padding(cell, 150)
-
-        para = cell.paragraphs[0]
+        para = self.document.add_paragraph()
         para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        para.paragraph_format.space_before = Pt(24)
+        para.paragraph_format.space_after = Pt(12)
 
-        run = para.add_run(f"{Decorative.ICON_MAP} No Map Work from this Chapter")
+        run = para.add_run("🗺 No Map Work from this Chapter")
         run.font.name = Fonts.PRIMARY
-        run.font.size = Fonts.SIZE_SECTION_TITLE
+        run.font.size = Pt(14)
         run.font.bold = True
         run.font.color.rgb = Colors.hex_to_rgb(Colors.DARK_GRAY)
 
-        para = cell.add_paragraph()
+        # Subject-specific note
+        para = self.document.add_paragraph()
         para.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
-        # Subject-specific note
         if self.data.subject == 'history':
             note = "All History map work (2 marks) comes from Chapter 2: Nationalism in India"
         else:
@@ -99,62 +76,72 @@ class PartEGenerator:
 
         run = para.add_run(note)
         run.font.name = Fonts.PRIMARY
-        run.font.size = Fonts.SIZE_BODY
+        run.font.size = Pt(11)
         run.font.italic = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.LIGHT_GRAY)
 
     def _add_map_items(self):
         """Add map work items list."""
-        para = self.document.add_paragraph(style='SectionTitle')
-        run = para.add_run(f"{Decorative.ICON_MAP} CBSE Prescribed Map Locations")
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # BOOK STANDARD
+        para = self.document.add_paragraph()
+        para.paragraph_format.space_before = Pt(12)
+        para.paragraph_format.space_after = Pt(6)
+
+        run = para.add_run("🗺 CBSE Prescribed Map Locations")
+        run.font.name = Fonts.PRIMARY
+        run.font.size = Pt(14)
+        run.font.bold = True
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)
 
         for idx, item in enumerate(self.data.map_items, 1):
-            para = self.document.add_paragraph(style='BodyText')
+            para = self.document.add_paragraph()
             para.paragraph_format.left_indent = Inches(0.25)
+            para.paragraph_format.space_after = Pt(3)
 
             run = para.add_run(f"{idx}. ")
+            run.font.name = Fonts.PRIMARY
+            run.font.size = Pt(11)
             run.font.bold = True
 
-            para.add_run(item)
-
-        self.document.add_paragraph(style='BodyText')  # Spacing
+            run = para.add_run(item)
+            run.font.name = Fonts.PRIMARY
+            run.font.size = Pt(11)
 
     def _add_map_image(self):
         """Add map image placeholder."""
-        para = self.document.add_paragraph(style='BodyText')
+        para = self.document.add_paragraph()
         para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        para.paragraph_format.space_before = Pt(18)
+        para.paragraph_format.space_after = Pt(18)
 
         # Note: Actual image embedding would use:
         # self.document.add_picture(self.data.map_image_path, width=Inches(5))
 
         run = para.add_run("[Map Image Placeholder]")
+        run.font.name = Fonts.PRIMARY
+        run.font.size = Pt(11)
         run.font.italic = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.LIGHT_GRAY)
-
-        self.document.add_paragraph(style='BodyText')  # Spacing
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.DARK_GRAY)
 
     def _add_map_tips(self):
         """Add map marking tips."""
-        table = self.document.add_table(rows=1, cols=1)
-        table.alignment = 1
-        table.columns[0].width = Inches(6.5)
+        para = self.document.add_paragraph()
+        para.paragraph_format.space_before = Pt(18)
+        para.paragraph_format.space_after = Pt(6)
 
-        cell = table.cell(0, 0)
-        DocxHelpers.set_cell_background(cell, Colors.BG_LIGHT_GREEN)
-        DocxHelpers.set_cell_borders(cell, Colors.BORDER_GREEN)
-        DocxHelpers.set_cell_padding(cell, 100)
-
-        para = cell.paragraphs[0]
-        run = para.add_run(f"{Decorative.ICON_BULB} Map Marking Tips")
+        run = para.add_run("💡 Map Marking Tips")
         run.font.name = Fonts.PRIMARY
-        run.font.size = Fonts.SIZE_BODY
+        run.font.size = Pt(14)
         run.font.bold = True
         run.font.color.rgb = Colors.hex_to_rgb(Colors.SUCCESS_GREEN)
 
         for tip in self.data.map_tips.split('\n'):
             tip = tip.strip()
             if tip:
-                para = cell.add_paragraph()
+                para = self.document.add_paragraph()
+                para.paragraph_format.left_indent = Inches(0.25)
+                para.paragraph_format.space_after = Pt(3)
+
                 run = para.add_run("• ")
+                run.font.name = Fonts.PRIMARY
+                run.font.size = Pt(11)
+
                 DocxHelpers.add_formatted_text(para, tip)
