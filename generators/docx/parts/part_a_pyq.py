@@ -8,7 +8,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Pt
 
 from core.models.base import ChapterData
-from styles.theme import Colors, Fonts
+from styles.theme import Colors, Fonts, Icons
 
 from ..helpers import DocxHelpers
 
@@ -150,7 +150,7 @@ class PartAGenerator:
         para.paragraph_format.space_before = Pt(12)
         para.paragraph_format.space_after = Pt(6)
 
-        run = para.add_run(f"🎯 Prediction {self._get_next_year()}: ")
+        run = para.add_run(f"{Icons.TARGET} Prediction {self._get_next_year()}: ")
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(11)
         run.font.bold = True

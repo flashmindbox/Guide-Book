@@ -8,7 +8,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Pt
 
 from core.models.base import ChapterData
-from styles.theme import Colors, Fonts
+from styles.theme import Colors, Fonts, Icons
 
 from ..helpers import DocxHelpers
 
@@ -149,7 +149,7 @@ class PartBGenerator:
             para.paragraph_format.space_after = Pt(3)
 
             # Check if it's a bullet point
-            if line.startswith(('-', '•', '*')):
+            if line.startswith('- ') or line.startswith('• ') or line.startswith('* '):
                 para.paragraph_format.left_indent = Inches(0.25)
                 line = line[1:].strip()
                 DocxHelpers.add_formatted_text(para, f"• {line}")
@@ -169,7 +169,7 @@ class PartBGenerator:
         para.paragraph_format.space_before = Pt(18)
         para.paragraph_format.space_after = Pt(6)
 
-        run = para.add_run("📊 Comparison Tables")
+        run = para.add_run(f"{Icons.CHART} Comparison Tables")
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(14)
         run.font.bold = True
@@ -210,7 +210,7 @@ class PartBGenerator:
             para.paragraph_format.left_indent = Inches(0.25)
             para.paragraph_format.space_after = Pt(3)
 
-            run = para.add_run("❌ ")
+            run = para.add_run(f"{Icons.WRONG} ")
             run.font.name = Fonts.PRIMARY
 
             DocxHelpers.add_formatted_text(para, mistake)
@@ -222,7 +222,7 @@ class PartBGenerator:
         para.paragraph_format.space_before = Pt(18)
         para.paragraph_format.space_after = Pt(6)
 
-        run = para.add_run("📅 Important Dates Timeline")
+        run = para.add_run(f"{Icons.CALENDAR} Important Dates Timeline")
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(14)
         run.font.bold = True

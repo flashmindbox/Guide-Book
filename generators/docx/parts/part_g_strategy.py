@@ -8,7 +8,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Pt
 
 from core.models.base import ChapterData
-from styles.theme import Colors, Fonts
+from styles.theme import Colors, Fonts, Icons
 
 from ..helpers import DocxHelpers
 
@@ -69,7 +69,7 @@ class PartGGenerator:
         para.paragraph_format.space_before = Pt(12)
         para.paragraph_format.space_after = Pt(6)
 
-        run = para.add_run("⏱ Time Allocation Guide")
+        run = para.add_run(f"{Icons.CLOCK} Time Allocation Guide")
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(14)
         run.font.bold = True
@@ -157,7 +157,7 @@ class PartGGenerator:
         DocxHelpers.set_cell_background(cell, Colors.TABLE_HEADER_BG)
         DocxHelpers.set_cell_padding(cell, 60)
         para = cell.paragraphs[0]
-        run = para.add_run("❌ MISTAKE")
+        run = para.add_run(f"{Icons.WRONG} MISTAKE")
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(11)
         run.font.bold = True
@@ -200,7 +200,7 @@ class PartGGenerator:
         para.paragraph_format.space_before = Pt(18)
         para.paragraph_format.space_after = Pt(6)
 
-        run = para.add_run("💡 Examiner's Pro Tips (What Gets EXTRA Marks)")
+        run = para.add_run(f"{Icons.TIP} Examiner's Pro Tips (What Gets EXTRA Marks)")
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(14)
         run.font.bold = True
@@ -262,7 +262,7 @@ class PartGGenerator:
         para.alignment = WD_ALIGN_PARAGRAPH.CENTER
         para.paragraph_format.space_before = Pt(6)
 
-        run = para.add_run(f"⭐ End of Chapter {self.data.chapter_number} ⭐")
+        run = para.add_run(f"{Icons.STAR} End of Chapter {self.data.chapter_number} {Icons.STAR}")
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(12)
         run.font.bold = True

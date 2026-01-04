@@ -8,7 +8,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Pt
 
 from core.models.base import ChapterData
-from styles.theme import Colors, Fonts
+from styles.theme import Colors, Fonts, Icons
 
 from ..helpers import DocxHelpers
 
@@ -68,7 +68,7 @@ class PartEGenerator:
         para.paragraph_format.space_before = Pt(24)
         para.paragraph_format.space_after = Pt(12)
 
-        run = para.add_run("🗺 No Map Work from this Chapter")
+        run = para.add_run(f"{Icons.PENCIL} No Map Work from this Chapter")
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(14)
         run.font.bold = True
@@ -94,7 +94,7 @@ class PartEGenerator:
         para.paragraph_format.space_before = Pt(12)
         para.paragraph_format.space_after = Pt(6)
 
-        run = para.add_run("🗺 CBSE Prescribed Map Locations")
+        run = para.add_run(f"{Icons.PENCIL} CBSE Prescribed Map Locations")
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(14)
         run.font.bold = True
@@ -136,7 +136,7 @@ class PartEGenerator:
         para.paragraph_format.space_before = Pt(18)
         para.paragraph_format.space_after = Pt(6)
 
-        run = para.add_run("💡 Map Marking Tips")
+        run = para.add_run(f"{Icons.TIP} Map Marking Tips")
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(14)
         run.font.bold = True

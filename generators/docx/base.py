@@ -121,6 +121,9 @@ class DocumentGenerator:
         generator_func = generators.get(part_id.upper())
         if generator_func:
             generator_func()
+        else:
+            # Handle custom parts (H, I, J, etc.)
+            self._generate_custom_part(part_id)
 
     def _generate_part_a(self):
         """Generate Part A: PYQ Analysis."""
@@ -147,9 +150,39 @@ class DocumentGenerator:
         generator.generate()
 
     def _generate_part_e(self):
-        """Generate Part E: Map Work."""
-        from .parts.part_e_map import PartEGenerator
-        generator = PartEGenerator(self.document, self.data)
+        """Generate Part E: Subject-specific content.
+
+        Routes to appropriate generator based on subject:
+        - History, Geography → Map Work
+        - Political Science → Constitutional Articles
+        - Economics → Graphs & Data Analysis
+        - Mathematics, Physics → Formula Sheet
+        - English → Grammar Focus
+        - Science, Chemistry, Biology → Lab Manual
+        """
+        subject = self.data.subject.lower() if self.data.subject else ''
+
+        # Route to appropriate Part E generator based on subject
+        if subject in ('political_science', 'civics'):
+            from .parts.part_e_constitutional import PartEConstitutionalGenerator
+            generator = PartEConstitutionalGenerator(self.document, self.data)
+        elif subject == 'economics':
+            from .parts.part_e_graphs import PartEGraphsGenerator
+            generator = PartEGraphsGenerator(self.document, self.data)
+        elif subject in ('mathematics', 'physics', 'maths'):
+            from .parts.part_e_formulas import PartEFormulasGenerator
+            generator = PartEFormulasGenerator(self.document, self.data)
+        elif subject in ('english', 'english_literature', 'english_grammar'):
+            from .parts.part_e_grammar import PartEGrammarGenerator
+            generator = PartEGrammarGenerator(self.document, self.data)
+        elif subject in ('science', 'chemistry', 'biology'):
+            from .parts.part_e_lab import PartELabGenerator
+            generator = PartELabGenerator(self.document, self.data)
+        else:
+            # Default: Map Work (for history, geography, and others)
+            from .parts.part_e_map import PartEGenerator
+            generator = PartEGenerator(self.document, self.data)
+
         generator.generate()
 
     def _generate_part_f(self):
@@ -162,6 +195,20 @@ class DocumentGenerator:
         """Generate Part G: Exam Strategy."""
         from .parts.part_g_strategy import PartGGenerator
         generator = PartGGenerator(self.document, self.data)
+        generator.generate()
+
+    def _generate_custom_part(self, part_id: str):
+        """Generate a custom part (H, I, J, etc.)."""
+        from .parts.part_custom import CustomPartGenerator
+
+        # Get the part info from the part manager
+        part = self.part_manager.get_part_by_id(part_id)
+        if part:
+            part_name = part.name
+        else:
+            part_name = "Custom Section"
+
+        generator = CustomPartGenerator(self.document, self.data, part_id, part_name)
         generator.generate()
 
 

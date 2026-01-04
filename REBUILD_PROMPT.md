@@ -11,7 +11,7 @@ Build a **Streamlit web application** called "Guide Book Generator" that creates
 ### Technology Stack
 - **Frontend**: Streamlit (Python web framework)
 - **Document Generation**: python-docx library
-- **PDF Generation**: WeasyPrint (optional, graceful fallback if unavailable)
+- **PDF Generation**: xhtml2pdf (optional, graceful fallback if unavailable)
 - **QR Codes**: qrcode library with PIL
 - **Storage**: Local file system (JSON for data, autosave directory)
 
@@ -382,7 +382,7 @@ Danger Zone:
 
 ## Error Handling
 
-1. **WeasyPrint not available**: Catch OSError and ImportError, disable PDF features gracefully
+1. **xhtml2pdf not available**: Catch ImportError, disable PDF features gracefully and show user-friendly warning
 2. **File operations**: Wrap in try-except, show user-friendly errors
 3. **DOCX parsing**: Graceful fallback if structure doesn't match
 4. **Image uploads**: Validate file types (PNG, JPG only)
@@ -394,22 +394,53 @@ Danger Zone:
 
 ```
 guide-book/
-├── app.py                 # Main Streamlit application
-├── requirements.txt       # Dependencies
-├── run.bat               # Windows launcher
-├── autosave/             # Auto-saved JSON files
-├── images/               # Uploaded map images
-├── app/
+├── app.py                      # Main Streamlit application
+├── requirements.txt            # Production dependencies
+├── requirements-dev.txt        # Development dependencies (testing, linting)
+├── pyproject.toml              # Project configuration and tool settings
+├── run.bat                     # Windows launcher
+├── config/
+│   └── chapters/               # Subject/class chapter configurations (JSON)
+├── core/
 │   ├── __init__.py
-│   ├── styles.py         # Color, font, spacing constants
-│   ├── generator.py      # Document orchestrator
-│   ├── main.py           # Entry point
-│   ├── components/
+│   ├── models/
 │   │   ├── __init__.py
-│   │   └── cover_page.py # Cover page generation
-│   └── utils/
+│   │   └── base.py             # Pydantic data models (ChapterData, etc.)
+│   └── parsers.py              # DOCX/JSON/PDF import parsers
+├── generators/
+│   ├── __init__.py
+│   ├── docx/
+│   │   ├── __init__.py
+│   │   ├── base.py             # Main DOCX generator orchestrator
+│   │   ├── styles.py           # Color, font, spacing constants
+│   │   └── parts/              # Part generators (A-G, custom, subject-specific)
+│   │       ├── __init__.py
+│   │       ├── part_a.py       # PYQ Analysis
+│   │       ├── part_b.py       # Key Concepts
+│   │       ├── part_c.py       # Model Answers
+│   │       ├── part_d.py       # Practice Questions
+│   │       ├── part_e.py       # Map Work (default)
+│   │       ├── part_e_*.py     # Subject-specific Part E variants
+│   │       ├── part_f.py       # Quick Revision
+│   │       ├── part_g.py       # Exam Strategy
+│   │       └── part_custom.py  # Dynamic custom parts (H, I, J, etc.)
+│   └── pdf/
 │       ├── __init__.py
-│       └── docx_helpers.py # DOCX utilities (borders, tables, boxes)
+│       └── converter.py        # HTML to PDF conversion (xhtml2pdf)
+├── ui/
+│   ├── __init__.py
+│   └── components/
+│       ├── __init__.py
+│       └── preview.py          # HTML preview and quick export
+├── utils/
+│   ├── __init__.py
+│   ├── autosave.py             # Throttled auto-save manager
+│   └── logger.py               # Logging configuration
+├── data/
+│   ├── autosave/               # Auto-saved JSON files
+│   ├── logs/                   # Application logs
+│   └── images/                 # Uploaded map images
+└── tests/                      # Test files
 ```
 
 ---
@@ -421,7 +452,21 @@ streamlit>=1.28.0
 python-docx>=0.8.11
 qrcode[pil]>=7.3
 Pillow>=9.0.0
-weasyprint>=52.0  # Optional: for PDF generation
+xhtml2pdf>=0.2.17  # Optional: for PDF generation
+htmldocx>=0.0.6    # Optional: for HTML to DOCX conversion during import
+```
+
+### Optional Dependencies Note
+
+The application supports graceful degradation for optional dependencies:
+
+- **xhtml2pdf**: Required for PDF export. If not installed, PDF generation is disabled with a user-friendly warning.
+- **htmldocx**: Required for importing HTML content to DOCX. If not installed, HTML import features show a warning.
+- **PyMuPDF (fitz)**: Required for PDF import. If not installed, PDF import is disabled with an informative message.
+
+Users can install optional dependencies individually as needed, or install all development dependencies with:
+```bash
+pip install -r requirements-dev.txt
 ```
 
 ---

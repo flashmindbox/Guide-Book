@@ -7,7 +7,7 @@ from docx import Document
 from docx.shared import Inches, Pt
 
 from core.models.base import ChapterData
-from styles.theme import Colors, Fonts
+from styles.theme import Colors, Fonts, Icons
 
 from ..helpers import DocxHelpers
 
@@ -84,7 +84,7 @@ class PartCGenerator:
         # Answer label
         para = self.document.add_paragraph()
         para.paragraph_format.space_after = Pt(3)
-        run = para.add_run("📝 Model Answer:")
+        run = para.add_run(f"{Icons.PENCIL} Model Answer:")
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(11)
         run.font.bold = True
@@ -124,7 +124,7 @@ class PartCGenerator:
         para.paragraph_format.space_before = Pt(18)
         para.paragraph_format.space_after = Pt(6)
 
-        run = para.add_run("🎯 Examiner's Marking Scheme")
+        run = para.add_run(f"{Icons.TARGET} Examiner's Marking Scheme")
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(14)
         run.font.bold = True

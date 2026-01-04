@@ -1,0 +1,264 @@
+{
+  "first_flight_prose": [
+    {
+      "number": 1,
+      "title": "A Letter to God",
+      "author": "G.L. Fuentes",
+      "type": "prose",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 2,
+      "title": "Nelson Mandela: Long Walk to Freedom",
+      "author": "Nelson Mandela",
+      "type": "prose",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 3,
+      "title": "Two Stories about Flying",
+      "author": "Frederick Forsyth / Liam O'Flaherty",
+      "type": "prose",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 4,
+      "title": "From the Diary of Anne Frank",
+      "author": "Anne Frank",
+      "type": "prose",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 5,
+      "title": "The Hundred Dresses - I",
+      "author": "El Bsor Ester",
+      "type": "prose",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 6,
+      "title": "The Hundred Dresses - II",
+      "author": "El Bsor Ester",
+      "type": "prose",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 7,
+      "title": "Glimpses of India",
+      "author": "Various",
+      "type": "prose",
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    },
+    {
+      "number": 8,
+      "title": "Mijbil the Otter",
+      "author": "Gavin Maxwell",
+      "type": "prose",
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    },
+    {
+      "number": 9,
+      "title": "Madam Rides the Bus",
+      "author": "Vallikkannan",
+      "type": "prose",
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    },
+    {
+      "number": 10,
+      "title": "The Sermon at Benares",
+      "author": "Betty Renshaw",
+      "type": "prose",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 11,
+      "title": "The Proposal",
+      "author": "Anton Chekhov",
+      "type": "prose",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    }
+  ],
+  "first_flight_poems": [
+    {
+      "number": 1,
+      "title": "Dust of Snow",
+      "author": "Robert Frost",
+      "type": "poem",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 2,
+      "title": "Fire and Ice",
+      "author": "Robert Frost",
+      "type": "poem",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 3,
+      "title": "A Tiger in the Zoo",
+      "author": "Leslie Norris",
+      "type": "poem",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 4,
+      "title": "How to Tell Wild Animals",
+      "author": "Carolyn Wells",
+      "type": "poem",
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    },
+    {
+      "number": 5,
+      "title": "The Ball Poem",
+      "author": "John Berryman",
+      "type": "poem",
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    },
+    {
+      "number": 6,
+      "title": "Amanda",
+      "author": "Robin Klein",
+      "type": "poem",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 7,
+      "title": "Animals",
+      "author": "Walt Whitman",
+      "type": "poem",
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    },
+    {
+      "number": 8,
+      "title": "The Trees",
+      "author": "Adrienne Rich",
+      "type": "poem",
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    },
+    {
+      "number": 9,
+      "title": "Fog",
+      "author": "Carl Sandburg",
+      "type": "poem",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 10,
+      "title": "The Tale of Custard the Dragon",
+      "author": "Ogden Nash",
+      "type": "poem",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 11,
+      "title": "For Anne Gregory",
+      "author": "William Butler Yeats",
+      "type": "poem",
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    }
+  ],
+  "footprints_without_feet": [
+    {
+      "number": 1,
+      "title": "A Triumph of Surgery",
+      "author": "James Herriot",
+      "type": "supplementary",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 2,
+      "title": "The Thief's Story",
+      "author": "Ruskin Bond",
+      "type": "supplementary",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 3,
+      "title": "The Midnight Visitor",
+      "author": "Robert Arthur",
+      "type": "supplementary",
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    },
+    {
+      "number": 4,
+      "title": "A Question of Trust",
+      "author": "Victor Canning",
+      "type": "supplementary",
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    },
+    {
+      "number": 5,
+      "title": "Footprints Without Feet",
+      "author": "H.G. Wells",
+      "type": "supplementary",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 6,
+      "title": "The Making of a Scientist",
+      "author": "Robert W. Peterson",
+      "type": "supplementary",
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    },
+    {
+      "number": 7,
+      "title": "The Necklace",
+      "author": "Guy de Maupassant",
+      "type": "supplementary",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 8,
+      "title": "The Hack Driver",
+      "author": "Sinclair Lewis",
+      "type": "supplementary",
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    },
+    {
+      "number": 9,
+      "title": "Bholi",
+      "author": "K.A. Abbas",
+      "type": "supplementary",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 10,
+      "title": "The Book That Saved the Earth",
+      "author": "Claire Boiko",
+      "type": "supplementary",
+      "importance": "Medium",
+      "pyq_frequency": "Moderate"
+    }
+  ]
+}

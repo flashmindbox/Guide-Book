@@ -1,0 +1,108 @@
+{
+  "chapters": [
+    {
+      "number": 1,
+      "title": "Chemical Reactions and Equations",
+      "unit": "Chemical Substances",
+      "weightage": "5-7 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 2,
+      "title": "Acids, Bases and Salts",
+      "unit": "Chemical Substances",
+      "weightage": "5-7 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 3,
+      "title": "Metals and Non-metals",
+      "unit": "Chemical Substances",
+      "weightage": "5-7 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 4,
+      "title": "Carbon and Its Compounds",
+      "unit": "Chemical Substances",
+      "weightage": "5-7 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 5,
+      "title": "Life Processes",
+      "unit": "World of Living",
+      "weightage": "7-8 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 6,
+      "title": "Control and Coordination",
+      "unit": "World of Living",
+      "weightage": "5-6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 7,
+      "title": "How do Organisms Reproduce?",
+      "unit": "World of Living",
+      "weightage": "5-6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 8,
+      "title": "Heredity",
+      "unit": "World of Living",
+      "weightage": "4-5 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 9,
+      "title": "Light - Reflection and Refraction",
+      "unit": "Natural Phenomena",
+      "weightage": "7-8 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 10,
+      "title": "Human Eye and the Colourful World",
+      "unit": "Natural Phenomena",
+      "weightage": "4-5 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 11,
+      "title": "Electricity",
+      "unit": "Effects of Current",
+      "weightage": "7-8 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 12,
+      "title": "Magnetic Effects of Electric Current",
+      "unit": "Effects of Current",
+      "weightage": "5-6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 13,
+      "title": "Our Environment",
+      "unit": "Natural Resources",
+      "weightage": "4-5 Marks",
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    }
+  ]
+}

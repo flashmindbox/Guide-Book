@@ -8,355 +8,544 @@ import streamlit as st
 from core.models.base import ChapterData
 from core.models.parts import PartManager
 from styles.theme import Colors, Icons
+from utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 
 class PreviewRenderer:
     """Renders chapter data as HTML preview."""
 
-    # CSS styles - xhtml2pdf compatible (no flex, no border-radius, simple styles)
+    # CSS styles - SYNCHRONIZED WITH DOCX OUTPUT (styles/theme.py, generators/docx/styles.py)
+    # xhtml2pdf compatible: no flex, no border-radius, no box-shadow, simple block layout
     CSS = f"""
     <style>
         {Colors.to_css_variables()}
 
+        /* =================================================================
+           PAGE SETUP - Matches PageLayout in theme.py
+           A4: 210mm x 297mm, Margins: 0.83in (21mm) top/left/right, 0.69in (17.5mm) bottom
+           ================================================================= */
         @page {{
             size: A4;
-            margin: 1.5cm;
+            margin: 21mm 21mm 18mm 21mm;
         }}
-        /* xhtml2pdf specific fixes */
+
+        /* =================================================================
+           GLOBAL STYLES - Matches Fonts class in theme.py
+           PRIMARY = Arial, SIZE_BODY = 11pt, LINE_SPACING_SINGLE = 1.0
+           ================================================================= */
         * {{
             word-wrap: break-word;
             overflow-wrap: break-word;
+            box-sizing: border-box;
         }}
         body {{
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: Arial, 'Segoe UI', Helvetica, sans-serif;
             font-size: 11pt;
-            line-height: 1.4;
-            color: var(--body-text);
+            line-height: 1.15;
+            color: #374151;
+            margin: 0;
+            padding: 0;
             -pdf-keep-with-next: false;
         }}
-        /* Prevent content overflow */
-        div, td, th {{
-            max-width: 100%;
-            word-wrap: break-word;
-        }}
-        /* Table fixes */
-        table {{
-            -pdf-keep-with-next: false;
-            word-wrap: break-word;
-        }}
+
+        /* =================================================================
+           CONTAINER - Main document wrapper
+           A4 content width = 6.5in (matches DOCX margins)
+           ================================================================= */
         .preview-container {{
-            font-family: Helvetica, Arial, sans-serif;
-            max-width: 100%;
-            padding: 10px;
-            background: var(--white);
+            font-family: Arial, 'Segoe UI', Helvetica, sans-serif;
+            max-width: 6.5in;
+            margin: 0 auto;
+            padding: 0;
+            background: #FFFFFF;
         }}
+
+        /* =================================================================
+           COVER PAGE STYLES - Matches DocxStyles.ChapterTitle (24pt bold blue centered)
+           ================================================================= */
         .preview-header {{
             text-align: center;
-            padding: 15px;
-            background: var(--bg-neutral);
-            border: 2px solid var(--primary-blue);
-            margin-bottom: 20px;
+            padding: 12pt;
+            background: #F9FAFB;
+            border: 2pt solid #1E40AF;
+            margin-bottom: 15pt;
         }}
         .preview-title {{
-            font-size: 22pt;
+            font-size: 24pt;
             font-weight: bold;
-            color: var(--primary-blue);
-            margin: 10px 0;
+            color: #1E40AF;
+            margin: 6pt 0;
+            line-height: 1.2;
         }}
         .preview-subtitle {{
             font-size: 11pt;
-            color: var(--body-text);
+            color: #374151;
+            margin: 3pt 0;
         }}
         .preview-chapter-num {{
             font-size: 14pt;
             font-weight: bold;
-            color: var(--primary-blue);
+            color: #1E40AF;
         }}
         .decorative-line {{
-            text-align: center;
-            margin: 8px auto;
             width: 60%;
-            border-top: 2px solid var(--primary-blue);
+            margin: 6pt auto;
+            border: none;
+            border-top: 2pt solid #2563EB;
+            height: 0;
         }}
+
+        /* =================================================================
+           METADATA TABLE - Matches TableStyles in theme.py
+           Header: TABLE_HEADER_BG = #DBEAFE, Border: 1pt solid #E5E7EB
+           Cell padding: 6pt
+           ================================================================= */
         .preview-meta-table {{
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
+            margin: 12pt 0;
         }}
         .preview-meta-table th {{
-            background: var(--table-header-bg);
-            padding: 8px;
+            background: #DBEAFE;
+            padding: 6pt;
             text-align: center;
             font-size: 10pt;
-            border: 1px solid var(--border-neutral);
-            white-space: nowrap;
+            font-weight: bold;
+            border: 1pt solid #E5E7EB;
+            color: #1E40AF;
         }}
         .preview-meta-table td {{
-            padding: 8px;
+            padding: 6pt;
             text-align: center;
             font-weight: bold;
-            border: 1px solid var(--border-neutral);
+            font-size: 11pt;
+            border: 1pt solid #E5E7EB;
+            color: #374151;
         }}
+
+        /* =================================================================
+           ALERT BOX - Matches BoxStyles.WARNING in theme.py
+           BG: #FEF2F2, Border: 4pt solid #B91C1C, Full width
+           ================================================================= */
         .preview-alert {{
-            background: var(--bg-warning);
-            border-left: 4px solid var(--accent-red);
-            padding: 10px 15px;
-            margin: 15px 0;
+            width: 100%;
+            background: #FEF2F2;
+            border-left: 4pt solid #B91C1C;
+            padding: 10pt 12pt;
+            margin: 12pt 0;
+            box-sizing: border-box;
         }}
         .preview-alert-title {{
-            color: var(--accent-red);
+            color: #B91C1C;
             font-weight: bold;
-            margin-bottom: 5px;
+            font-size: 11pt;
+            margin-bottom: 6pt;
         }}
+
+        /* =================================================================
+           LEARNING OBJECTIVES - Matches BoxStyles.INFO in theme.py
+           BG: #EFF6FF, Border: 4pt solid #1E40AF, Full width
+           ================================================================= */
         .preview-objectives {{
-            background: var(--bg-info);
-            border-left: 4px solid var(--border-info);
-            padding: 15px;
-            margin: 15px 0;
+            width: 100%;
+            background: #EFF6FF;
+            border-left: 4pt solid #1E40AF;
+            padding: 10pt 12pt;
+            margin: 12pt 0;
+            box-sizing: border-box;
         }}
         .preview-objectives-title {{
-            color: var(--primary-blue);
+            color: #1E40AF;
             font-weight: bold;
-            margin-bottom: 10px;
+            font-size: 12pt;
+            margin-bottom: 6pt;
         }}
+
+        /* =================================================================
+           CONTENTS BOX - Matches BoxStyles.NEUTRAL in theme.py
+           BG: #F9FAFB, Border: 1pt solid #E5E7EB, Full width
+           ================================================================= */
         .preview-contents-box {{
-            background: var(--bg-neutral);
-            border: 1px solid var(--border-neutral);
-            padding: 15px;
-            margin: 15px 0;
+            width: 100%;
+            background: #F9FAFB;
+            border: 1pt solid #E5E7EB;
+            padding: 10pt 12pt;
+            margin: 12pt 0;
+            box-sizing: border-box;
         }}
+
+        /* =================================================================
+           PAGE BREAKS - DOCX compatible
+           ================================================================= */
         .page-break {{
             page-break-before: always;
             break-before: page;
         }}
+
+        /* =================================================================
+           PART HEADER - Matches DOCX part_b_concepts.py _add_part_header
+           Full width, BG_WARNING (#FEF2F2), 18pt bold, YEAR_RED text
+           ================================================================= */
         .preview-part-header {{
             page-break-before: always;
             break-before: page;
-            background: var(--bg-warning);
-            border: 1px solid var(--border-neutral);
-            padding: 10px 15px;
-            margin: 20px 0 15px 0;
+            width: 100%;
+            background: #FEF2F2;
+            border: none;
+            padding: 12pt 15pt;
+            margin: 24pt 0 12pt 0;
+            box-sizing: border-box;
         }}
-        .preview-part-label {{
+        .preview-part-text {{
             color: #DC2626;
             font-weight: bold;
-            font-size: 14pt;
+            font-size: 18pt;
         }}
-        .preview-part-name {{
-            color: #DC2626;
-            font-weight: bold;
-            font-size: 14pt;
-        }}
+
+        /* =================================================================
+           SECTION TITLE - Matches DocxStyles.SectionTitle (14pt bold blue)
+           HEADING_BLUE = #2563EB
+           ================================================================= */
         .preview-section-title {{
-            color: var(--primary-blue);
+            color: #2563EB;
             font-weight: bold;
-            font-size: 12pt;
-            margin: 15px 0 10px 0;
+            font-size: 14pt;
+            margin: 12pt 0 6pt 0;
+            line-height: 1.2;
         }}
-        .preview-concept-box {{
-            background: var(--bg-neutral);
-            border: 1px solid var(--border-neutral);
-            padding: 12px;
-            margin: 10px 0;
-        }}
+
+        /* =================================================================
+           CONCEPT - Matches DOCX part_b_concepts.py _add_concept
+           Title: 16pt bold HEADING_BLUE, space-before 18pt, space-after 6pt
+           No box wrapper - just title and content inline
+           ================================================================= */
         .preview-concept-title {{
-            color: var(--primary-blue);
+            color: #2563EB;
             font-weight: bold;
-            font-size: 12pt;
-            margin-bottom: 8px;
+            font-size: 16pt;
+            margin: 18pt 0 6pt 0;
+            line-height: 1.2;
         }}
+        .preview-concept-content {{
+            margin: 3pt 0;
+            font-size: 11pt;
+        }}
+
+        /* Legacy box style - for compatibility with Part D source boxes */
+        .preview-concept-box {{
+            background: #F9FAFB;
+            border: 1pt solid #E5E7EB;
+            padding: 10pt;
+            margin: 10pt 0;
+        }}
+
+        /* =================================================================
+           NCERT LINE - Matches DOCX part_b_concepts.py lines 76-90
+           Indented (0.3in), "NCERT Exact Line: " bold red, content in italic quotes
+           No box - just indented text
+           ================================================================= */
         .preview-ncert {{
-            background: var(--bg-info);
-            border-left: 3px solid var(--border-info);
-            padding: 8px 12px;
-            margin: 8px 0;
-            font-style: italic;
-            font-size: 10pt;
+            margin: 6pt 0;
+            padding-left: 0.3in;
+            font-size: 11pt;
         }}
+        .preview-ncert-label {{
+            font-weight: bold;
+            color: #B91C1C;
+            font-style: normal;
+        }}
+        .preview-ncert-content {{
+            font-style: italic;
+        }}
+
+        /* =================================================================
+           MEMORY TRICK - Matches DOCX part_b_concepts.py lines 97-113
+           Right-aligned, green (#059669), 10pt, italic
+           No box - just right-aligned text
+           ================================================================= */
         .preview-memory-trick {{
-            background: var(--bg-tip);
-            border-left: 3px solid var(--border-tip);
-            padding: 10px 15px;
-            margin: 10px 0;
+            text-align: right;
+            margin: 6pt 0;
+            font-size: 10pt;
+            color: #059669;
+            font-style: italic;
         }}
         .preview-memory-label {{
-            color: var(--success-green);
             font-weight: bold;
-            font-size: 10pt;
+            font-style: italic;
         }}
+        .preview-memory-acronym {{
+            font-weight: bold;
+            font-style: italic;
+        }}
+
+        /* =================================================================
+           DID YOU KNOW - Matches DOCX part_b_concepts.py lines 116-137
+           Grey box (#F3F4F6), "Do You Know? " bold red (#DC2626), max 6.0in centered
+           ================================================================= */
         .preview-dyk {{
+            width: 100%;
+            max-width: 6.0in;
             background: #F3F4F6;
-            padding: 10px 15px;
-            margin: 10px 0;
+            border: 1pt solid #E5E7EB;
+            padding: 10pt 12pt;
+            margin: 12pt auto;
+            box-sizing: border-box;
         }}
         .preview-dyk-label {{
             color: #DC2626;
             font-weight: bold;
+            font-size: 11pt;
         }}
+
+        /* =================================================================
+           PYQ TABLE - Matches DOCX part_a_pyq.py lines 74-144
+           Full width, Header: #DBEAFE, Cell padding 60 twips (~4pt)
+           ================================================================= */
         .preview-pyq-table {{
             width: 100%;
             border-collapse: collapse;
-            margin: 10px 0;
+            margin: 10pt 0;
         }}
         .preview-pyq-table th {{
-            background: var(--table-header-bg);
-            color: var(--primary-blue);
-            padding: 8px;
-            text-align: left;
-            border: 1px solid var(--border-neutral);
-            font-size: 10pt;
-            white-space: nowrap;
-            min-width: 50px;
+            background: #DBEAFE;
+            color: #374151;
+            padding: 4pt 6pt;
+            text-align: center;
+            border: 1pt solid #E5E7EB;
+            font-size: 11pt;
+            font-weight: bold;
         }}
         .preview-pyq-table td {{
-            padding: 8px;
-            border: 1px solid var(--border-neutral);
+            padding: 4pt 6pt;
+            border: 1pt solid #E5E7EB;
+            font-size: 11pt;
+            color: #374151;
+            vertical-align: top;
+        }}
+        .preview-pyq-table td.marks-cell {{
+            text-align: center;
+        }}
+        .preview-pyq-table td.years-cell {{
+            text-align: center;
             font-size: 10pt;
         }}
+
+        /* =================================================================
+           MARKS STYLING - ACCENT_RED = #B91C1C
+           ================================================================= */
         .preview-marks {{
-            color: var(--accent-red);
+            color: #B91C1C;
             font-weight: bold;
         }}
+
+        /* =================================================================
+           PREDICTION BOX - Matches BoxStyles.INFO, Full width
+           ================================================================= */
         .preview-prediction {{
-            background: var(--bg-info);
-            border-left: 4px solid var(--border-info);
-            padding: 10px 15px;
-            margin: 15px 0;
+            width: 100%;
+            background: #EFF6FF;
+            border-left: 4pt solid #1E40AF;
+            padding: 10pt 12pt;
+            margin: 12pt 0;
+            box-sizing: border-box;
         }}
-        /* Timeline Visual Treatment */
+
+        /* =================================================================
+           TIMELINE TABLE - Matches DOCX part_b_concepts.py lines 218-261
+           Full width, Year cell: blue bg (#DBEAFE), bold red text, centered
+           ================================================================= */
         .preview-timeline {{
-            position: relative;
-            padding-left: 25px;
-            margin: 10px 0;
+            margin: 10pt 0;
         }}
-        .preview-timeline::before {{
-            content: '';
-            position: absolute;
-            left: 8px;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: var(--primary-blue);
+        .preview-timeline-table {{
+            width: 100%;
+            border-collapse: collapse;
+            margin: 8pt 0;
         }}
-        .preview-timeline-item {{
-            position: relative;
-            padding: 8px 12px;
-            margin-bottom: 8px;
-            background: var(--bg-neutral);
-            border-radius: 4px;
-            border-left: 3px solid var(--primary-blue);
-        }}
-        .preview-timeline-item::before {{
-            content: '';
-            position: absolute;
-            left: -22px;
-            top: 12px;
-            width: 10px;
-            height: 10px;
-            background: var(--primary-blue);
-            border-radius: 50%;
-        }}
-        .preview-timeline-year {{
-            display: inline-block;
-            background: var(--primary-blue);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 3px;
+        .preview-timeline-table th {{
+            background: #DBEAFE;
+            color: #2563EB;
+            padding: 4pt 6pt;
+            border: 1pt solid #E5E7EB;
+            font-size: 11pt;
             font-weight: bold;
-            font-size: 10pt;
-            margin-right: 10px;
         }}
-        .preview-timeline-event {{
-            color: var(--body-text);
-            font-size: 10pt;
+        .preview-timeline-table td {{
+            padding: 4pt 6pt;
+            border: 1pt solid #E5E7EB;
+            font-size: 11pt;
+            vertical-align: top;
         }}
+        .preview-timeline-table td.year-cell {{
+            width: 15%;
+            background: #DBEAFE;
+            font-weight: bold;
+            color: #B91C1C;
+            text-align: center;
+        }}
+        .preview-timeline-table td.event-cell {{
+            width: 85%;
+            color: #374151;
+        }}
+
+        /* =================================================================
+           MCQ BOX - Matches concept box styling
+           ================================================================= */
         .preview-mcq {{
-            background: var(--bg-neutral);
-            padding: 10px 15px;
-            margin: 8px 0;
-            border-left: 3px solid var(--primary-blue);
+            background: #F9FAFB;
+            padding: 10pt;
+            margin: 8pt 0;
+            border-left: 4pt solid #1E40AF;
         }}
         .preview-mcq-options {{
-            margin-left: 20px;
-            margin-top: 8px;
+            margin-left: 15pt;
+            margin-top: 6pt;
         }}
+
+        /* =================================================================
+           ANSWER BOX - Matches BoxStyles.TIP
+           ================================================================= */
         .preview-answer {{
-            background: var(--bg-tip);
-            padding: 10px 15px;
-            margin: 10px 0;
+            background: #F0FDF4;
+            border-left: 4pt solid #059669;
+            padding: 10pt;
+            margin: 10pt 0;
         }}
+
+        /* =================================================================
+           MARKING POINTS - Table-based for DOCX compatibility
+           ================================================================= */
         .preview-marking-points {{
-            margin: 10px 0 10px 10px;
+            margin: 8pt 0 8pt 10pt;
         }}
         .preview-marking-point {{
-            color: var(--body-text);
-            padding: 4px 0;
-            padding-left: 20px;
-            position: relative;
-        }}
-        .preview-marking-point::before {{
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: var(--success-green);
-            font-weight: bold;
+            color: #374151;
+            padding: 3pt 0 3pt 15pt;
+            font-size: 10pt;
         }}
         .preview-marking-point-mark {{
-            color: var(--accent-red);
+            color: #B91C1C;
             font-size: 9pt;
-            margin-left: 5px;
+            margin-left: 5pt;
         }}
+
+        /* =================================================================
+           MAP ITEMS
+           ================================================================= */
         .preview-map-item {{
-            padding: 5px 0;
-            padding-left: 20px;
+            padding: 3pt 0;
+            padding-left: 15pt;
+            font-size: 11pt;
         }}
+
+        /* =================================================================
+           CHECKLIST
+           ================================================================= */
         .preview-checklist {{
-            padding: 5px 0;
+            padding: 3pt 0;
+            font-size: 11pt;
         }}
+
+        /* =================================================================
+           MISTAKE TABLE - Two-column comparison
+           ================================================================= */
         .preview-mistake-table {{
             width: 100%;
             border-collapse: collapse;
-            margin: 10px 0;
+            margin: 10pt 0;
         }}
         .preview-mistake-table th.mistake {{
-            background: var(--bg-warning);
-            color: var(--accent-red);
-            padding: 8px;
-            border: 1px solid var(--border-neutral);
+            background: #FEF2F2;
+            color: #B91C1C;
+            padding: 6pt;
+            border: 1pt solid #E5E7EB;
+            font-size: 10pt;
+            font-weight: bold;
         }}
         .preview-mistake-table th.correct {{
-            background: var(--bg-tip);
-            color: var(--success-green);
-            padding: 8px;
-            border: 1px solid var(--border-neutral);
+            background: #F0FDF4;
+            color: #059669;
+            padding: 6pt;
+            border: 1pt solid #E5E7EB;
+            font-size: 10pt;
+            font-weight: bold;
         }}
         .preview-mistake-table td {{
-            padding: 8px;
-            border: 1px solid var(--border-neutral);
+            padding: 6pt;
+            border: 1pt solid #E5E7EB;
             font-size: 10pt;
+            color: #374151;
+            vertical-align: top;
         }}
+
+        /* =================================================================
+           DIVIDERS AND END MARKERS
+           ================================================================= */
         .preview-divider {{
-            border-top: 1px solid var(--border-neutral);
-            margin: 20px 0;
+            border-top: 1pt solid #E5E7EB;
+            margin: 15pt 0;
         }}
         .preview-end-marker {{
             text-align: center;
-            color: var(--primary-blue);
+            color: #1E40AF;
             font-weight: bold;
-            margin-top: 30px;
+            font-size: 11pt;
+            margin-top: 20pt;
         }}
+
+        /* =================================================================
+           QR CODE TABLE
+           ================================================================= */
         .qr-table {{
             width: 100%;
-            margin: 15px 0;
+            margin: 12pt 0;
         }}
         .qr-cell {{
             text-align: center;
-            padding: 10px;
+            padding: 10pt;
             width: 50%;
+            vertical-align: top;
         }}
-        .importance-high {{ color: var(--accent-red); }}
-        .importance-medium {{ color: var(--warning-orange); }}
-        .importance-low {{ color: var(--success-green); }}
+
+        /* =================================================================
+           IMPORTANCE COLORS - Matches Colors class
+           ================================================================= */
+        .importance-high {{ color: #B91C1C; font-weight: bold; }}
+        .importance-medium {{ color: #D97706; font-weight: bold; }}
+        .importance-low {{ color: #059669; font-weight: bold; }}
+
+        /* =================================================================
+           TEXT FORMATTING - Matches character styles
+           ================================================================= */
+        .year-text {{
+            color: #DC2626;
+            font-weight: bold;
+        }}
+        .key-term {{
+            font-weight: bold;
+            color: #000000;
+        }}
+        .foreign-term {{
+            font-weight: bold;
+            font-style: italic;
+            color: #000000;
+        }}
+
+        /* =================================================================
+           PREVENT OVERFLOW
+           ================================================================= */
+        div, td, th {{
+            max-width: 100%;
+            word-wrap: break-word;
+        }}
+        table {{
+            -pdf-keep-with-next: false;
+            word-wrap: break-word;
+            table-layout: fixed;
+        }}
     </style>
     """
 
@@ -509,74 +698,113 @@ class PreviewRenderer:
 
     @classmethod
     def _render_cover(cls, data: ChapterData) -> str:
-        """Render cover page section."""
+        """Render cover page section - MATCHES DOCX STRUCTURE EXACTLY (cover_page.py)."""
         subject_display = data.subject.replace('_', ' ').title()
 
-        # Use CSS border-based decorative line (avoids Unicode encoding issues in print)
-        decorative_line = '<div class="decorative-line"></div>'
+        # Decorative line: solid 2pt blue line, 60% width, centered
+        separator_line = '<div class="decorative-line"></div>'
 
+        # Header - matches DOCX _add_header (line 45-56): 11pt, centered, DARK_GRAY
         html = f'''
-        <div class="preview-header">
-            <div class="preview-subtitle">CBSE Class {data.class_num} | Social Science | {subject_display}</div>
-            {decorative_line}
-            <div class="preview-chapter-num">CHAPTER {data.chapter_number}</div>
-            <div class="preview-title">{data.chapter_title}</div>
-            {f'<div class="preview-subtitle">{data.subtitle}</div>' if data.subtitle else ''}
-            {decorative_line}
+        <div style="text-align: center; margin-bottom: 6pt;">
+            <div style="font-size: 11pt; color: #374151;">CBSE Class {data.class_num} | Social Science | {subject_display}</div>
         </div>
 
-        <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
-            <tr>
-                <td style="border: 1px solid #E5E7EB; padding: 10px 15px; text-align: center; white-space: nowrap;">
-                    Weightage <span style="color: #B91C1C; font-weight: bold;">{data.weightage}</span>
-                </td>
-                <td style="border: 1px solid #E5E7EB; padding: 10px 15px; text-align: center; white-space: nowrap;">
-                    Map Work <span style="color: #B91C1C; font-weight: bold;">{data.map_work}</span>
-                </td>
-                <td style="border: 1px solid #E5E7EB; padding: 10px 15px; text-align: center; white-space: nowrap;">
-                    Importance <span style="color: #B91C1C; font-weight: bold;">{data.importance}</span>
-                </td>
-                <td style="border: 1px solid #E5E7EB; padding: 10px 15px; text-align: center; white-space: nowrap;">
-                    PYQ Frequency <span style="color: #B91C1C; font-weight: bold;">{data.pyq_frequency}</span>
-                </td>
-            </tr>
-        </table>
+        {separator_line}
+
+        <!-- Chapter Number - matches DOCX line 75-79: 18pt bold HEADING_BLUE -->
+        <div style="text-align: center; margin: 12pt 0 6pt 0;">
+            <span style="font-size: 18pt; font-weight: bold; color: #2563EB;">CHAPTER {data.chapter_number}</span>
+        </div>
+
+        <!-- Chapter Title - matches DOCX line 85-89: 24pt bold HEADING_BLUE -->
+        <div style="text-align: center; margin-bottom: 12pt;">
+            <span style="font-size: 24pt; font-weight: bold; color: #2563EB;">{data.chapter_title}</span>
+        </div>
         '''
 
-        # Syllabus Alert
+        # Subtitle if present - matches DOCX line 92-98: 12pt italic
+        if data.subtitle:
+            html += f'''
+        <div style="text-align: center; margin-bottom: 6pt;">
+            <span style="font-size: 12pt; font-style: italic;">{data.subtitle}</span>
+        </div>
+            '''
+
+        html += separator_line
+
+        # Metadata as inline text with | separators - matches DOCX _add_metadata (lines 100-150)
+        importance_color = '#B91C1C' if data.importance == 'High' else '#374151'
+        freq_color = '#B91C1C' if data.pyq_frequency == 'Every Year' else '#374151'
+
+        html += f'''
+        <div style="text-align: center; font-size: 10pt; margin: 12pt 0;">
+            <span style="font-weight: bold;">Weightage:</span>
+            <span style="color: #2563EB;">{data.weightage}</span>
+            <span style="color: #374151;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+            <span style="font-weight: bold;">Map Work:</span>
+            <span>{data.map_work}</span>
+            <span style="color: #374151;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+            <span style="font-weight: bold;">Importance:</span>
+            <span style="color: {importance_color};">{data.importance}</span>
+            <span style="color: #374151;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+            <span style="font-weight: bold;">PYQ:</span>
+            <span style="color: {freq_color};">{data.pyq_frequency}</span>
+        </div>
+        '''
+
+        # Syllabus Alert - matches DOCX _add_syllabus_alert (lines 152-165): inline text, not a box
         if data.syllabus_alert_enabled and data.syllabus_alert_text:
             html += f'''
-            <div class="preview-alert">
-                <div class="preview-alert-title">! SYLLABUS ALERT</div>
-                <div>{data.syllabus_alert_text}</div>
-            </div>
+        <div style="margin: 12pt 0;">
+            <span style="font-size: 11pt; font-weight: bold; color: #B91C1C;">! SYLLABUS NOTE:</span>
+            <span style="font-size: 11pt;"> {data.syllabus_alert_text}</span>
+        </div>
             '''
 
-        # Learning Objectives
+        # Learning Objectives - matches DOCX _add_learning_objectives (lines 167-203)
         if data.learning_objectives:
-            objectives_html = data.learning_objectives.replace('\n', '<br/>')
-            html += f'''
-            <div class="preview-objectives">
-                <div class="preview-objectives-title">* Learning Objectives</div>
-                <div>{objectives_html}</div>
-            </div>
-            '''
+            # Parse objectives into list
+            objectives = [obj.strip() for obj in data.learning_objectives.strip().split('\n') if obj.strip()]
+            clean_objectives = []
+            for obj in objectives:
+                if obj.startswith(('-', '•', '*')):
+                    obj = obj[1:].strip()
+                clean_objectives.append(obj)
 
-        # Chapter Contents box (Part Descriptions)
+            html += f'''
+        <!-- Learning Objectives Header - matches DOCX line 182-186: 14pt bold HEADING_BLUE -->
+        <div style="margin: 18pt 0 6pt 0;">
+            <span style="font-size: 14pt; font-weight: bold; color: #2563EB;">{Icons.TARGET} Learning Objectives</span>
+        </div>
+        <!-- Subtitle - matches DOCX line 191-194: 11pt italic -->
+        <div style="margin-bottom: 6pt;">
+            <span style="font-size: 11pt; font-style: italic;">After studying this chapter, you will be able to:</span>
+        </div>
+            '''
+            # Bullet points - matches DOCX lines 197-203: 0.25in left indent, bullet
+            for obj in clean_objectives:
+                html += f'''
+        <div style="margin: 3pt 0; padding-left: 18pt; font-size: 11pt;">• {obj}</div>
+                '''
+
+        # Chapter Contents - matches DOCX _add_chapter_contents (lines 205-234)
         if data.part_descriptions:
             html += f'''
-            <div class="preview-contents-box">
-                <div style="color: #1E40AF; font-weight: bold; font-size: 14pt; margin-bottom: 10px;">{Icons.BOOK} Chapter Contents</div>
+        <!-- Chapter Contents Header - matches DOCX line 211-215: 14pt bold HEADING_BLUE -->
+        <div style="margin: 18pt 0 6pt 0;">
+            <span style="font-size: 14pt; font-weight: bold; color: #2563EB;">{Icons.BOOK} Chapter Contents</span>
+        </div>
             '''
+            # Part list - matches DOCX lines 222-234: 0.25in left indent
             for part_id, desc in data.part_descriptions.items():
                 if desc:
                     html += f'''
-                    <div style="margin: 5px 0; padding-left: 10px;">
-                        <span style="color: var(--primary-blue); font-weight: bold;">Part {part_id}:</span>
-                        <span style="color: var(--body-text);"> {desc}</span>
-                    </div>
+        <div style="margin: 3pt 0; padding-left: 18pt; font-size: 11pt;">
+            <span style="font-weight: bold; color: #2563EB;">Part {part_id}:</span>
+            <span> {desc}</span>
+        </div>
                     '''
-            html += '</div>'
 
         # QR Codes Section - using TABLE layout instead of flex (xhtml2pdf compatible)
         if data.qr_practice_questions_url or data.qr_practice_with_answers_url:
@@ -641,37 +869,38 @@ class PreviewRenderer:
             buf.seek(0)
 
             return base64.b64encode(buf.getvalue()).decode('utf-8')
-        except Exception:
+        except Exception as e:
+            logger.warning("Failed to generate QR code for URL '%s': %s", url, e)
             return ""
 
     @classmethod
     def _render_part_a(cls, data: ChapterData) -> str:
-        """Render Part A: PYQ Analysis."""
-        html = '''
+        """Render Part A: PYQ Analysis - matches DOCX part_a_pyq.py structure."""
+        # Part header - matches DOCX _add_part_header
+        html = f'''
         <div class="preview-part-header">
-            <span class="preview-part-label">Part A: </span>
-            <span class="preview-part-name">Previous Year Questions Analysis</span>
+            <span class="preview-part-text">Part A: PYQ Analysis ({data.pyq_year_range})</span>
         </div>
         '''
 
-        if data.pyq_year_range:
-            html += f'<div class="preview-section-title">&gt; PYQ Pattern ({data.pyq_year_range})</div>'
-
+        # PYQ Table - matches DOCX _add_pyq_table
         if data.pyq_items:
             html += '''
             <table class="preview-pyq-table">
                 <tr>
-                    <th style="width:60%">Question</th>
-                    <th style="width:15%">Marks</th>
-                    <th style="width:25%">Years Asked</th>
+                    <th style="width:62%; text-align:left;">Question</th>
+                    <th style="width:12%;">Marks</th>
+                    <th style="width:26%;">Years Asked</th>
                 </tr>
             '''
             for item in data.pyq_items:
+                if not item.question:
+                    continue
                 # Calculate frequency for row coloring
                 years = item.years or ''
                 year_count = len([y.strip() for y in years.split(',') if y.strip()])
 
-                # Row background color based on frequency
+                # Row background color based on frequency (matches DOCX logic)
                 row_bg = ''
                 if year_count >= 6:
                     row_bg = 'background: #FEF2F2;'  # Light red
@@ -683,126 +912,193 @@ class PreviewRenderer:
                 html += f'''
                 <tr style="{row_bg}">
                     <td>{item.question}</td>
-                    <td class="preview-marks">{item.marks}</td>
-                    <td>{item.years}</td>
+                    <td class="marks-cell">{item.marks}</td>
+                    <td class="years-cell">{item.years}</td>
                 </tr>
                 '''
             html += '</table>'
 
+        # Prediction - matches DOCX _add_prediction (simple inline text)
         if data.pyq_prediction:
+            next_year = cls._get_next_year(data.pyq_year_range)
             html += f'''
-            <div class="preview-prediction">
-                <strong>&gt; Prediction:</strong> {data.pyq_prediction}
+            <div style="margin: 12pt 0 6pt 0;">
+                <span style="font-size: 11pt; font-weight: bold; color: #2563EB;">{Icons.TARGET} Prediction {next_year}: </span>
+                <span style="font-size: 11pt;">{data.pyq_prediction}</span>
             </div>
             '''
 
+        # Frequency Legend - matches DOCX _add_frequency_legend
+        html += '''
+        <div style="margin: 12pt 0; font-size: 10pt;">
+            <span style="font-weight: bold;">Frequency: </span>
+            <span style="color: #B91C1C;">Red</span> = 6+ times &nbsp;&nbsp;
+            <span style="color: #2563EB;">Blue</span> = 5 times &nbsp;&nbsp;
+            <span style="color: #059669;">Green</span> = 3-4 times
+        </div>
+        '''
+
+        # Syllabus Note - matches DOCX _add_syllabus_note (simple inline text)
         if data.pyq_syllabus_note:
             html += f'''
-            <div style="background: var(--bg-tip); border-left: 4px solid var(--border-tip); padding: 10px 15px; margin: 15px 0;">
-                <strong style="color: var(--success-green);">{Icons.TIP} Syllabus Note:</strong> {data.pyq_syllabus_note}
+            <div style="margin: 12pt 0;">
+                <span style="font-size: 11pt; font-weight: bold; color: #059669;">{Icons.TIP} Syllabus Note: </span>
+                <span style="font-size: 11pt;">{data.pyq_syllabus_note}</span>
             </div>
             '''
 
         return html
 
+    @staticmethod
+    def _get_next_year(year_range: str) -> str:
+        """Get the next year for prediction."""
+        try:
+            end_year = int(year_range.split('-')[1])
+            return str(end_year + 1)
+        except (ValueError, IndexError, AttributeError):
+            return "2025"
+
     @classmethod
     def _render_part_b(cls, data: ChapterData) -> str:
-        """Render Part B: Key Concepts."""
+        """Render Part B: Key Concepts - matches DOCX part_b_concepts.py structure."""
+        # Part header - matches DOCX _add_part_header
         html = '''
         <div class="preview-part-header">
-            <span class="preview-part-label">Part B: </span>
-            <span class="preview-part-name">Key Concepts Explained</span>
+            <span class="preview-part-text">Part B: Key Concepts</span>
         </div>
         '''
 
+        # Concepts - matches DOCX _add_concept
         for concept in data.concepts:
             if concept.is_empty():
                 continue
 
+            # Concept title - 16pt blue, no box wrapper
             html += f'''
-            <div class="preview-concept-box">
-                <div class="preview-concept-title">{concept.number}. {concept.title or 'Untitled'}</div>
+            <div class="preview-concept-title">{concept.number}. {concept.title or 'Untitled'}</div>
             '''
 
+            # NCERT line - indented, bold red label, italic content in quotes
             if concept.ncert_line:
-                html += f'<div class="preview-ncert"><span style="color: var(--accent-red); font-weight: bold; font-style: normal;">NCERT Exact Line:</span> "{concept.ncert_line}"</div>'
+                html += f'''
+            <div class="preview-ncert">
+                <span class="preview-ncert-label">NCERT Exact Line: </span>
+                <span class="preview-ncert-content">"{concept.ncert_line}"</span>
+            </div>
+                '''
 
+            # Content - formatted text
             if concept.content:
-                content_html = cls._format_text(concept.content)
-                html += f'<div>{content_html}</div>'
+                content_html = cls._format_concept_content(concept.content)
+                html += f'<div class="preview-concept-content">{content_html}</div>'
 
+            # Memory trick - right-aligned, green, italic
             if concept.memory_trick:
                 html += f'''
-                <div class="preview-memory-trick">
-                    <span class="preview-memory-label">&gt; Memory Trick:</span>
-                    {concept.memory_trick}
-                </div>
+            <div class="preview-memory-trick">
+                <span class="preview-memory-label">Memory Trick: </span>
+                <span>{concept.memory_trick}</span>
+            </div>
                 '''
 
+            # Did You Know - grey box with red label
             if concept.did_you_know:
                 html += f'''
-                <div class="preview-dyk">
-                    <span class="preview-dyk-label">Do You Know?</span> {concept.did_you_know}
-                </div>
+            <div class="preview-dyk">
+                <span class="preview-dyk-label">Do You Know? </span>
+                <span>{concept.did_you_know}</span>
+            </div>
                 '''
 
-            html += '</div>'
-
-        # Comparison Tables
+        # Comparison Tables - matches DOCX _add_comparison_tables
         if data.comparison_tables:
-            html += f'<div class="preview-section-title" style="color: var(--primary-blue);">{Icons.CHART} Comparison Tables</div>'
+            html += f'''
+            <div class="preview-section-title" style="margin-top: 18pt;">{Icons.CHART} Comparison Tables</div>
+            '''
             for table in data.comparison_tables:
                 table_title = table.get('title', 'Comparison')
                 headers = table.get('headers', [])
                 rows = table.get('rows', [])
 
-                html += f'<div style="font-weight: bold; margin: 10px 0 5px 0;">{table_title}</div>'
-                html += '<table class="preview-pyq-table"><tr>'
+                html += f'''
+            <div style="margin: 12pt 0 6pt 0; font-weight: bold; font-style: italic;">{table_title}</div>
+            <table class="preview-pyq-table"><tr>
+                '''
                 for header in headers:
-                    html += f'<th>{header}</th>'
+                    html += f'<th style="color: #1E40AF;">{header}</th>'
                 html += '</tr>'
                 for row in rows:
                     html += '<tr>'
                     for cell in row:
-                        html += f'<td>{cell}</td>'
+                        html += f'<td>{cls._format_text(cell)}</td>'
                     html += '</tr>'
                 html += '</table>'
 
-        # Common Mistakes
+        # Common Mistakes - matches DOCX _add_common_mistakes
         if data.common_mistakes:
-            html += f'<div class="preview-section-title" style="color: var(--accent-red);">{Icons.WRONG} Common Mistakes to Avoid</div>'
-            html += '''
-            <div style="background: var(--bg-warning); border-left: 4px solid var(--border-warning); padding: 12px 15px; margin: 10px 0;">
-                <div style="color: var(--accent-red); font-style: italic; margin-bottom: 8px;">These mistakes cost students marks every year!</div>
+            html += f'''
+            <div class="preview-section-title" style="color: #B91C1C; margin-top: 18pt;">{Icons.WARNING} Common Mistakes to Avoid</div>
             '''
             for mistake in data.common_mistakes:
-                html += f'<div style="margin: 5px 0;">{Icons.WRONG} {mistake}</div>'
-            html += '</div>'
+                html += f'''
+            <div style="margin: 3pt 0; padding-left: 18pt;">
+                {Icons.WRONG} {cls._format_text(mistake)}
+            </div>
+                '''
 
-        # Important Dates Timeline
+        # Important Dates Timeline - matches DOCX _add_important_dates
         if data.important_dates:
-            html += f'<div class="preview-section-title" style="color: var(--primary-blue);">{Icons.CALENDAR} Important Dates Timeline</div>'
-            html += '<div class="preview-timeline">'
+            html += f'''
+            <div class="preview-section-title" style="margin-top: 18pt;">{Icons.CALENDAR} Important Dates Timeline</div>
+            <table class="preview-timeline-table">
+            '''
             for date_item in data.important_dates:
                 year = date_item.get('year', '')
                 event = date_item.get('event', '')
                 html += f'''
-                <div class="preview-timeline-item">
-                    <span class="preview-timeline-year">{year}</span>
-                    <span class="preview-timeline-event">{cls._format_text(event)}</span>
-                </div>
+                <tr>
+                    <td class="year-cell">{year}</td>
+                    <td class="event-cell">{cls._format_text(event)}</td>
+                </tr>
                 '''
-            html += '</div>'
+            html += '</table>'
+
+        return html
+
+    @classmethod
+    def _format_concept_content(cls, content: str) -> str:
+        """Format concept content with bullet points and numbering."""
+        if not content:
+            return ''
+
+        lines = content.strip().split('\n')
+        html = ''
+
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+
+            # Check if it's a bullet point
+            if line.startswith('- ') or line.startswith('• ') or line.startswith('* '):
+                line = line[1:].strip()
+                html += f'<div style="padding-left: 18pt; margin: 3pt 0;">• {cls._format_text(line)}</div>'
+
+            # Check if it's a numbered point
+            elif line[0].isdigit() and '.' in line[:3]:
+                html += f'<div style="padding-left: 18pt; margin: 3pt 0;">{cls._format_text(line)}</div>'
+
+            else:
+                html += f'<div style="margin: 3pt 0;">{cls._format_text(line)}</div>'
 
         return html
 
     @classmethod
     def _render_part_c(cls, data: ChapterData) -> str:
-        """Render Part C: Model Answers."""
+        """Render Part C: Model Answers - matches DOCX structure."""
         html = '''
         <div class="preview-part-header">
-            <span class="preview-part-label">Part C: </span>
-            <span class="preview-part-name">Model Answers</span>
+            <span class="preview-part-text">Part C: Model Answers</span>
         </div>
         '''
 
@@ -810,32 +1106,35 @@ class PreviewRenderer:
             if not answer.question:
                 continue
 
+            # Question title - matches concept title styling
             html += f'''
-            <div class="preview-concept-box">
-                <div class="preview-concept-title">Q{idx}. {answer.question} <span class="preview-marks">[{answer.marks}M]</span></div>
-                <div class="preview-answer">
-                    <strong>Answer:</strong><br>
-                    {cls._format_text(answer.answer)}
-                </div>
+            <div class="preview-concept-title">Q{idx}. {answer.question} <span class="preview-marks" style="font-size: 11pt;">[{answer.marks}M]</span></div>
             '''
 
+            # Answer - styled answer box
+            if answer.answer:
+                html += f'''
+            <div class="preview-answer">
+                <strong>Answer:</strong><br/>
+                {cls._format_text(answer.answer)}
+            </div>
+                '''
+
+            # Marking Points - indented list
             if answer.marking_points:
                 html += '<div class="preview-marking-points"><strong>Marking Points:</strong>'
                 for point in answer.marking_points:
                     html += f'<div class="preview-marking-point">{point}<span class="preview-marking-point-mark">(1 mark)</span></div>'
                 html += '</div>'
 
-            html += '</div>'
-
         return html
 
     @classmethod
     def _render_part_d(cls, data: ChapterData) -> str:
-        """Render Part D: Practice Questions."""
+        """Render Part D: Practice Questions - matches DOCX structure."""
         html = '''
         <div class="preview-part-header">
-            <span class="preview-part-label">Part D: </span>
-            <span class="preview-part-name">Practice Questions</span>
+            <span class="preview-part-text">Part D: Practice Questions</span>
         </div>
         '''
 
@@ -1007,11 +1306,10 @@ class PreviewRenderer:
 
     @classmethod
     def _render_part_e(cls, data: ChapterData) -> str:
-        """Render Part E: Map Work."""
+        """Render Part E: Map Work - matches DOCX structure."""
         html = '''
         <div class="preview-part-header">
-            <span class="preview-part-label">Part E: </span>
-            <span class="preview-part-name">Map Work</span>
+            <span class="preview-part-text">Part E: Map Work</span>
         </div>
         '''
 
@@ -1041,11 +1339,10 @@ class PreviewRenderer:
 
     @classmethod
     def _render_part_f(cls, data: ChapterData) -> str:
-        """Render Part F: Quick Revision."""
+        """Render Part F: Quick Revision - matches DOCX structure."""
         html = '''
         <div class="preview-part-header">
-            <span class="preview-part-label">Part F: </span>
-            <span class="preview-part-name">Quick Revision</span>
+            <span class="preview-part-text">Part F: Quick Revision</span>
         </div>
         '''
 
@@ -1084,11 +1381,10 @@ class PreviewRenderer:
 
     @classmethod
     def _render_part_g(cls, data: ChapterData) -> str:
-        """Render Part G: Exam Strategy."""
+        """Render Part G: Exam Strategy - matches DOCX structure."""
         html = '''
         <div class="preview-part-header">
-            <span class="preview-part-label">Part G: </span>
-            <span class="preview-part-name">Exam Strategy</span>
+            <span class="preview-part-text">Part G: Exam Strategy</span>
         </div>
         '''
 
@@ -1262,10 +1558,30 @@ def show_preview_panel(data: ChapterData, part_manager: PartManager = None,
 # NEW PDF-BASED PREVIEW SYSTEM
 # =============================================================================
 
+def _compute_data_hash(data: ChapterData) -> str:
+    """Compute a hash of the chapter data for change detection."""
+    import hashlib
+    import json
+    # Use a subset of key fields for faster hashing
+    key_data = {
+        'title': data.chapter_title,
+        'subject': data.subject,
+        'chapter_number': data.chapter_number,
+        'concepts_count': len(data.concepts),
+        'mcqs_count': len(data.mcqs),
+        'model_answers_count': len(data.model_answers),
+        'learning_objectives': data.learning_objectives[:100] if data.learning_objectives else '',
+    }
+    data_str = json.dumps(key_data, sort_keys=True)
+    return hashlib.md5(data_str.encode()).hexdigest()[:12]
+
+
 def show_pdf_preview(data: ChapterData, part_manager: PartManager):
     """
-    Generate and display actual PDF preview.
-    Uses HTML-to-PDF conversion for accurate preview matching.
+    Enhanced preview with Quick (HTML) and Accurate (PDF from DOCX) modes.
+
+    - Quick Preview: Instant HTML preview while editing
+    - Accurate Preview: Generate DOCX → Convert to PDF → Show exact output
     """
     import base64
 
@@ -1276,132 +1592,209 @@ def show_pdf_preview(data: ChapterData, part_manager: PartManager):
 
     st.subheader("📄 Document Preview & Download")
 
-    # Check PDF conversion availability
-    html_pdf_available = PDFConverter.is_html_pdf_available()
-    docx_pdf_available, method = PDFConverter.is_available()
+    # Compute current data hash for change detection
+    current_hash = _compute_data_hash(data)
 
-    if not html_pdf_available and not docx_pdf_available:
-        st.warning("""
-            ⚠️ **PDF generation not available**
+    # Check if data has changed since last preview
+    preview_hash = st.session_state.get('preview_data_hash')
+    data_changed = preview_hash is not None and preview_hash != current_hash
 
-            Install xhtml2pdf for PDF support: `pip install xhtml2pdf`
-        """)
+    if data_changed and st.session_state.get('preview_docx'):
+        st.warning("⚠️ **Data has changed** since the last preview was generated. Click 'Generate Preview' to update.")
 
-    # Generate Preview button
-    col1, col2 = st.columns([1, 3])
+    # Create two tabs for different preview modes
+    tab_quick, tab_accurate = st.tabs(["⚡ Quick Preview (HTML)", "🎯 Accurate Preview (PDF)"])
 
-    with col1:
-        generate_clicked = st.button(
-            "🔄 Generate Preview",
-            type="primary",
-            use_container_width=True,
-            help="Generate the document to see preview and download"
-        )
+    # ==========================================================================
+    # TAB 1: QUICK PREVIEW (HTML) - Instant, while editing
+    # ==========================================================================
+    with tab_quick:
+        st.caption("Fast preview while editing. May differ slightly from final DOCX output.")
 
-    if generate_clicked:
-        with st.spinner("Generating document..."):
-            try:
-                # Generate DOCX
-                generator = DocumentGenerator(data, part_manager)
-                docx_bytes = generator.generate_to_bytes()
+        # Render HTML preview instantly
+        try:
+            html_content = PreviewRenderer.render_full_preview(data, part_manager)
 
-                # Store DOCX in session state
-                st.session_state['preview_docx'] = docx_bytes
-                st.session_state['preview_generated'] = True
+            # Add print button above preview
+            col1, col2, col3 = st.columns([2, 1, 2])
+            with col2:
+                b64_html = base64.b64encode(html_content.encode()).decode()
+                print_script = f'''
+                <a href="javascript:void(0);"
+                   onclick="var w=window.open('','_blank','width=900,height=700');
+                            w.document.write(atob('{b64_html}'));
+                            w.document.close();
+                            setTimeout(function(){{w.print();}}, 500);"
+                   style="display:inline-block;
+                          padding:0.4rem 1rem;
+                          background:#4CAF50;
+                          color:white;
+                          border-radius:0.5rem;
+                          text-decoration:none;
+                          font-size:13px;
+                          font-weight:500;
+                          text-align:center;">
+                   🖨️ Print HTML
+                </a>
+                '''
+                components.html(print_script, height=40)
 
-                # Generate PDF from HTML (matches preview exactly)
-                if html_pdf_available:
-                    with st.spinner("Generating PDF preview..."):
-                        # Generate HTML preview
-                        html_content = PreviewRenderer.render_full_preview(data, part_manager)
-                        pdf_bytes = PDFConverter.convert_html_to_pdf(html_content)
+            # Display HTML preview
+            components.html(html_content, height=800, scrolling=True)
 
-                        if pdf_bytes:
-                            st.session_state['preview_pdf'] = pdf_bytes
-                            st.session_state['preview_html'] = html_content
-                        else:
-                            st.session_state['preview_pdf'] = None
-                            st.warning("PDF generation failed.")
-                elif docx_pdf_available:
-                    # Fallback to DOCX-to-PDF if Word/LibreOffice available
-                    with st.spinner("Converting to PDF..."):
-                        pdf_bytes = PDFConverter.convert_bytes(docx_bytes)
-                        if pdf_bytes:
-                            st.session_state['preview_pdf'] = pdf_bytes
-                        else:
-                            st.session_state['preview_pdf'] = None
-                else:
-                    st.session_state['preview_pdf'] = None
+            st.info("💡 This is a quick HTML preview. For exact DOCX/PDF output with proper pagination, use the **Accurate Preview** tab.")
 
-                st.success("✅ Preview generated successfully!")
-                st.rerun()
+        except Exception as e:
+            logger.error("Error rendering quick HTML preview: %s", e, exc_info=True)
+            st.error(f"Error rendering preview: {str(e)}")
 
-            except Exception as e:
-                st.error(f"Error generating document: {str(e)}")
-                return
+    # ==========================================================================
+    # TAB 2: ACCURATE PREVIEW (PDF from DOCX) - Exact output
+    # ==========================================================================
+    with tab_accurate:
+        st.caption("Exact preview of final document. Click Generate to create/update.")
 
-    # Display preview if available
-    if st.session_state.get('preview_pdf'):
-        st.divider()
-        pdf_bytes = st.session_state['preview_pdf']
-        base64_pdf = base64.b64encode(pdf_bytes).decode('utf-8')
+        # Check PDF conversion availability
+        html_pdf_available = PDFConverter.is_html_pdf_available()
+        docx_pdf_available, method = PDFConverter.is_available()
 
-        # PDF viewer iframe
-        pdf_display = f'''
-            <iframe
-                src="data:application/pdf;base64,{base64_pdf}"
-                width="100%"
-                height="800px"
-                style="border: 1px solid #ddd; border-radius: 8px;"
-                type="application/pdf">
-                <p>Your browser doesn't support PDF preview. Please download the file.</p>
-            </iframe>
-        '''
-        components.html(pdf_display, height=820)
+        if not html_pdf_available and not docx_pdf_available:
+            st.warning("""
+                ⚠️ **PDF preview not available**
 
-    elif st.session_state.get('preview_docx') and not st.session_state.get('preview_pdf'):
-        st.divider()
-        st.info("📝 PDF preview not available. Click 'Download DOCX' to view the document in Microsoft Word or LibreOffice.")
+                Install xhtml2pdf for PDF support: `pip install xhtml2pdf`
 
-    elif st.session_state.get('preview_generated'):
-        st.divider()
-        st.info("📝 Preview generated. Download the file to view.")
+                You can still generate and download the DOCX file.
+            """)
 
-    # Download buttons
-    if st.session_state.get('preview_docx') or st.session_state.get('preview_pdf'):
-        st.divider()
-        col1, col2, col3 = st.columns(3)
-
-        # Safe filename
-        safe_title = "".join(c for c in data.chapter_title[:20] if c.isalnum() or c in (' ', '-', '_')).strip()
-        safe_title = safe_title.replace(' ', '_') if safe_title else 'Chapter'
-
-        with col1:
-            if st.session_state.get('preview_docx'):
-                filename = f"Ch{data.chapter_number}_{data.subject}_{safe_title}.docx"
-                st.download_button(
-                    "⬇️ Download DOCX",
-                    data=st.session_state['preview_docx'],
-                    file_name=filename,
-                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                    use_container_width=True
-                )
+        # Generate Preview button
+        col1, col2, col3 = st.columns([1, 2, 1])
 
         with col2:
-            if st.session_state.get('preview_pdf'):
-                filename = f"Ch{data.chapter_number}_{data.subject}_{safe_title}.pdf"
-                st.download_button(
-                    "⬇️ Download PDF",
-                    data=st.session_state['preview_pdf'],
-                    file_name=filename,
-                    mime="application/pdf",
-                    use_container_width=True
-                )
+            generate_clicked = st.button(
+                "🔄 Generate Preview",
+                type="primary",
+                use_container_width=True,
+                help="Generate the document to see exact preview and download"
+            )
 
-        with col3:
-            if st.button("🗑️ Clear Preview", use_container_width=True):
-                clear_preview_cache()
-                st.rerun()
+        if generate_clicked:
+            with st.spinner("Generating document (this may take a few seconds)..."):
+                try:
+                    # Step 1: Generate DOCX
+                    generator = DocumentGenerator(data, part_manager)
+                    docx_bytes = generator.generate_to_bytes()
+
+                    # Store DOCX in session state
+                    st.session_state['preview_docx'] = docx_bytes
+                    st.session_state['preview_generated'] = True
+
+                    # Step 2: Try to convert to PDF
+                    pdf_bytes = None
+                    preview_source = None
+
+                    # Try DOCX-to-PDF first (most accurate)
+                    if docx_pdf_available:
+                        with st.spinner("Converting DOCX to PDF..."):
+                            pdf_bytes = PDFConverter.convert_bytes(docx_bytes)
+                            if pdf_bytes:
+                                preview_source = 'docx'
+
+                    # Fallback to HTML-to-PDF
+                    if not pdf_bytes and html_pdf_available:
+                        with st.spinner("Generating PDF from HTML..."):
+                            html_content = PreviewRenderer.render_full_preview(data, part_manager)
+                            pdf_bytes = PDFConverter.convert_html_to_pdf(html_content)
+                            if pdf_bytes:
+                                preview_source = 'html'
+                                st.session_state['preview_html'] = html_content
+
+                    # Store results
+                    if pdf_bytes:
+                        st.session_state['preview_pdf'] = pdf_bytes
+                        st.session_state['preview_source'] = preview_source
+                    else:
+                        st.session_state['preview_pdf'] = None
+                        st.session_state['preview_source'] = None
+
+                    # Store data hash to track changes
+                    st.session_state['preview_data_hash'] = current_hash
+
+                    st.success("✅ Preview generated successfully!")
+                    st.rerun()
+
+                except Exception as e:
+                    logger.error("Error generating document preview: %s", e, exc_info=True)
+                    st.error(f"Error generating document: {str(e)}")
+
+        # Display preview source indicator
+        if st.session_state.get('preview_pdf') and st.session_state.get('preview_source'):
+            source = st.session_state['preview_source']
+            if source == 'docx':
+                st.success("✅ This preview exactly matches the DOCX output (converted via Word/LibreOffice)")
+            elif source == 'html':
+                st.info("ℹ️ PDF generated from HTML. Download DOCX for exact formatting.")
+
+        # Display PDF preview if available
+        if st.session_state.get('preview_pdf'):
+            pdf_bytes = st.session_state['preview_pdf']
+            base64_pdf = base64.b64encode(pdf_bytes).decode('utf-8')
+
+            # PDF viewer iframe
+            pdf_display = f'''
+                <iframe
+                    src="data:application/pdf;base64,{base64_pdf}"
+                    width="100%"
+                    height="800px"
+                    style="border: 1px solid #ddd; border-radius: 8px;"
+                    type="application/pdf">
+                    <p>Your browser doesn't support PDF preview. Please download the file.</p>
+                </iframe>
+            '''
+            components.html(pdf_display, height=820)
+
+        elif st.session_state.get('preview_docx') and not st.session_state.get('preview_pdf'):
+            st.info("📝 PDF preview not available. Download DOCX to view the document in Microsoft Word or LibreOffice.")
+
+        elif not st.session_state.get('preview_generated'):
+            st.info("👆 Click **'Generate Preview'** to see the exact document preview")
+
+        # Download buttons
+        if st.session_state.get('preview_docx') or st.session_state.get('preview_pdf'):
+            st.divider()
+
+            # Safe filename
+            safe_title = "".join(c for c in data.chapter_title[:20] if c.isalnum() or c in (' ', '-', '_')).strip()
+            safe_title = safe_title.replace(' ', '_') if safe_title else 'Chapter'
+
+            col1, col2, col3 = st.columns(3)
+
+            with col1:
+                if st.session_state.get('preview_docx'):
+                    filename = f"Ch{data.chapter_number}_{data.subject}_{safe_title}.docx"
+                    st.download_button(
+                        "⬇️ Download DOCX",
+                        data=st.session_state['preview_docx'],
+                        file_name=filename,
+                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        use_container_width=True
+                    )
+
+            with col2:
+                if st.session_state.get('preview_pdf'):
+                    filename = f"Ch{data.chapter_number}_{data.subject}_{safe_title}.pdf"
+                    st.download_button(
+                        "⬇️ Download PDF",
+                        data=st.session_state['preview_pdf'],
+                        file_name=filename,
+                        mime="application/pdf",
+                        use_container_width=True
+                    )
+
+            with col3:
+                if st.button("🗑️ Clear Preview", use_container_width=True):
+                    clear_preview_cache()
+                    st.rerun()
 
 
 def show_section_preview(data: ChapterData, section: str = "cover"):
@@ -1429,7 +1822,14 @@ def show_section_preview(data: ChapterData, section: str = "cover"):
 
 def clear_preview_cache():
     """Clear all preview-related session state."""
-    keys_to_clear = ['preview_docx', 'preview_pdf', 'preview_generated']
+    keys_to_clear = [
+        'preview_docx',
+        'preview_pdf',
+        'preview_generated',
+        'preview_html',
+        'preview_source',
+        'preview_data_hash'
+    ]
     for key in keys_to_clear:
         if key in st.session_state:
             del st.session_state[key]
@@ -1486,6 +1886,7 @@ def show_generate_docx_button(data: ChapterData, part_manager: PartManager = Non
                     st.session_state[f'quick_docx_ready_{key_suffix}'] = True
                     st.rerun()
                 except Exception as e:
+                    logger.error("Error generating quick DOCX export: %s", e, exc_info=True)
                     st.error(f"Error generating DOCX: {str(e)}")
 
         # Show download button if DOCX is ready

@@ -1,0 +1,116 @@
+{
+  "chapters": [
+    {
+      "number": 1,
+      "title": "Real Numbers",
+      "unit": "Number Systems",
+      "weightage": "6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 2,
+      "title": "Polynomials",
+      "unit": "Algebra",
+      "weightage": "5-6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 3,
+      "title": "Pair of Linear Equations in Two Variables",
+      "unit": "Algebra",
+      "weightage": "6-7 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 4,
+      "title": "Quadratic Equations",
+      "unit": "Algebra",
+      "weightage": "6-7 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 5,
+      "title": "Arithmetic Progressions",
+      "unit": "Algebra",
+      "weightage": "6-7 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 6,
+      "title": "Coordinate Geometry",
+      "unit": "Coordinate Geometry",
+      "weightage": "6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 7,
+      "title": "Triangles",
+      "unit": "Geometry",
+      "weightage": "6-7 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 8,
+      "title": "Circles",
+      "unit": "Geometry",
+      "weightage": "5-6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 9,
+      "title": "Introduction to Trigonometry",
+      "unit": "Trigonometry",
+      "weightage": "6-7 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 10,
+      "title": "Some Applications of Trigonometry",
+      "unit": "Trigonometry",
+      "weightage": "5-6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 11,
+      "title": "Areas Related to Circles",
+      "unit": "Mensuration",
+      "weightage": "5-6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 12,
+      "title": "Surface Areas and Volumes",
+      "unit": "Mensuration",
+      "weightage": "6-7 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 13,
+      "title": "Statistics",
+      "unit": "Statistics and Probability",
+      "weightage": "5-6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 14,
+      "title": "Probability",
+      "unit": "Statistics and Probability",
+      "weightage": "5-6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    }
+  ]
+}

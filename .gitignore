@@ -30,3 +30,14 @@ Thumbs.db
 # Misc
 *.log
 nul
+
+# Generated outputs
+*.pdf
+Ch-*.docx
+
+# User data (local only)
+data/autosave/
+
+# Test artifacts
+test_*.pdf
+test_*.docx

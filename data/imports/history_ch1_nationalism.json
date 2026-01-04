@@ -1,0 +1,664 @@
+{
+  "chapter_data": {
+    "class_num": 10,
+    "subject": "history",
+    "chapter_number": 1,
+    "chapter_title": "The Rise of Nationalism in Europe",
+    "subtitle": "From French Revolution to World War I",
+    "weightage": "5-8 Marks",
+    "map_work": "Yes",
+    "importance": "High",
+    "pyq_frequency": "Every Year",
+    "syllabus_alert_enabled": true,
+    "syllabus_alert_text": "This chapter has remained unchanged since 2015. During COVID-19 (2020-21), CBSE reduced 30% syllabus but Chapter 1 was NOT deleted.",
+
+    "learning_objectives": "- Understand the rise of nationalism in Europe and its impact on the political landscape\n- Analyse the French Revolution's role in spreading nationalist ideas across Europe\n- Explain the process and key figures in the unification of Germany and Italy\n- Evaluate the role of culture, language, and romanticism in developing nationalism\n- Understand how the Balkans became a source of nationalist tension leading to World War I",
+
+    "part_descriptions": {
+      "A": "10-year PYQ analysis (2015-2024), most repeated questions, mark distribution, predictions",
+      "B": "11 key concepts with NCERT lines, memory tricks (FLAT-CUN, PEACE, BRAN-PS, MAGIC-B, BOSCO-RT, BAGS-MCR)",
+      "C": "8 model answers with examiner-approved format and marking scheme",
+      "D": "20 MCQs, 10 Assertion-Reason, 8 VSA, 8 SA, 5 LA, 4 Source-based, 3 HOTS",
+      "E": "Map work: German states, Italian states, Balkans region with marking tips",
+      "F": "Timeline (1789-1914), key terms glossary, memory tricks compilation",
+      "G": "Time allocation, common mistakes, examiner tips, last-minute revision"
+    },
+
+    "pyq_year_range": "2015-2024",
+    "pyq_items": [
+      {"question": "Explain the role of Giuseppe Mazzini in Italian unification.", "marks": "5M", "years": "2024, 2022, 2020, 2018, 2016"},
+      {"question": "Describe the process of German unification under Otto von Bismarck.", "marks": "5M", "years": "2024, 2023, 2021, 2019, 2017, 2015"},
+      {"question": "How did the Treaty of Vienna try to restore conservatism in Europe?", "marks": "3M", "years": "2023, 2021, 2019, 2017"},
+      {"question": "What was the role of women in nationalist struggles in Europe?", "marks": "3M", "years": "2023, 2022, 2020"},
+      {"question": "Explain the significance of the Napoleonic Code.", "marks": "3M", "years": "2024, 2022, 2019, 2016"},
+      {"question": "How did culture play a role in creating the idea of the nation?", "marks": "5M", "years": "2023, 2020, 2018"},
+      {"question": "Why did nationalist tensions emerge in the Balkans?", "marks": "5M", "years": "2024, 2021, 2018, 2015"},
+      {"question": "Describe the features of the Napoleonic Code.", "marks": "3M", "years": "2022, 2020, 2017"},
+      {"question": "What changes did Napoleon introduce in the administrative system?", "marks": "3M", "years": "2021, 2019"},
+      {"question": "Explain any three measures introduced by the French revolutionaries to create a sense of collective identity.", "marks": "3M", "years": "2024, 2023, 2020, 2018"}
+    ],
+    "pyq_prediction": "Expect 5M question on German/Italian unification. High probability of 3M question on Treaty of Vienna or Napoleonic Code. Map work on Balkans region is likely.",
+    "pyq_syllabus_note": "Full chapter is in syllabus. No deletions for 2024-25 board exams.",
+
+    "concepts": [
+      {
+        "number": 1,
+        "title": "The French Revolution and the Idea of the Nation",
+        "content": "The French Revolution of 1789 was the first clear expression of nationalism. Key measures introduced:\n\n- **Estates General renamed National Assembly**: Represented the will of the nation, not just estates\n- **New French flag (tricolour)**: Replaced the royal standard with red, white, and blue\n- **La patrie and Le citoyen**: Ideas of fatherland and citizenship emphasized\n- **New hymns and oaths**: Composed and taken in the name of the nation\n- **Uniform laws**: A centralized administrative system with uniform laws for all citizens\n- **French as national language**: Regional dialects discouraged, French promoted\n- **Internal customs abolished**: Free trade within France\n- **Uniform weights and measures**: Standard system replaced regional variations\n\n**NCERT Line**: \"The first clear expression of nationalism came with the French Revolution in 1789.\"",
+        "ncert_line": "The first clear expression of nationalism came with the French Revolution in 1789.",
+        "memory_trick": "**FLAT-CUN** = Flag, Language, Anthem, Tricolour, Customs abolished, Uniform laws, National Assembly",
+        "did_you_know": "The tricolour flag of France inspired many other national flags including the Indian tricolour."
+      },
+      {
+        "number": 2,
+        "title": "The Napoleonic Code (Civil Code of 1804)",
+        "content": "Napoleon introduced the Civil Code of 1804, also known as the Napoleonic Code, which was exported to regions under French control.\n\n**Key Features:**\n- **Privileges based on birth abolished**: All citizens equal before law\n- **Right to property secured**: Property rights guaranteed by law\n- **Administrative divisions simplified**: Removed feudal complexity\n- **Guild restrictions removed**: Freedom to pursue any trade or profession\n- **Transport and communication improved**: Better infrastructure for trade\n\n**Impact on Europe:**\n- Spread of revolutionary principles beyond France\n- Uniform civil laws in Dutch Republic, Switzerland, Italy, Germany\n- Peasants, artisans, and businessmen initially welcomed French rule\n- Later, became disillusioned due to increased taxation, censorship, and forced conscription\n\n**NCERT Line**: \"In the areas conquered by Napoleon, he introduced many reforms. Feudal system was abolished and the peasants were freed from serfdom.\"",
+        "ncert_line": "In the areas conquered by Napoleon, he introduced many reforms. Feudal system was abolished and the peasants were freed from serfdom.",
+        "memory_trick": "**PEACE** = Property rights, Equality before law, Administrative simplification, Censorship of feudal privileges, Economic freedom (guild restrictions removed)"
+      },
+      {
+        "number": 3,
+        "title": "The Treaty of Vienna (1815) and Conservatism",
+        "content": "After Napoleon's defeat in 1815, European governments followed conservatism - a political philosophy that believed in preserving traditional institutions.\n\n**Treaty of Vienna (1815):**\n- **Britain**: Gained control of the Netherlands\n- **Russia**: Given part of Poland\n- **Austria**: Given control of northern Italy (Lombardy and Venetia)\n- **Napoleon's Confederation of 39 states**: Left unchanged\n- **Prussia**: Given important new territories on western frontiers\n- **Spain**: Bourbon dynasty restored\n\n**Features of Conservatism:**\n- Monarchy, Church, aristocracy, and family should be preserved\n- Modernization of administration and economy accepted\n- But rejected democracy and social change\n\n**NCERT Line**: \"The Treaty of Vienna of 1815 was the attempt of the conservative regimes to restore the old order.\"",
+        "ncert_line": "The Treaty of Vienna of 1815 was the attempt of the conservative regimes to restore the old order.",
+        "memory_trick": "**BRAN-PS** = Britain (Netherlands), Russia (Poland), Austria (N. Italy), Napoleon's 39 states, Prussia (western), Spain (Bourbon restored)"
+      },
+      {
+        "number": 4,
+        "title": "The Revolutionaries and Giuseppe Mazzini",
+        "content": "Secret societies emerged in Europe to train revolutionaries and spread nationalist ideas.\n\n**Giuseppe Mazzini (1807-1872):**\n- Italian revolutionary, born in Genoa\n- Member of secret society **Carbonari**\n- Founded **Young Italy** in Marseilles (1831)\n- Founded **Young Europe** in Berne (1834)\n- Believed in unification through popular uprising, not monarchy\n- His ideas frightened conservatives - Metternich called him \"the most dangerous enemy of our social order\"\n\n**Other Secret Societies:**\n- **Carbonari**: Italian secret society\n- **Young Germany**, **Young Poland**, **Young Switzerland**: Inspired by Mazzini\n\n**NCERT Line**: \"Metternich described him as 'the most dangerous enemy of our social order'.\"",
+        "ncert_line": "Metternich described him as 'the most dangerous enemy of our social order'."
+      },
+      {
+        "number": 5,
+        "title": "The Age of Revolutions: 1830-1848",
+        "content": "The period 1830-1848 saw widespread revolutionary activity across Europe.\n\n**Revolution of 1830 (July Revolution):**\n- Bourbon kings overthrown in France\n- Louis Philippe established constitutional monarchy\n- Belgium broke away from Netherlands\n- Greece gained independence from Ottoman Empire (1832)\n\n**The Hunger, Hardship, and Popular Revolt:**\n- 1830s: Years of great economic hardship in Europe\n- Rise in food prices, bad harvests, unemployment\n- Peasant uprisings and food riots common\n- Silesian weavers' revolt (1845) against contractors\n\n**1848 Revolutions:**\n- February 1848: Revolution in France, Louis Philippe fled\n- Revolts spread to Germany, Italy, Poland, Austro-Hungarian Empire\n- Artisans and workers demanded constitutions, national unification\n- Most revolts suppressed by conservative forces\n\n**NCERT Line**: \"In 1848, Europe experienced a series of revolutions led by the educated middle classes.\"",
+        "ncert_line": "In 1848, Europe experienced a series of revolutions led by the educated middle classes."
+      },
+      {
+        "number": 6,
+        "title": "Romanticism and Cultural Nationalism",
+        "content": "Romanticism was a cultural movement that developed nationalist sentiment through emotion and mystical experience.\n\n**Key Features:**\n- Rejection of reason and science glorified by Enlightenment\n- Focus on emotions, intuition, and mystical feelings\n- Shared collective heritage and common cultural past as basis of nation\n- Folk songs, folk poetry, and folk dances popularized\n\n**Role of Language:**\n- Language played crucial role in developing nationalist sentiments\n- Polish language used as weapon against Russian dominance\n- Karol Kurpinski: Polish composer who celebrated national struggle through operas and music\n- Grimm Brothers: Collected German fairy tales to preserve folk culture\n\n**Johann Gottfried Herder:**\n- German philosopher who claimed true German culture was in common people (das Volk)\n- Folk songs, folk poetry showed true spirit of the nation\n\n**NCERT Line**: \"Romanticism, a cultural movement which sought to develop a particular form of nationalist sentiment.\"",
+        "ncert_line": "Romanticism, a cultural movement which sought to develop a particular form of nationalist sentiment."
+      },
+      {
+        "number": 7,
+        "title": "The Revolutions of 1848 and Frankfurt Parliament",
+        "content": "The 1848 revolutions brought political changes across German-speaking regions.\n\n**Frankfurt Parliament (May 1848):**\n- 831 elected representatives gathered in Frankfurt\n- Met in the Church of St. Paul\n- Drafted a constitution for German nation under constitutional monarchy\n- Crown offered to Friedrich Wilhelm IV of Prussia\n- He rejected it, opposed to accepting crown from 'an assembly'\n- Parliament was dominated by middle class professionals\n- Artisans and workers lost representation\n\n**Role of Women:**\n- Women actively participated in liberal movements\n- Founded political associations, newspapers\n- But denied voting rights in the Frankfurt Parliament\n- Had to stand in visitors' gallery\n\n**Failure of 1848 Revolutions:**\n- Conservative forces regrouped\n- Middle class feared working-class demands\n- Monarchs suppressed revolts with military force\n\n**NCERT Line**: \"The issue of extending political rights to women was a controversial one within the liberal movement.\"",
+        "ncert_line": "The issue of extending political rights to women was a controversial one within the liberal movement."
+      },
+      {
+        "number": 8,
+        "title": "Unification of Germany (1866-1871)",
+        "content": "German unification was achieved through conservative forces led by Prussia.\n\n**Key Figure: Otto von Bismarck (1815-1898):**\n- Chief Minister of Prussia\n- Architect of German unification\n- Policy of 'Blood and Iron' (Realpolitik)\n- United Germany through three wars\n\n**Three Wars of Unification:**\n1. **Danish War (1864)**: Prussia and Austria vs. Denmark over Schleswig-Holstein\n2. **Austro-Prussian War (1866)**: Prussia vs. Austria; Austria defeated in 7 weeks\n3. **Franco-Prussian War (1870-71)**: Prussia vs. France; France defeated\n\n**Proclamation of German Empire:**\n- January 18, 1871: Kaiser Wilhelm I proclaimed German Emperor\n- Ceremony held in Hall of Mirrors, Palace of Versailles\n- Prussian king became German Kaiser\n- Bismarck became the Chancellor\n\n**NCERT Line**: \"The nation-building process in Germany had demonstrated the dominance of Prussian state power.\"",
+        "ncert_line": "The nation-building process in Germany had demonstrated the dominance of Prussian state power."
+      },
+      {
+        "number": 9,
+        "title": "Unification of Italy (1859-1870)",
+        "content": "Italy was divided into seven states in the 19th century. Unification was achieved through the efforts of three key figures.\n\n**Three Architects of Italian Unification:**\n\n1. **Giuseppe Mazzini (The Soul):**\n   - Founded Young Italy (1831)\n   - Believed in republican ideals\n   - Inspired revolutionary movement\n   - Failed uprisings in 1831 and 1848\n\n2. **Count Cavour (The Brain):**\n   - Chief Minister of Sardinia-Piedmont\n   - Led diplomatic efforts\n   - Allied with France against Austria (1859)\n   - Defeated Austrian forces\n\n3. **Giuseppe Garibaldi (The Sword):**\n   - Led famous expedition of the **Thousand** (Red Shirts)\n   - Conquered Kingdom of Two Sicilies (1860)\n   - Handed over southern Italy to King Victor Emmanuel II\n\n**Timeline:**\n- 1859: Sardinia-Piedmont defeats Austria (with French help)\n- 1860: Garibaldi conquers southern Italy\n- 1861: Victor Emmanuel II declared King of United Italy\n- 1866: Venetia added (after Austria defeated in Austro-Prussian War)\n- 1870: Rome added (after French troops withdrew during Franco-Prussian War)\n\n**NCERT Line**: \"Like Germany, Italy too had a long history of political fragmentation.\"",
+        "ncert_line": "Like Germany, Italy too had a long history of political fragmentation.",
+        "memory_trick": "**MAGIC-B** = Mazzini (soul), Alliance with France, Garibaldi (sword), Italy united, Cavour (brain), Blood and Iron not used (unlike Germany)"
+      },
+      {
+        "number": 10,
+        "title": "Visualising the Nation - Marianne and Germania",
+        "content": "Nations were portrayed as female figures to personify the idea of the nation.\n\n**Marianne (France):**\n- Female allegory of France\n- Characteristics: Liberty, Republic\n- Symbols: Red cap, tricolour, cockade\n- Statues placed in public squares\n- Image on coins and stamps\n- Named after common French names Marie and Anne\n\n**Germania (Germany):**\n- Female allegory of German nation\n- Appeared in visual representations during 1848 revolution\n\n**Attributes of Germania:**\n- **Crown of oak leaves**: Heroism\n- **Sword**: Readiness to fight\n- **Olive branch**: Willingness for peace\n- **Black, red, gold flag**: Flag of liberal nationalists (banned after 1848)\n- **Rays of rising sun**: Beginning of a new era\n- **Breastplate with eagle**: Symbol of German Empire\n\n**NCERT Line**: \"Artists in the eighteenth and nineteenth centuries personified a nation as a female figure.\"",
+        "ncert_line": "Artists in the eighteenth and nineteenth centuries personified a nation as a female figure.",
+        "memory_trick": "**BOSCO-RT** = Breastplate eagle, Oak crown, Sword, Crown of oak, Olive branch, Rays of sun, Tricolour (for Marianne)"
+      },
+      {
+        "number": 11,
+        "title": "Nationalism and Imperialism - The Balkans",
+        "content": "The Balkans became the most serious source of nationalist tension in Europe after 1871.\n\n**The Balkans Region:**\n- Comprised modern-day Romania, Bulgaria, Albania, Greece, Macedonia, Croatia, Bosnia-Herzegovina, Slovenia, Serbia, Montenegro\n- Under Ottoman Empire which was weakening\n- Spread of ideas of romantic nationalism led to disintegration\n\n**Reasons for Tension:**\n- Various Slavic peoples claimed independence based on nationality\n- Each claimed territory based on historical boundaries\n- Big European powers (Russia, Germany, England, Austria-Hungary) competed for control\n- Trade, colonies, naval power, and military might increased rivalries\n\n**Consequences:**\n- Balkans Wars (1912-1913)\n- Assassination of Archduke Franz Ferdinand (1914)\n- World War I (1914-1918)\n- Disintegration of Austria-Hungary, Ottoman Empire, Russian Empire\n\n**NCERT Line**: \"The Balkans became the scene of big power rivalry and the major European powers were keen on countering the hold of other powers over the Balkans.\"",
+        "ncert_line": "The Balkans became the scene of big power rivalry and the major European powers were keen on countering the hold of other powers over the Balkans.",
+        "memory_trick": "**BAGS-MCR** = Bulgaria, Albania, Greece, Serbia, Macedonia, Croatia, Romania (Balkan nations)"
+      }
+    ],
+
+    "important_dates": [
+      {"year": "1789", "event": "French Revolution begins"},
+      {"year": "1804", "event": "Napoleonic Code introduced; Napoleon crowned Emperor"},
+      {"year": "1815", "event": "Napoleon defeated at Waterloo; Treaty of Vienna signed"},
+      {"year": "1830", "event": "July Revolution in France; Belgium gains independence"},
+      {"year": "1831", "event": "Mazzini founds Young Italy"},
+      {"year": "1834", "event": "Mazzini founds Young Europe"},
+      {"year": "1848", "event": "Revolutions across Europe; Frankfurt Parliament"},
+      {"year": "1859", "event": "Sardinia-Piedmont defeats Austria"},
+      {"year": "1860", "event": "Garibaldi conquers southern Italy"},
+      {"year": "1861", "event": "Victor Emmanuel II declared King of United Italy"},
+      {"year": "1866", "event": "Austro-Prussian War; Venetia added to Italy"},
+      {"year": "1870", "event": "Franco-Prussian War; Rome added to Italy"},
+      {"year": "1871", "event": "German Empire proclaimed at Versailles"}
+    ],
+
+    "common_mistakes": [
+      "Confusing Giuseppe Mazzini with Giuseppe Garibaldi - Mazzini was the ideologue, Garibaldi was the military leader",
+      "Wrong date for German unification - It was 1871 (proclamation at Versailles), not 1866",
+      "Confusing Treaty of Vienna (1815) with Congress of Vienna - both terms used interchangeably",
+      "Forgetting that women were denied voting rights even by liberal nationalists",
+      "Not mentioning the three wars in German unification",
+      "Confusing Marianne (France) attributes with Germania (Germany) attributes"
+    ],
+
+    "model_answers": [
+      {
+        "question": "Explain any three measures introduced by the French revolutionaries to create a sense of collective identity among the French people.",
+        "marks": 3,
+        "answer": "The French revolutionaries introduced several measures to create collective identity:\n\n**1. National Symbols:** A new French flag (tricolour of red, white, and blue) replaced the royal standard, becoming a symbol of the nation.\n\n**2. Unified Language:** French was established as the common language, and regional dialects were discouraged to foster national unity.\n\n**3. Uniform Laws and Administration:** The Estates General was renamed National Assembly, and uniform laws were enacted for all citizens, abolishing feudal privileges.\n\n*(Additional: New hymns were composed, oaths taken in name of nation, internal customs duties abolished, uniform weights and measures introduced)*",
+        "marking_points": ["New flag/tricolour", "Common language", "Uniform laws/administration", "Any 3 points with explanation = 3 marks"]
+      },
+      {
+        "question": "Describe the process of German unification.",
+        "marks": 5,
+        "answer": "Germany was unified under Prussian leadership through a policy of 'Blood and Iron' by Otto von Bismarck.\n\n**Background:**\n- Germany was divided into a loose confederation of 39 states\n- Nationalist feelings grew after 1848 revolutions\n- Prussia, the largest state, led unification\n\n**Bismarck's Policy:**\nOtto von Bismarck, Chief Minister of Prussia, believed unification could only be achieved through military force (Realpolitik).\n\n**Three Wars of Unification:**\n\n**1. Danish War (1864):** Prussia and Austria jointly fought Denmark over Schleswig-Holstein and won.\n\n**2. Austro-Prussian War (1866):** Prussia defeated Austria in just seven weeks, removing Austria from German affairs.\n\n**3. Franco-Prussian War (1870-71):** Prussia defeated France, and southern German states joined the North German Confederation.\n\n**Proclamation:**\nOn January 18, 1871, the German Empire was proclaimed in the Hall of Mirrors at Versailles. Prussian King Wilhelm I became German Kaiser, and Bismarck became Chancellor.\n\n**Significance:**\n- Germany became a powerful nation-state\n- Process showed dominance of Prussian military and bureaucracy\n- Set pattern for nationalist movements through 'top-down' approach",
+        "marking_points": ["Background of divided Germany", "Role of Bismarck", "Three wars with dates", "Proclamation at Versailles", "Significance - any 5 points well explained"]
+      },
+      {
+        "question": "What was the role of culture in shaping nationalism in Europe? Explain with examples.",
+        "marks": 5,
+        "answer": "Culture played a vital role in developing nationalist sentiment through Romanticism.\n\n**1. Romanticism:**\n- A cultural movement that rejected reason and science\n- Focused on emotions, intuition, and mystical feelings\n- Glorified shared collective heritage and common cultural past\n\n**2. Folk Culture:**\n- Folk songs, folk poetry, and folk dances were collected and popularized\n- Johann Gottfried Herder claimed true German culture was among common people (das Volk)\n- Grimm Brothers collected German fairy tales to preserve folk traditions\n\n**3. Language as Weapon:**\n- Polish was used as a weapon against Russian dominance\n- After 1831 uprising, Polish language was banned, but it continued in Church gatherings\n- Karol Kurpinski celebrated Polish national struggle through operas and music\n\n**4. National Symbols:**\n- Artists personified nations as female figures\n- Marianne represented France (liberty, republic)\n- Germania represented Germany (heroism, strength)\n\n**5. Music and Art:**\n- Composers created national music\n- Artists depicted national struggles and heroes\n- Romantic art and literature inspired patriotism\n\n**Conclusion:**\nCulture helped in imagining the nation when it did not exist in political reality, laying the foundation for nationalist movements.",
+        "marking_points": ["Romanticism definition", "Folk culture examples", "Language as weapon", "National symbols", "Music/Art - each point with example = 5 marks"]
+      },
+      {
+        "question": "Explain the significance of the Treaty of Vienna (1815).",
+        "marks": 3,
+        "answer": "The Treaty of Vienna of 1815 was signed after Napoleon's defeat to restore conservative order in Europe.\n\n**Key Provisions:**\n1. **Territorial Changes:** France lost territories acquired under Napoleon; Bourbon dynasty restored in France; Prussia got new western territories; Austria gained northern Italy.\n\n2. **Conservative Ideology:** The treaty aimed to preserve monarchy, Church, aristocracy, and traditional institutions; rejected ideas of democracy and revolution.\n\n3. **Balance of Power:** European powers tried to prevent any single nation from becoming too powerful; created buffer states around France.\n\n**Significance:**\nThe treaty tried to turn back the clock on revolutionary changes but could not suppress nationalist and liberal ideas permanently.",
+        "marking_points": ["Territorial changes", "Conservative ideology", "Balance of power concept", "1 mark each for well-explained points"]
+      },
+      {
+        "question": "How did the Balkans become the most serious source of nationalist tension in Europe?",
+        "marks": 5,
+        "answer": "The Balkans region became a source of intense nationalist tension in the late 19th and early 20th centuries.\n\n**1. Geographic Location:**\n- The Balkans comprised Romania, Bulgaria, Albania, Greece, Macedonia, Croatia, Bosnia-Herzegovina, Slovenia, Serbia, and Montenegro\n- Strategically located between Europe and Asia\n\n**2. Ottoman Decline:**\n- The region was under the weakening Ottoman Empire\n- As Ottoman power declined, Balkan peoples sought independence\n- Spread of romantic nationalism inspired various Slavic nationalities\n\n**3. Nationalist Claims:**\n- Each Balkan nationality claimed territory based on ethnic and historical boundaries\n- These claims overlapped, leading to conflicts\n- Serbia, Bulgaria, Greece, and other states competed for Ottoman territories\n\n**4. Great Power Rivalry:**\n- European powers (Russia, Germany, England, Austria-Hungary) competed for influence in the Balkans\n- Russia supported Slavic peoples; Austria-Hungary feared Slavic nationalism\n- Rivalries over trade routes, colonies, and strategic positions intensified\n\n**5. Consequences:**\n- Balkan Wars (1912-1913)\n- Assassination of Archduke Franz Ferdinand (1914) in Sarajevo\n- This triggered World War I (1914-1918)\n\n**Conclusion:**\nThe Balkans demonstrated how nationalism could lead to conflict when combined with imperial rivalries and competing territorial claims.",
+        "marking_points": ["Ottoman decline", "Nationalist claims", "Great power rivalry", "Consequences leading to WWI", "Well-structured answer with examples"]
+      },
+      {
+        "question": "What was the role of women in nationalist struggles?",
+        "marks": 3,
+        "answer": "Women played an active but largely unrecognized role in European nationalist movements.\n\n**1. Active Participation:**\n- Women participated in liberal and nationalist movements\n- They founded political associations and newspapers\n- Organized meetings and demonstrations\n\n**2. Denied Political Rights:**\n- Despite their contributions, women were denied voting rights\n- In the Frankfurt Parliament (1848), women could only stand in the visitors' gallery\n- Liberal politicians opposed extending suffrage to women\n\n**3. Symbolic Representation:**\n- Ironically, nations were often represented as female figures\n- Marianne (France) and Germania (Germany) were feminine allegories\n- But real women remained excluded from political power\n\n**Conclusion:**\nWomen's participation shows the contradiction in liberal nationalism - it fought for freedom but denied rights to half the population.",
+        "marking_points": ["Active participation", "Denied political rights with Frankfurt example", "Symbolic vs real representation contrast"]
+      },
+      {
+        "question": "What was the Napoleonic Code? How did it affect the regions conquered by Napoleon?",
+        "marks": 3,
+        "answer": "The Napoleonic Code (Civil Code of 1804) was a uniform civil law introduced by Napoleon.\n\n**Key Features:**\n1. Abolished privileges based on birth - all citizens became equal before law\n2. Secured right to property\n3. Removed guild restrictions - gave freedom to pursue any trade\n4. Simplified administrative divisions\n\n**Impact on Conquered Regions:**\n- The code was introduced in Dutch Republic, Switzerland, Italy, and German states\n- Initially welcomed by peasants (freed from serfdom), artisans (guild restrictions removed), and businessmen (uniform laws)\n- Later, people became hostile due to increased taxation, censorship, and forced conscription into French armies\n\n**Significance:**\nThe Code spread revolutionary principles across Europe but also created resentment against French rule.",
+        "marking_points": ["Features of code (any 2)", "Impact on conquered regions", "Initial welcome and later resentment"]
+      },
+      {
+        "question": "Describe the role of Giuseppe Mazzini in Italian unification.",
+        "marks": 5,
+        "answer": "Giuseppe Mazzini (1807-1872) was the ideological father of Italian unification, known as 'The Soul' of Italian nationalism.\n\n**Early Life and Ideology:**\n- Born in Genoa in 1807\n- Believed Italy should be united as a democratic republic\n- Opposed to monarchy and conservative nationalism\n- His ideas inspired young revolutionaries across Europe\n\n**Secret Societies:**\n- Joined the Carbonari secret society as a young man\n- Sent into exile for revolutionary activities\n- Founded **Young Italy** in Marseilles (1831) - a secret society to unite Italy\n- Founded **Young Europe** in Berne (1834) - to spread nationalism across Europe\n\n**Revolutionary Attempts:**\n- Organized uprisings in 1831 and 1848\n- Both attempts failed but kept the spirit of nationalism alive\n- His writings inspired thousands of young Italians\n\n**Impact:**\n- Metternich called him \"the most dangerous enemy of our social order\"\n- His ideas frightened conservative governments across Europe\n- Inspired similar movements in Germany, Poland, and Switzerland\n- Though unification came through monarchy (not republic), his ideological contribution was crucial\n\n**Conclusion:**\nMazzini provided the intellectual foundation for Italian nationalism, even though the actual unification was achieved by Cavour's diplomacy and Garibaldi's military action.",
+        "marking_points": ["Early life/ideology", "Secret societies formed", "Revolutionary attempts", "Impact on Europe", "Significance - each well-explained point"]
+      }
+    ],
+
+    "examiner_tips": "For 5-mark questions, always write introduction, 4-5 main points with explanations, and a brief conclusion. Use dates and names of key figures. For map questions, mark locations precisely and label clearly. Memory tricks should be used as aids, not written in answers.",
+
+    "mcqs": [
+      {
+        "question": "Which of the following did NOT happen as a result of the French Revolution?",
+        "marks": 1,
+        "options": ["French became the national language", "Regional dialects were encouraged", "Internal customs duties were abolished", "Uniform weights and measures were adopted"],
+        "answer": "b",
+        "difficulty": "E"
+      },
+      {
+        "question": "Who was called 'the most dangerous enemy of our social order' by Metternich?",
+        "marks": 1,
+        "options": ["Giuseppe Garibaldi", "Otto von Bismarck", "Giuseppe Mazzini", "Count Cavour"],
+        "answer": "c",
+        "difficulty": "E"
+      },
+      {
+        "question": "The Treaty of Vienna of 1815 was signed after the defeat of:",
+        "marks": 1,
+        "options": ["Louis XVI", "Napoleon Bonaparte", "Kaiser Wilhelm I", "Bismarck"],
+        "answer": "b",
+        "difficulty": "E"
+      },
+      {
+        "question": "Which of the following was NOT a feature of the Napoleonic Code?",
+        "marks": 1,
+        "options": ["Equality before law", "Abolition of birth-based privileges", "Right to vote for women", "Right to property"],
+        "answer": "c",
+        "difficulty": "M"
+      },
+      {
+        "question": "Young Italy was founded in 1831 in:",
+        "marks": 1,
+        "options": ["Rome", "Genoa", "Marseilles", "Berne"],
+        "answer": "c",
+        "difficulty": "M"
+      },
+      {
+        "question": "The German Empire was proclaimed in 1871 at:",
+        "marks": 1,
+        "options": ["Berlin", "Vienna", "Versailles", "Frankfurt"],
+        "answer": "c",
+        "difficulty": "M"
+      },
+      {
+        "question": "Garibaldi's famous expedition is known as:",
+        "marks": 1,
+        "options": ["The March of Thousand", "The Expedition of the Thousand", "The Red March", "The Italian March"],
+        "answer": "b",
+        "difficulty": "M"
+      },
+      {
+        "question": "Which of the following attributes was NOT associated with Germania?",
+        "marks": 1,
+        "options": ["Crown of oak leaves", "Sword", "Red cap", "Breastplate with eagle"],
+        "answer": "c",
+        "difficulty": "M"
+      },
+      {
+        "question": "The Frankfurt Parliament was held in:",
+        "marks": 1,
+        "options": ["1830", "1845", "1848", "1871"],
+        "answer": "c",
+        "difficulty": "E"
+      },
+      {
+        "question": "Which war was NOT part of German unification?",
+        "marks": 1,
+        "options": ["Danish War", "Austro-Prussian War", "Franco-Prussian War", "Crimean War"],
+        "answer": "d",
+        "difficulty": "M"
+      },
+      {
+        "question": "The Silesian weavers' revolt took place in:",
+        "marks": 1,
+        "options": ["1830", "1845", "1848", "1871"],
+        "answer": "b",
+        "difficulty": "H"
+      },
+      {
+        "question": "Who among the following is known as 'The Brain' of Italian unification?",
+        "marks": 1,
+        "options": ["Mazzini", "Garibaldi", "Victor Emmanuel II", "Count Cavour"],
+        "answer": "d",
+        "difficulty": "E"
+      },
+      {
+        "question": "Marianne was the female allegory of:",
+        "marks": 1,
+        "options": ["Germany", "France", "Italy", "Britain"],
+        "answer": "b",
+        "difficulty": "E"
+      },
+      {
+        "question": "The Grimm Brothers collected:",
+        "marks": 1,
+        "options": ["Polish folk songs", "German fairy tales", "French hymns", "Italian operas"],
+        "answer": "b",
+        "difficulty": "M"
+      },
+      {
+        "question": "Rome was added to unified Italy in:",
+        "marks": 1,
+        "options": ["1861", "1866", "1870", "1871"],
+        "answer": "c",
+        "difficulty": "M"
+      },
+      {
+        "question": "Who was the Chief Minister of Prussia who led German unification?",
+        "marks": 1,
+        "options": ["Kaiser Wilhelm I", "Frederick William IV", "Otto von Bismarck", "Metternich"],
+        "answer": "c",
+        "difficulty": "E"
+      },
+      {
+        "question": "Which cultural movement developed nationalist sentiment through emotions and folk traditions?",
+        "marks": 1,
+        "options": ["Enlightenment", "Romanticism", "Renaissance", "Reformation"],
+        "answer": "b",
+        "difficulty": "E"
+      },
+      {
+        "question": "The Balkans region became source of tension because:",
+        "marks": 1,
+        "options": ["Ottoman Empire was strengthening", "Only one nation claimed the territory", "Multiple nationalities claimed overlapping territories", "Great powers had no interest in the region"],
+        "answer": "c",
+        "difficulty": "M"
+      },
+      {
+        "question": "Victor Emmanuel II was declared King of United Italy in:",
+        "marks": 1,
+        "options": ["1859", "1860", "1861", "1870"],
+        "answer": "c",
+        "difficulty": "M"
+      },
+      {
+        "question": "The French tricolour represents:",
+        "marks": 1,
+        "options": ["Monarchy, Church, People", "Liberty, Equality, Fraternity", "Army, Navy, Air Force", "Past, Present, Future"],
+        "answer": "b",
+        "difficulty": "E"
+      }
+    ],
+
+    "assertion_reason": [
+      {
+        "question": "Assertion: Napoleon was viewed as a liberator by the common people initially.\nReason: Napoleon introduced the Civil Code that abolished birth-based privileges.",
+        "marks": 1,
+        "options": ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is not the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+        "answer": "a",
+        "difficulty": "M"
+      },
+      {
+        "question": "Assertion: The Treaty of Vienna tried to restore conservative order in Europe.\nReason: The treaty gave more power to democratic institutions.",
+        "marks": 1,
+        "options": ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is not the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+        "answer": "c",
+        "difficulty": "M"
+      },
+      {
+        "question": "Assertion: Language played an important role in developing nationalist sentiments.\nReason: Polish was used as a weapon against Russian dominance.",
+        "marks": 1,
+        "options": ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is not the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+        "answer": "a",
+        "difficulty": "M"
+      },
+      {
+        "question": "Assertion: Women had voting rights in the Frankfurt Parliament.\nReason: Liberal politicians supported extending political rights to women.",
+        "marks": 1,
+        "options": ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is not the correct explanation of A", "A is true but R is false", "Both A and R are false"],
+        "answer": "d",
+        "difficulty": "M"
+      },
+      {
+        "question": "Assertion: Germany was unified through wars.\nReason: Bismarck believed in the policy of 'Blood and Iron'.",
+        "marks": 1,
+        "options": ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is not the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+        "answer": "a",
+        "difficulty": "E"
+      },
+      {
+        "question": "Assertion: Mazzini's uprisings in 1831 and 1848 were successful.\nReason: Italy was united under Mazzini's leadership as a republic.",
+        "marks": 1,
+        "options": ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is not the correct explanation of A", "A is true but R is false", "Both A and R are false"],
+        "answer": "d",
+        "difficulty": "M"
+      },
+      {
+        "question": "Assertion: The Balkans became a source of big power rivalry.\nReason: Russia, Germany, England, and Austria-Hungary competed for control in the Balkans.",
+        "marks": 1,
+        "options": ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is not the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+        "answer": "a",
+        "difficulty": "E"
+      },
+      {
+        "question": "Assertion: Italia was united as a republic.\nReason: Mazzini wanted Italy to be a democratic republic.",
+        "marks": 1,
+        "options": ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is not the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+        "answer": "d",
+        "difficulty": "M"
+      },
+      {
+        "question": "Assertion: Romanticism rejected reason and science.\nReason: Romantics believed emotions and folk culture were the true basis of nationalism.",
+        "marks": 1,
+        "options": ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is not the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+        "answer": "a",
+        "difficulty": "M"
+      },
+      {
+        "question": "Assertion: The German Empire was proclaimed in France.\nReason: Prussia defeated France in the Franco-Prussian War of 1870-71.",
+        "marks": 1,
+        "options": ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is not the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+        "answer": "a",
+        "difficulty": "M"
+      }
+    ],
+
+    "short_answer": [
+      {
+        "question": "Explain any three features of the Napoleonic Code.",
+        "marks": 3,
+        "difficulty": "M"
+      },
+      {
+        "question": "What were the main provisions of the Treaty of Vienna of 1815?",
+        "marks": 3,
+        "difficulty": "M"
+      },
+      {
+        "question": "What was the role of women in nationalist struggles? Why were they denied political rights?",
+        "marks": 3,
+        "difficulty": "M"
+      },
+      {
+        "question": "Explain the concept of 'Conservatism' that emerged after 1815.",
+        "marks": 3,
+        "difficulty": "M"
+      },
+      {
+        "question": "What were the attributes of the allegory Germania?",
+        "marks": 3,
+        "difficulty": "E"
+      },
+      {
+        "question": "Why did the Frankfurt Parliament fail?",
+        "marks": 3,
+        "difficulty": "M"
+      },
+      {
+        "question": "How did language play a role in developing nationalist sentiments in Europe?",
+        "marks": 3,
+        "difficulty": "M"
+      },
+      {
+        "question": "Who was Karol Kurpinski? What was his contribution to Polish nationalism?",
+        "marks": 3,
+        "difficulty": "H"
+      }
+    ],
+
+    "long_answer": [
+      {
+        "question": "Describe the process of German unification under Bismarck.",
+        "marks": 5,
+        "difficulty": "M"
+      },
+      {
+        "question": "How was Italy unified? Discuss the role of Mazzini, Cavour, and Garibaldi.",
+        "marks": 5,
+        "difficulty": "M"
+      },
+      {
+        "question": "How did culture play an important role in shaping nationalism in Europe? Explain with examples.",
+        "marks": 5,
+        "difficulty": "M"
+      },
+      {
+        "question": "How did the Balkans become the most serious source of nationalist tension in Europe?",
+        "marks": 5,
+        "difficulty": "M"
+      },
+      {
+        "question": "Explain the impact of the French Revolution on Europe.",
+        "marks": 5,
+        "difficulty": "M"
+      }
+    ],
+
+    "hots": [
+      {
+        "question": "Why do you think Napoleon was initially welcomed but later resented in the conquered territories?",
+        "marks": 3,
+        "difficulty": "H",
+        "hint": "Think about reforms vs. exploitation (taxation, conscription)"
+      },
+      {
+        "question": "Compare the methods used to unify Germany and Italy. Which approach do you think was more effective and why?",
+        "marks": 5,
+        "difficulty": "H",
+        "hint": "Germany: military force, top-down. Italy: combination of ideology, diplomacy, and military"
+      },
+      {
+        "question": "Why did the 1848 revolutions fail despite widespread participation?",
+        "marks": 3,
+        "difficulty": "H",
+        "hint": "Consider: middle class fears, conservative regrouping, lack of coordination"
+      }
+    ],
+
+    "source_based": [
+      {
+        "passage": "\"The first clear expression of nationalism came with the French Revolution in 1789. France, as you would remember, was a full-fledged territorial state in 1789 under the rule of an absolute monarch. The political and constitutional changes that came in the wake of the French Revolution led to the transfer of sovereignty from the monarchy to a body of French citizens. The revolution proclaimed that it was the people who would henceforth constitute the nation and shape its destiny.\"",
+        "questions": [
+          {"question": "When did the first clear expression of nationalism come?", "marks": 1},
+          {"question": "Who ruled France in 1789?", "marks": 1},
+          {"question": "What changes did the French Revolution bring?", "marks": 2}
+        ],
+        "source": "NCERT Textbook"
+      },
+      {
+        "passage": "\"Ernst Renan, a French philosopher, delivered a speech in 1882 at the University of Sorbonne. In this speech, he criticised the notion suggested by others that a nation is formed by a common language, race, religion or territory: 'A nation is the culmination of a long past of endeavours, sacrifice and devotion... To have common glories in the past and to have a common will in the present; to have performed great deeds together, to wish to perform still more, these are the essential conditions of being a people.'\"",
+        "questions": [
+          {"question": "Who was Ernst Renan?", "marks": 1},
+          {"question": "What did Renan criticise?", "marks": 1},
+          {"question": "According to Renan, what are the essential conditions of being a people?", "marks": 2}
+        ],
+        "source": "NCERT Textbook"
+      },
+      {
+        "passage": "\"In 1848, Frédéric Sorrieu, a French artist, prepared a series of four prints visualising his dream of a world made up of 'democratic and social Republics'. The first print of the series shows the peoples of Europe and America... On the earth in the foreground lie the shattered remains of the symbols of absolutist institutions.\"",
+        "questions": [
+          {"question": "Who was Frédéric Sorrieu?", "marks": 1},
+          {"question": "What did his prints visualise?", "marks": 1},
+          {"question": "What is shown in the foreground?", "marks": 1},
+          {"question": "What does this symbolise?", "marks": 1}
+        ],
+        "source": "NCERT Textbook"
+      },
+      {
+        "passage": "\"During the years following 1815, the fear of repression drove many liberal-nationalists underground. Secret societies sprang up in many European states to train revolutionaries and spread their ideas. To be revolutionary at this time meant a commitment to oppose monarchical forms that had been established after the Vienna Congress, and to fight for liberty and freedom.\"",
+        "questions": [
+          {"question": "Why did liberal-nationalists go underground after 1815?", "marks": 1},
+          {"question": "What was the purpose of secret societies?", "marks": 1},
+          {"question": "What did being 'revolutionary' mean at this time?", "marks": 2}
+        ],
+        "source": "NCERT Textbook"
+      }
+    ],
+
+    "map_work_na": false,
+    "map_items": [
+      "Prussia (largest German state)",
+      "Austria-Hungary (major European power)",
+      "Sardinia-Piedmont (led Italian unification)",
+      "Kingdom of Two Sicilies (conquered by Garibaldi)",
+      "Venetia (added to Italy in 1866)",
+      "Rome (added to Italy in 1870)",
+      "France (Napoleon's empire)",
+      "Serbia (Balkan nation)",
+      "Greece (gained independence 1832)",
+      "Ottoman Empire (controlled Balkans)"
+    ],
+    "map_tips": "For German unification: Mark Prussia, Austria, and the location of Versailles. For Italian unification: Mark Sardinia-Piedmont, Kingdom of Two Sicilies, Venetia, and Rome. For Balkans: Mark Serbia, Greece, Bulgaria, and show the extent of Ottoman Empire.",
+
+    "quick_revision": {
+      "key_points": [
+        "French Revolution (1789) = First expression of nationalism",
+        "Napoleonic Code (1804) = Equal laws, property rights, abolished feudalism",
+        "Treaty of Vienna (1815) = Restored conservative order after Napoleon's defeat",
+        "Mazzini founded Young Italy (1831) and Young Europe (1834)",
+        "1848 = Year of revolutions; Frankfurt Parliament met",
+        "German unification (1871) = Three wars by Bismarck; proclaimed at Versailles",
+        "Italian unification (1861) = Mazzini (soul), Cavour (brain), Garibaldi (sword)",
+        "Marianne = France; Germania = Germany",
+        "Balkans = Source of WWI; multiple nations claimed same territories"
+      ],
+      "timeline": [
+        {"year": "1789", "event": "French Revolution begins; transfer of sovereignty from monarchy to citizens"},
+        {"year": "1797", "event": "Napoleon invades Italy; Napoleonic wars begin"},
+        {"year": "1804", "event": "Napoleonic Code (Civil Code) introduced"},
+        {"year": "1814-1815", "event": "Fall of Napoleon; Congress of Vienna"},
+        {"year": "1821", "event": "Greek struggle for independence begins"},
+        {"year": "1830", "event": "July Revolution in France; Belgium separates from Netherlands"},
+        {"year": "1831", "event": "Polish uprising against Russia crushed; Mazzini founds Young Italy"},
+        {"year": "1832", "event": "Treaty of Constantinople; Greece recognized as independent"},
+        {"year": "1834", "event": "Zollverein (customs union) formed in Germany; Young Europe founded"},
+        {"year": "1845", "event": "Silesian weavers revolt in Germany"},
+        {"year": "1848", "event": "Revolutions across Europe; Frankfurt Parliament meets"},
+        {"year": "1859", "event": "Sardinia-Piedmont defeats Austria with French help"},
+        {"year": "1860", "event": "Garibaldi conquers South Italy with Red Shirts"},
+        {"year": "1861", "event": "Victor Emmanuel II declared King of united Italy"},
+        {"year": "1866", "event": "Prussia defeats Austria in war; Venetia added to Italy"},
+        {"year": "1867", "event": "North German Confederation formed"},
+        {"year": "1870", "event": "Prussia defeats France; Rome joins Italy"},
+        {"year": "1871", "event": "German Empire proclaimed at Versailles; William I becomes Kaiser"},
+        {"year": "1914", "event": "First World War begins (triggered by Balkan tensions)"}
+      ],
+      "glossary": [
+        {"term": "Nationalism", "definition": "Political ideology that believes in the creation of nation-states based on common identity"},
+        {"term": "Nation-state", "definition": "A sovereign state whose citizens share common identity, language, or culture"},
+        {"term": "Conservatism", "definition": "Political philosophy favoring traditional institutions - monarchy, Church, aristocracy"},
+        {"term": "Liberalism", "definition": "Political philosophy favoring individual freedom, constitutional government, and equality before law"},
+        {"term": "Romanticism", "definition": "Cultural movement emphasizing emotions, folk traditions, and national culture"},
+        {"term": "Allegory", "definition": "Expressing an abstract idea through a concrete image (Marianne, Germania)"},
+        {"term": "Plebiscite", "definition": "Direct vote by all citizens on an important public question"},
+        {"term": "Junkers", "definition": "Large landowners of Prussia"},
+        {"term": "Das Volk", "definition": "The common people; true spirit of nation according to Herder"},
+        {"term": "Realpolitik", "definition": "Practical politics based on power rather than ideals (Bismarck's policy)"},
+        {"term": "Zollverein", "definition": "Customs union formed among German states in 1834 to promote economic unity"}
+      ],
+      "memory_tricks": [
+        "**FLAT-CUN** (French Revolution measures): Flag, Language, Anthem, Tricolour, Customs abolished, Uniform laws, National Assembly",
+        "**PEACE** (Napoleonic Code): Property rights, Equality, Administrative simplification, Censorship of feudal privileges, Economic freedom",
+        "**BRAN-PS** (Treaty of Vienna): Britain-Netherlands, Russia-Poland, Austria-N.Italy, Napoleon's 39 states, Prussia-west, Spain-Bourbon",
+        "**MAGIC-B** (Italian Unification): Mazzini, Alliance with France, Garibaldi, Italy united, Cavour, Blood and Iron not used",
+        "**BOSCO-RT** (Germania attributes): Breastplate eagle, Oak crown, Sword, Crown, Olive branch, Rays of sun, Tricolour (Marianne)",
+        "**BAGS-MCR** (Balkan nations): Bulgaria, Albania, Greece, Serbia, Macedonia, Croatia, Romania",
+        "**1831** = Young Italy; **1834** = Young Europe (3 before 4)",
+        "**MCS** for Italian unification roles: Mazzini=Mind/Soul, Cavour=Calculator/Brain, Sword=Garibaldi"
+      ]
+    },
+
+    "time_allocation": [
+      {"type": "MCQs (20)", "marks": "20", "time": "20 minutes"},
+      {"type": "Source-based (4)", "marks": "16", "time": "20 minutes"},
+      {"type": "Short Answer (5)", "marks": "15", "time": "25 minutes"},
+      {"type": "Long Answer (3)", "marks": "15", "time": "25 minutes"},
+      {"type": "Map Work", "marks": "5", "time": "5 minutes"},
+      {"type": "Revision/Buffer", "marks": "-", "time": "5 minutes"}
+    ],
+
+    "common_mistakes_exam": [
+      {"mistake": "Writing only names without dates", "correction": "Always mention year with events (e.g., 'German Empire proclaimed in 1871')"},
+      {"mistake": "Confusing Mazzini and Garibaldi", "correction": "Mazzini = ideologue/soul (Young Italy), Garibaldi = military leader/sword (Expedition of Thousand)"},
+      {"mistake": "Writing general answers without specific examples", "correction": "Use specific examples: Grimm Brothers for folk culture, Karol Kurpinski for Polish nationalism"},
+      {"mistake": "Incomplete map marking", "correction": "Label all required locations clearly with proper spelling"},
+      {"mistake": "Not structuring long answers", "correction": "Use: Introduction → Main points (numbered) → Conclusion format"},
+      {"mistake": "Missing the 'why' in answers", "correction": "Don't just state facts; explain significance and impact"}
+    ],
+
+    "examiner_pro_tips": [
+      "For 5-mark questions: Write 5 distinct points with examples; add brief introduction and conclusion",
+      "For 3-mark questions: 3 well-explained points are sufficient; don't write essays",
+      "Use keywords from NCERT: 'first clear expression', 'most dangerous enemy', 'blood and iron'",
+      "In map questions: Use pencil first, then pen; write location names clearly",
+      "Source-based: Answers should come from the passage AND your knowledge",
+      "Time management: Don't spend more than 10 minutes on any single question",
+      "Attempt all questions; partial marks are given for partially correct answers"
+    ],
+
+    "self_assessment_checklist": [
+      "Can I explain the role of French Revolution in nationalism?",
+      "Do I know all features of the Napoleonic Code?",
+      "Can I describe the Treaty of Vienna provisions?",
+      "Do I remember Mazzini's contributions and organizations?",
+      "Can I explain German unification with three wars and dates?",
+      "Can I explain Italian unification with three key figures?",
+      "Do I know attributes of Marianne and Germania?",
+      "Can I explain why Balkans became a source of tension?",
+      "Do I remember all key dates (1789, 1815, 1848, 1861, 1871)?",
+      "Can I mark required locations on the map?"
+    ],
+
+    "enabled_parts": ["A", "B", "C", "D", "E", "F", "G"],
+    "page_size": "A4",
+    "add_page_numbers": true,
+    "page_number_position": "Bottom Center"
+  }
+}

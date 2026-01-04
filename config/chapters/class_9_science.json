@@ -1,0 +1,100 @@
+{
+  "chapters": [
+    {
+      "number": 1,
+      "title": "Matter in Our Surroundings",
+      "unit": "Matter",
+      "weightage": "5-6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 2,
+      "title": "Is Matter Around Us Pure",
+      "unit": "Matter",
+      "weightage": "5-6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 3,
+      "title": "Atoms and Molecules",
+      "unit": "Matter",
+      "weightage": "6-7 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 4,
+      "title": "Structure of the Atom",
+      "unit": "Matter",
+      "weightage": "6-7 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 5,
+      "title": "The Fundamental Unit of Life",
+      "unit": "Organisation in Living World",
+      "weightage": "6-7 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 6,
+      "title": "Tissues",
+      "unit": "Organisation in Living World",
+      "weightage": "5-6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 7,
+      "title": "Motion",
+      "unit": "Motion, Force and Work",
+      "weightage": "7-8 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 8,
+      "title": "Force and Laws of Motion",
+      "unit": "Motion, Force and Work",
+      "weightage": "7-8 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 9,
+      "title": "Gravitation",
+      "unit": "Motion, Force and Work",
+      "weightage": "5-6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 10,
+      "title": "Work and Energy",
+      "unit": "Motion, Force and Work",
+      "weightage": "6-7 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 11,
+      "title": "Sound",
+      "unit": "Motion, Force and Work",
+      "weightage": "5-6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 12,
+      "title": "Improvement in Food Resources",
+      "unit": "Food Production",
+      "weightage": "4-5 Marks",
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    }
+  ]
+}

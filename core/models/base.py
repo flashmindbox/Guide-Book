@@ -151,12 +151,56 @@ class ChapterData(BaseModel):
     competency_based: List[QuestionItem] = Field(default_factory=list)
 
     # =========================================================================
-    # PART E: MAP WORK
+    # PART E: MAP WORK (History, Geography)
     # =========================================================================
     map_work_na: bool = Field(default=False)
     map_items: List[str] = Field(default_factory=list)
     map_image_path: Optional[str] = Field(default=None)
     map_tips: Optional[str] = Field(default=None)
+
+    # =========================================================================
+    # PART E: CONSTITUTIONAL ARTICLES (Political Science)
+    # =========================================================================
+    constitutional_articles: Optional[List[Dict[str, Any]]] = Field(
+        default=None,
+        description="List of constitutional articles with article_number, title, description, key_points, case_studies"
+    )
+    constitutional_amendments: Optional[List[Dict[str, Any]]] = Field(
+        default=None,
+        description="List of amendments with number, description, year"
+    )
+
+    # =========================================================================
+    # PART E: GRAPHS & DATA (Economics)
+    # =========================================================================
+    graphs_data: Optional[List[Dict[str, Any]]] = Field(
+        default=None,
+        description="List of graphs with title, description, data_points, analysis, image_path"
+    )
+
+    # =========================================================================
+    # PART E: FORMULA SHEET (Mathematics, Physics)
+    # =========================================================================
+    formulas_data: Optional[List[Dict[str, Any]]] = Field(
+        default=None,
+        description="List of formulas with category, name, formula, variables, example"
+    )
+
+    # =========================================================================
+    # PART E: GRAMMAR FOCUS (English)
+    # =========================================================================
+    grammar_data: Optional[List[Dict[str, Any]]] = Field(
+        default=None,
+        description="List of grammar rules with topic, rule, examples, common_mistakes, practice"
+    )
+
+    # =========================================================================
+    # PART E: LAB MANUAL (Science, Chemistry, Biology)
+    # =========================================================================
+    lab_activities: Optional[List[Dict[str, Any]]] = Field(
+        default=None,
+        description="List of experiments with name, aim, materials, procedure, observations, conclusion, precautions, diagram"
+    )
 
     # =========================================================================
     # PART F: QUICK REVISION

@@ -9,6 +9,10 @@ from pathlib import Path
 from threading import Timer
 from typing import Optional
 
+from .logger import get_logger
+
+logger = get_logger(__name__)
+
 
 class AutoSaveManager:
     """Manages throttled auto-save functionality."""
@@ -48,8 +52,9 @@ class AutoSaveManager:
             with open(filepath, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
             self.last_save_time = time.time()
+            logger.debug("Auto-saved to %s", filepath)
         except Exception as e:
-            print(f"Auto-save error: {e}")
+            logger.error("Auto-save failed for '%s': %s", filepath, e)
 
     def _queue_save(self, data: dict, filename: str):
         """Queue a save for later execution."""
@@ -105,7 +110,7 @@ class AutoSaveManager:
             with open(filepath, 'r', encoding='utf-8') as f:
                 return json.load(f)
         except Exception as e:
-            print(f"Load error: {e}")
+            logger.warning("Failed to load autosave file '%s': %s", filepath, e)
             return None
 
     def delete(self, filename: str) -> bool:
@@ -115,8 +120,9 @@ class AutoSaveManager:
         try:
             if filepath.exists():
                 filepath.unlink()
+                logger.debug("Deleted autosave file: %s", filepath)
                 return True
         except Exception as e:
-            print(f"Delete error: {e}")
+            logger.warning("Failed to delete autosave file '%s': %s", filepath, e)
 
         return False

@@ -14,7 +14,7 @@ from docx.oxml.ns import qn
 from docx.shared import Inches, Pt
 from docx.table import Table, _Cell
 
-from styles.theme import BoxStyles, Colors, Fonts, Spacing
+from styles.theme import BoxStyles, Colors, Fonts, Icons, Spacing
 
 
 class DocxHelpers:
@@ -738,7 +738,7 @@ class DocxHelpers:
         BOOK STANDARD:
         - Light orange background (#FFF7ED)
         - Orange left border (#D97706)
-        - Icon: 💡
+        - Icon: ★ (Icons.TIP)
         - Title: "Did You Know?"
         """
         table = document.add_table(rows=1, cols=1)
@@ -758,7 +758,7 @@ class DocxHelpers:
 
         # Title
         para = cell.paragraphs[0]
-        run = para.add_run("💡 ")
+        run = para.add_run(f"{Icons.TIP} ")
         run.font.size = Fonts.SIZE_BODY
 
         run = para.add_run("Did You Know? ")

@@ -114,26 +114,34 @@ class Colors:
         """Generate CSS :root block with all color variables."""
         return f"""
         :root {{
+            /* Primary colors */
             --primary-blue: {cls.PRIMARY_BLUE};
+            --heading-blue: {cls.HEADING_BLUE};
             --accent-red: {cls.ACCENT_RED};
+            --year-red: {cls.YEAR_RED};
             --body-text: {cls.BODY_TEXT};
             --success-green: {cls.SUCCESS_GREEN};
             --warning-orange: {cls.WARNING_ORANGE};
+
+            /* Grayscale */
             --light-gray: {cls.LIGHT_GRAY};
             --dark-gray: {cls.DARK_GRAY};
             --white: {cls.WHITE};
             --black: {cls.BLACK};
 
+            /* Background colors */
             --bg-info: {cls.BG_INFO};
             --bg-tip: {cls.BG_TIP};
             --bg-warning: {cls.BG_WARNING};
             --bg-neutral: {cls.BG_NEUTRAL};
 
+            /* Border colors */
             --border-info: {cls.BORDER_INFO};
             --border-tip: {cls.BORDER_TIP};
             --border-warning: {cls.BORDER_WARNING};
             --border-neutral: {cls.BORDER_NEUTRAL};
 
+            /* Table colors */
             --table-header-bg: {cls.TABLE_HEADER_BG};
             --table-alt-row: {cls.TABLE_ALT_ROW};
         }}

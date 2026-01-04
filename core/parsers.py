@@ -8,7 +8,10 @@ import re
 from io import BytesIO
 from typing import Any, Dict, List, Optional, Tuple
 
+from utils.logger import get_logger
 from .models.base import ChapterData
+
+logger = get_logger(__name__)
 
 
 class ImportResult:
@@ -164,7 +167,8 @@ class DocxParser:
             # Parse the content
             return DocxParser._extract_chapter_data(text_content)
 
-        except Exception:
+        except Exception as e:
+            logger.warning("Failed to parse DOCX file: %s", e)
             return None
 
     @staticmethod
@@ -270,7 +274,8 @@ class DocxParser:
                 return parser_func(text_content)
             return {}
 
-        except Exception:
+        except Exception as e:
+            logger.warning("Failed to parse DOCX section '%s': %s", section, e)
             return {}
 
     @staticmethod
@@ -680,8 +685,41 @@ class DocxParser:
 class PdfParser:
     """Parse PDF files to extract chapter data."""
 
+    # Track if last parse failure was due to missing dependencies
+    _last_failure_missing_deps: bool = False
+
     @staticmethod
-    def parse(file_bytes: bytes) -> Optional[ChapterData]:
+    def is_available() -> bool:
+        """Check if PDF parsing dependencies are installed."""
+        try:
+            import fitz  # PyMuPDF
+            return True
+        except ImportError:
+            pass
+
+        try:
+            import pdfplumber
+            return True
+        except ImportError:
+            pass
+
+        return False
+
+    @staticmethod
+    def get_missing_dependency_message() -> str:
+        """Get user-friendly message about missing PDF dependencies."""
+        return (
+            "PDF import requires PyMuPDF or pdfplumber.\n"
+            "Install with: `pip install pymupdf` or `pip install pdfplumber`"
+        )
+
+    @classmethod
+    def was_missing_deps(cls) -> bool:
+        """Check if the last parse failure was due to missing dependencies."""
+        return cls._last_failure_missing_deps
+
+    @classmethod
+    def parse(cls, file_bytes: bytes) -> Optional[ChapterData]:
         """
         Parse a PDF file and extract chapter data.
 
@@ -691,6 +729,9 @@ class PdfParser:
         Returns:
             ChapterData object if successful, None otherwise
         """
+        # Reset the missing deps flag
+        cls._last_failure_missing_deps = False
+
         try:
             # Try PyMuPDF first
             try:
@@ -713,12 +754,15 @@ class PdfParser:
                             text_content += page.extract_text() or ""
 
                 except ImportError:
+                    # Neither library is available
+                    cls._last_failure_missing_deps = True
                     return None
 
             # Use the same extraction logic as DOCX
             return DocxParser._extract_chapter_data(text_content)
 
-        except Exception:
+        except Exception as e:
+            logger.warning("Failed to parse PDF file: %s", e)
             return None
 
 
@@ -739,7 +783,8 @@ class MarkdownParser:
         try:
             text = file_bytes.decode('utf-8')
             return MarkdownParser._extract_chapter_data(text)
-        except Exception:
+        except Exception as e:
+            logger.warning("Failed to parse Markdown file: %s", e)
             return None
 
     @staticmethod
@@ -1144,6 +1189,7 @@ def parse_section(file_bytes: bytes, file_type: str, section: str) -> Dict[str, 
             }
             parser_func = parsers.get(section)
             return parser_func(text) if parser_func else {}
-        except Exception:
+        except Exception as e:
+            logger.warning("Failed to parse PDF section '%s': %s", section, e)
             return {}
     return {}

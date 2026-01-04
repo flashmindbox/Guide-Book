@@ -3,12 +3,15 @@ PDF conversion for Guide Book Generator.
 Converts DOCX files or HTML to PDF format.
 """
 
+import logging
 import os
 import sys
 import tempfile
 from io import BytesIO
 from pathlib import Path
 from typing import Optional, Tuple
+
+logger = logging.getLogger(__name__)
 
 
 class PDFConverter:
@@ -50,6 +53,15 @@ class PDFConverter:
         return False, "none"
 
     @staticmethod
+    def get_missing_dependency_message() -> str:
+        """Get user-friendly message about missing PDF conversion dependencies."""
+        return (
+            "PDF conversion requires docx2pdf or LibreOffice.\n"
+            "Install with: `pip install docx2pdf` (requires MS Word) "
+            "or install LibreOffice for cross-platform support."
+        )
+
+    @staticmethod
     def _find_libreoffice() -> Optional[str]:
         """Find LibreOffice executable."""
         possible_paths = []
@@ -84,6 +96,10 @@ class PDFConverter:
         available, method = cls.is_available()
 
         if not available:
+            logger.warning(
+                "PDF conversion unavailable: %s",
+                cls.get_missing_dependency_message()
+            )
             return None
 
         if method == "docx2pdf":
@@ -106,6 +122,10 @@ class PDFConverter:
         available, method = cls.is_available()
 
         if not available:
+            logger.warning(
+                "PDF conversion unavailable: %s",
+                cls.get_missing_dependency_message()
+            )
             return None
 
         try:
@@ -116,7 +136,7 @@ class PDFConverter:
             elif method == "libreoffice":
                 return cls._convert_file_with_libreoffice(docx_path, pdf_path)
         except Exception as e:
-            print(f"PDF conversion error: {e}")
+            logger.error("PDF conversion error: %s", e)
 
         return None
 
@@ -147,7 +167,7 @@ class PDFConverter:
             return pdf_bytes
 
         except Exception as e:
-            print(f"docx2pdf conversion error: {e}")
+            logger.error("docx2pdf conversion error: %s", e)
             return None
 
     @classmethod
@@ -184,7 +204,7 @@ class PDFConverter:
                         return f.read()
 
         except Exception as e:
-            print(f"LibreOffice conversion error: {e}")
+            logger.error("LibreOffice conversion error: %s", e)
 
         return None
 
@@ -218,7 +238,7 @@ class PDFConverter:
                 return pdf_path
 
         except Exception as e:
-            print(f"LibreOffice conversion error: {e}")
+            logger.error("LibreOffice conversion error: %s", e)
 
         return None
 
@@ -249,7 +269,7 @@ class PDFConverter:
 
             # Check if conversion was successful
             if pisa_status.err:
-                print(f"xhtml2pdf conversion error: {pisa_status.err}")
+                logger.error("xhtml2pdf conversion error: %s", pisa_status.err)
                 return None
 
             # Get the PDF bytes
@@ -257,8 +277,8 @@ class PDFConverter:
             return pdf_buffer.read()
 
         except ImportError:
-            print("xhtml2pdf not installed. Run: pip install xhtml2pdf")
+            logger.warning("xhtml2pdf not installed. Run: pip install xhtml2pdf")
             return None
         except Exception as e:
-            print(f"HTML to PDF conversion error: {e}")
+            logger.error("HTML to PDF conversion error: %s", e)
             return None

@@ -1496,7 +1496,7 @@ def render_import_export():
                     # DOCX or PDF import
                     if st.button("Import", type="primary", use_container_width=True):
                         try:
-                            from core.parsers import parse_document
+                            from core.parsers import parse_document, PdfParser
 
                             file_bytes = uploaded.read()
                             chapter_data = parse_document(file_bytes, file_type)
@@ -1526,6 +1526,9 @@ def render_import_export():
                                 st.session_state.current_page = 'cover'
                                 st.rerun()
                             else:
+                                # Check if failure was due to missing PDF dependencies
+                                if file_type == 'pdf' and PdfParser.was_missing_deps():
+                                    st.warning(PdfParser.get_missing_dependency_message())
                                 st.error(f"Failed to parse {file_type.upper()} file. The document format may not be recognized.")
 
                         except Exception as e:

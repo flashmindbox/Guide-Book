@@ -8,7 +8,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Pt
 
 from core.models.base import ChapterData
-from styles.theme import Colors, Fonts
+from styles.theme import Colors, Fonts, Icons
 
 from ..helpers import DocxHelpers
 
@@ -438,7 +438,7 @@ class PartDGenerator:
                 para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
                 para.paragraph_format.space_after = Pt(3)
 
-                run = para.add_run("💡 Hint: ")
+                run = para.add_run(f"{Icons.TIP} Hint: ")
                 run.font.name = Fonts.PRIMARY
                 run.font.size = Pt(10)
                 run.font.bold = True

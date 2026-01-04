@@ -8,7 +8,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Pt
 
 from core.models.base import ChapterData
-from styles.theme import Colors, Fonts
+from styles.theme import Colors, Fonts, Icons
 
 from ..helpers import DocxHelpers
 
@@ -69,7 +69,7 @@ class PartFGenerator:
         para.paragraph_format.space_before = Pt(12)
         para.paragraph_format.space_after = Pt(6)
 
-        run = para.add_run("📝 Key Points Summary")
+        run = para.add_run(f"{Icons.PENCIL} Key Points Summary")
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(14)
         run.font.bold = True
@@ -159,7 +159,7 @@ class PartFGenerator:
         para.paragraph_format.space_before = Pt(18)
         para.paragraph_format.space_after = Pt(6)
 
-        run = para.add_run("📅 Important Dates Timeline")
+        run = para.add_run(f"{Icons.CALENDAR} Important Dates Timeline")
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(14)
         run.font.bold = True
@@ -201,7 +201,7 @@ class PartFGenerator:
         para.paragraph_format.space_before = Pt(18)
         para.paragraph_format.space_after = Pt(6)
 
-        run = para.add_run("💡 Memory Tricks Compilation")
+        run = para.add_run(f"{Icons.TIP} Memory Tricks Compilation")
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(14)
         run.font.bold = True
@@ -212,7 +212,7 @@ class PartFGenerator:
             para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
             para.paragraph_format.space_after = Pt(6)
 
-            run = para.add_run("💡 ")
+            run = para.add_run(f"{Icons.TIP} ")
             run.font.name = Fonts.PRIMARY
 
             run = para.add_run(trick)
@@ -227,7 +227,7 @@ class PartFGenerator:
         para.alignment = WD_ALIGN_PARAGRAPH.CENTER
         para.paragraph_format.space_before = Pt(24)
 
-        run = para.add_run("⭐ You've got this! Trust your preparation. Good luck! ⭐")
+        run = para.add_run(f"{Icons.STAR} You've got this! Trust your preparation. Good luck! {Icons.STAR}")
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(12)
         run.font.bold = True

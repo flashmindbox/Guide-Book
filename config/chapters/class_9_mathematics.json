@@ -1,0 +1,100 @@
+{
+  "chapters": [
+    {
+      "number": 1,
+      "title": "Number Systems",
+      "unit": "Number Systems",
+      "weightage": "8 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 2,
+      "title": "Polynomials",
+      "unit": "Algebra",
+      "weightage": "6-7 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 3,
+      "title": "Coordinate Geometry",
+      "unit": "Coordinate Geometry",
+      "weightage": "4 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 4,
+      "title": "Linear Equations in Two Variables",
+      "unit": "Algebra",
+      "weightage": "5-6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 5,
+      "title": "Introduction to Euclid's Geometry",
+      "unit": "Geometry",
+      "weightage": "4-5 Marks",
+      "importance": "Medium",
+      "pyq_frequency": "High"
+    },
+    {
+      "number": 6,
+      "title": "Lines and Angles",
+      "unit": "Geometry",
+      "weightage": "6-7 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 7,
+      "title": "Triangles",
+      "unit": "Geometry",
+      "weightage": "7-8 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 8,
+      "title": "Quadrilaterals",
+      "unit": "Geometry",
+      "weightage": "6-7 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 9,
+      "title": "Circles",
+      "unit": "Geometry",
+      "weightage": "5-6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 10,
+      "title": "Heron's Formula",
+      "unit": "Mensuration",
+      "weightage": "5-6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 11,
+      "title": "Surface Areas and Volumes",
+      "unit": "Mensuration",
+      "weightage": "7-8 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    },
+    {
+      "number": 12,
+      "title": "Statistics",
+      "unit": "Statistics",
+      "weightage": "6 Marks",
+      "importance": "High",
+      "pyq_frequency": "Every Year"
+    }
+  ]
+}

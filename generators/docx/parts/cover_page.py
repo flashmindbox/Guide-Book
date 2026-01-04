@@ -11,7 +11,7 @@ from docx.shared import Inches, Pt
 
 from core.models.base import ChapterData
 from core.models.parts import PartManager
-from styles.theme import Colors, Fonts
+from styles.theme import Colors, Fonts, Icons
 
 
 class CoverPageGenerator:
@@ -179,7 +179,7 @@ class CoverPageGenerator:
         para = self.document.add_paragraph()
         para.paragraph_format.space_before = Pt(18)
         para.paragraph_format.space_after = Pt(6)
-        run = para.add_run("🎯 Learning Objectives")
+        run = para.add_run(f"{Icons.TARGET} Learning Objectives")
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(14)
         run.font.bold = True
@@ -208,7 +208,7 @@ class CoverPageGenerator:
         para = self.document.add_paragraph()
         para.paragraph_format.space_before = Pt(18)
         para.paragraph_format.space_after = Pt(6)
-        run = para.add_run("📑 Chapter Contents")
+        run = para.add_run(f"{Icons.BOOK} Chapter Contents")
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(14)
         run.font.bold = True

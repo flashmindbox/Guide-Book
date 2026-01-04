@@ -1,7 +1,7 @@
 [project]
 name = "guide-book-generator"
 version = "1.0.0"
-description = "CBSE Study Guide Generator for Class 10 Social Science"
+description = "CBSE Study Guide Generator for Class 9-12"
 requires-python = ">=3.9"
 
 [tool.ruff]
@@ -22,6 +22,13 @@ ignore = [
 "app.py" = ["E402", "E501"]
 "ui/components/preview.py" = ["E501"]  # HTML templates have long lines
 "generators/pdf/converter.py" = ["F401"]  # Conditional imports for optional dependencies
+
+[project.scripts]
+# Development commands (run via: python -m guide_book_generator.<command>)
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
