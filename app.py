@@ -20,7 +20,7 @@ st.set_page_config(
 
 # Import modules
 from config.constants import APP_VERSION, AUTOSAVE_DIR
-from config.subjects import load_chapters
+from config.subjects import load_chapters, get_categories_with_subjects, get_subject_config, get_subject_display_name, get_subject_icon
 from core.models.base import ConceptItem, ModelAnswer, PYQItem, QuestionItem
 from core.progress import ProgressTracker
 from core.session import SessionManager
@@ -95,7 +95,9 @@ def render_sidebar():
         data = SessionManager.get_chapter_data()
         if data:
             st.subheader("📖 Current Chapter")
-            st.write(f"**Class {data.class_num}** | {data.subject.replace('_', ' ').title()}")
+            subject_icon = get_subject_icon(data.subject)
+            subject_name = get_subject_display_name(data.subject)
+            st.write(f"**Class {data.class_num}** | {subject_icon} {subject_name}")
             st.write(f"**Ch {data.chapter_number}:** {data.chapter_title[:30]}...")
 
             # Progress
@@ -276,12 +278,29 @@ def render_home_page():
         # Class selection
         class_num = st.selectbox("Select Class", [10, 9], key="new_class")
 
-        # Subject selection
-        subjects = ['history', 'geography', 'political_science', 'economics']
-        subject_names = [s.replace('_', ' ').title() for s in subjects]
-        subject_idx = st.selectbox("Select Subject", range(len(subjects)),
-                                   format_func=lambda x: subject_names[x], key="new_subject")
-        subject = subjects[subject_idx]
+        # Subject Category selection
+        categories = get_categories_with_subjects()
+        category_names = list(categories.keys())
+        category_display = [f"{categories[c]['icon']} {c}" for c in category_names]
+
+        selected_cat_idx = st.selectbox(
+            "Select Subject Category",
+            range(len(category_names)),
+            format_func=lambda x: category_display[x],
+            key="new_category"
+        )
+        selected_category = category_names[selected_cat_idx]
+
+        # Subject selection within category
+        cat_subjects = categories[selected_category]['subjects']
+        subject_display = [f"{s['icon']} {s['name']}" for s in cat_subjects]
+        subject_idx = st.selectbox(
+            "Select Subject",
+            range(len(cat_subjects)),
+            format_func=lambda x: subject_display[x],
+            key="new_subject"
+        )
+        subject = cat_subjects[subject_idx]['id']
 
         # Chapter selection
         chapters = load_chapters(class_num, subject)
