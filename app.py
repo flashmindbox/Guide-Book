@@ -27,7 +27,7 @@ from core.models.parts import PartManager
 from core.session import SessionManager
 from core.progress import ProgressTracker
 from styles.theme import Colors, Weightage, Importance, PYQFrequency
-from ui.components.preview import PreviewRenderer, show_preview_panel
+from ui.components.preview import PreviewRenderer, show_preview_panel, show_generate_docx_button
 from ui.components.navigation import (
     inject_custom_css, render_breadcrumb, render_next_prev_buttons,
     PAGE_INFO, WORKFLOW_ORDER
@@ -549,6 +549,10 @@ def render_cover_page():
     st.divider()
     show_preview_panel(data)
 
+    # Generate DOCX button
+    st.divider()
+    show_generate_docx_button(data, SessionManager.get_part_manager())
+
     # Next/Previous navigation
     st.divider()
     new_page = render_next_prev_buttons('cover')
@@ -645,6 +649,10 @@ def render_part_a():
     st.divider()
     show_preview_panel(data, part_id='A')
 
+    # Generate DOCX button
+    st.divider()
+    show_generate_docx_button(data, SessionManager.get_part_manager())
+
     # Next/Previous navigation
     st.divider()
     new_page = render_next_prev_buttons('part_a')
@@ -724,6 +732,10 @@ def render_part_b():
     st.divider()
     show_preview_panel(data, part_id='B')
 
+    # Generate DOCX button
+    st.divider()
+    show_generate_docx_button(data, SessionManager.get_part_manager())
+
     # Next/Previous navigation
     st.divider()
     new_page = render_next_prev_buttons('part_b')
@@ -791,6 +803,10 @@ def render_part_c():
     st.divider()
     show_preview_panel(data, part_id='C')
 
+    # Generate DOCX button
+    st.divider()
+    show_generate_docx_button(data, SessionManager.get_part_manager())
+
     # Next/Previous navigation
     st.divider()
     new_page = render_next_prev_buttons('part_c')
@@ -830,6 +846,10 @@ def render_part_d():
     # Preview panel
     st.divider()
     show_preview_panel(data, part_id='D')
+
+    # Generate DOCX button
+    st.divider()
+    show_generate_docx_button(data, SessionManager.get_part_manager())
 
     # Next/Previous navigation
     st.divider()
@@ -985,6 +1005,10 @@ def render_part_e():
     st.divider()
     show_preview_panel(data, part_id='E')
 
+    # Generate DOCX button
+    st.divider()
+    show_generate_docx_button(data, SessionManager.get_part_manager())
+
     # Next/Previous navigation
     st.divider()
     new_page = render_next_prev_buttons('part_e')
@@ -1048,6 +1072,10 @@ def render_part_f():
     # Preview panel
     st.divider()
     show_preview_panel(data, part_id='F')
+
+    # Generate DOCX button
+    st.divider()
+    show_generate_docx_button(data, SessionManager.get_part_manager())
 
     # Next/Previous navigation
     st.divider()
@@ -1139,6 +1167,10 @@ def render_part_g():
     # Preview panel
     st.divider()
     show_preview_panel(data, part_id='G')
+
+    # Generate DOCX button
+    st.divider()
+    show_generate_docx_button(data, SessionManager.get_part_manager())
 
     # Next/Previous navigation
     st.divider()
