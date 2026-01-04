@@ -185,13 +185,12 @@ class PreviewRenderer:
             font-size: 10pt;
         }}
         .preview-dyk {{
-            background: #FFF7ED;
-            border-left: 3px solid #D97706;
+            background: #F3F4F6;
             padding: 10px 15px;
             margin: 10px 0;
         }}
         .preview-dyk-label {{
-            color: #D97706;
+            color: var(--success-green);
             font-weight: bold;
         }}
         .preview-pyq-table {{
@@ -723,7 +722,7 @@ class PreviewRenderer:
             '''
 
             if concept.ncert_line:
-                html += f'<div class="preview-ncert">"{concept.ncert_line}"</div>'
+                html += f'<div class="preview-ncert"><span style="color: var(--accent-red); font-weight: bold; font-style: normal;">NCERT Exact Line:</span> "{concept.ncert_line}"</div>'
 
             if concept.content:
                 content_html = cls._format_text(concept.content)
@@ -740,8 +739,7 @@ class PreviewRenderer:
             if concept.did_you_know:
                 html += f'''
                 <div class="preview-dyk">
-                    <span class="preview-dyk-label">&gt; Did You Know?</span><br/>
-                    {concept.did_you_know}
+                    <span class="preview-dyk-label">Do You Know?</span> {concept.did_you_know}
                 </div>
                 '''
 
