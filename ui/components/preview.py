@@ -74,9 +74,9 @@ class PreviewRenderer:
         }}
         .decorative-line {{
             text-align: center;
-            color: var(--primary-blue);
-            font-size: 10pt;
-            margin: 8px 0;
+            margin: 8px auto;
+            width: 60%;
+            border-top: 2px solid var(--primary-blue);
         }}
         .preview-meta-table {{
             width: 100%;
@@ -512,8 +512,8 @@ class PreviewRenderer:
         """Render cover page section."""
         subject_display = data.subject.replace('_', ' ').title()
 
-        # Use solid line character for decorative line (U+2500)
-        decorative_line = '<div class="decorative-line">' + '─' * 50 + '</div>'
+        # Use CSS border-based decorative line (avoids Unicode encoding issues in print)
+        decorative_line = '<div class="decorative-line"></div>'
 
         html = f'''
         <div class="preview-header">
@@ -1157,7 +1157,7 @@ class PreviewRenderer:
 
     @staticmethod
     def _pdf_safe_text(text: str) -> str:
-        """Replace multi-byte emojis with PDF-safe Unicode symbols."""
+        """Replace multi-byte emojis and box-drawing characters with PDF-safe alternatives."""
         if not text:
             return ''
 
@@ -1182,6 +1182,13 @@ class PreviewRenderer:
             '📄': '■',
             '📕': '■',
             '📱': '■',
+            # Box-drawing characters that may cause encoding issues
+            '─': '-',  # Light horizontal (U+2500)
+            '━': '=',  # Heavy horizontal (U+2501)
+            '═': '=',  # Double horizontal (U+2550)
+            '│': '|',  # Light vertical (U+2502)
+            '┃': '|',  # Heavy vertical (U+2503)
+            '║': '|',  # Double vertical (U+2551)
         }
 
         for emoji, replacement in replacements.items():
