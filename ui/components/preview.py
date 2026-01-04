@@ -566,7 +566,7 @@ class PreviewRenderer:
         if data.part_descriptions:
             html += f'''
             <div class="preview-contents-box">
-                <div style="color: var(--primary-blue); font-weight: bold; margin-bottom: 10px;">{Icons.BOOK} Chapter Contents</div>
+                <div style="color: #1E40AF; font-weight: bold; font-size: 14pt; margin-bottom: 10px;">{Icons.BOOK} Chapter Contents</div>
             '''
             for part_id, desc in data.part_descriptions.items():
                 if desc:
@@ -581,9 +581,12 @@ class PreviewRenderer:
         # QR Codes Section - using TABLE layout instead of flex (xhtml2pdf compatible)
         if data.qr_practice_questions_url or data.qr_practice_with_answers_url:
             html += '''
-            <div style="background: var(--bg-info); border: 1px solid var(--primary-blue); padding: 15px; margin: 15px 0;">
-                <div style="color: var(--primary-blue); font-weight: bold; margin-bottom: 10px; text-align: center;">
-                    Scan QR Codes to Download Practice Materials
+            <div style="background: var(--bg-info); border: 2px solid var(--primary-blue); padding: 15px; margin: 15px 0;">
+                <div style="color: #1E40AF; font-weight: bold; font-size: 14pt; margin-bottom: 5px; text-align: center;">
+                    Download Extra Practice Materials
+                </div>
+                <div style="color: #374151; font-size: 10pt; text-align: center; margin-bottom: 15px;">
+                    Use your phone camera to scan these QR codes and download PDF worksheets
                 </div>
                 <table class="qr-table">
                     <tr>
@@ -596,9 +599,9 @@ class PreviewRenderer:
                         <td class="qr-cell">
                             <img src="data:image/png;base64,{qr_img_1}" width="100" height="100"/>
                             <br/>
-                            <span style="font-size: 10pt; color: var(--body-text); font-weight: bold;">Practice Questions</span>
+                            <span style="font-size: 11pt; color: #1E40AF; font-weight: bold;">Practice Questions</span>
                             <br/>
-                            <span style="font-size: 9pt; color: var(--light-gray);">(PDF Download)</span>
+                            <span style="font-size: 9pt; color: #374151;">(Questions Only - For Self Practice)</span>
                         </td>
                     '''
 
@@ -609,9 +612,9 @@ class PreviewRenderer:
                         <td class="qr-cell">
                             <img src="data:image/png;base64,{qr_img_2}" width="100" height="100"/>
                             <br/>
-                            <span style="font-size: 10pt; color: var(--body-text); font-weight: bold;">With Answers</span>
+                            <span style="font-size: 11pt; color: #059669; font-weight: bold;">Questions + Answers</span>
                             <br/>
-                            <span style="font-size: 9pt; color: var(--light-gray);">(PDF Download)</span>
+                            <span style="font-size: 9pt; color: #374151;">(Complete Solutions Included)</span>
                         </td>
                     '''
 

@@ -212,7 +212,7 @@ class CoverPageGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(14)
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.DARK_GRAY)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)
 
         # List enabled parts
         enabled_parts = self.part_manager.get_enabled_parts()
@@ -243,15 +243,23 @@ class CoverPageGenerator:
         # Section header
         para = self.document.add_paragraph()
         para.paragraph_format.space_before = Pt(18)
-        para.paragraph_format.space_after = Pt(6)
-        run = para.add_run("📱 Scan QR Codes to Download Practice Materials")
+        para.paragraph_format.space_after = Pt(3)
+        run = para.add_run("📱 Download Extra Practice Materials")
         run.font.name = Fonts.PRIMARY
-        run.font.size = Pt(12)
+        run.font.size = Pt(14)
         run.font.bold = True
         run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)
 
-        # Create a table for QR codes side by side
-        table = self.document.add_table(rows=2, cols=2)
+        # Instruction subtitle
+        para = self.document.add_paragraph()
+        para.paragraph_format.space_after = Pt(6)
+        run = para.add_run("Use your phone camera to scan these QR codes and download PDF worksheets")
+        run.font.name = Fonts.PRIMARY
+        run.font.size = Pt(10)
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.DARK_GRAY)
+
+        # Create a table for QR codes side by side (3 rows: QR, Title, Description)
+        table = self.document.add_table(rows=3, cols=2)
         table.alignment = 1
 
         # Generate and add QR codes
@@ -264,11 +272,21 @@ class CoverPageGenerator:
                 run = para.add_run()
                 run.add_picture(qr_img, width=Inches(1.2))
 
-                # Label
+                # Title label
                 label_cell = table.cell(1, 0)
                 label_para = label_cell.paragraphs[0]
                 label_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
                 run = label_para.add_run("Practice Questions")
+                run.font.name = Fonts.PRIMARY
+                run.font.size = Pt(11)
+                run.font.bold = True
+                run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)
+
+                # Description
+                desc_cell = table.cell(2, 0)
+                desc_para = desc_cell.paragraphs[0]
+                desc_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                run = desc_para.add_run("(Questions Only - For Self Practice)")
                 run.font.name = Fonts.PRIMARY
                 run.font.size = Pt(9)
                 run.font.color.rgb = Colors.hex_to_rgb(Colors.DARK_GRAY)
@@ -282,11 +300,21 @@ class CoverPageGenerator:
                 run = para.add_run()
                 run.add_picture(qr_img, width=Inches(1.2))
 
-                # Label
+                # Title label
                 label_cell = table.cell(1, 1)
                 label_para = label_cell.paragraphs[0]
                 label_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                run = label_para.add_run("With Answers")
+                run = label_para.add_run("Questions + Answers")
+                run.font.name = Fonts.PRIMARY
+                run.font.size = Pt(11)
+                run.font.bold = True
+                run.font.color.rgb = Colors.hex_to_rgb(Colors.SUCCESS_GREEN)
+
+                # Description
+                desc_cell = table.cell(2, 1)
+                desc_para = desc_cell.paragraphs[0]
+                desc_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                run = desc_para.add_run("(Complete Solutions Included)")
                 run.font.name = Fonts.PRIMARY
                 run.font.size = Pt(9)
                 run.font.color.rgb = Colors.hex_to_rgb(Colors.DARK_GRAY)
