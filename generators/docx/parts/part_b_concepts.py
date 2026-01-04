@@ -90,10 +90,11 @@ class PartBGenerator:
             para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
             para.paragraph_format.space_before = Pt(6)
 
-            run = para.add_run("💡 Memory: ")
+            run = para.add_run("Memory Trick: ")
             run.font.name = Fonts.PRIMARY
             run.font.size = Pt(10)
             run.font.bold = True
+            run.font.italic = True
             run.font.color.rgb = Colors.hex_to_rgb(Colors.SUCCESS_GREEN)
 
             run = para.add_run(concept.memory_trick)
