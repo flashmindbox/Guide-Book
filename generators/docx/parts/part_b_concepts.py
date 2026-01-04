@@ -102,21 +102,29 @@ class PartBGenerator:
             run.font.italic = True
             run.font.color.rgb = Colors.hex_to_rgb(Colors.SUCCESS_GREEN)
 
-        # Did You Know (if present)
+        # Do You Know (if present) - light grey background box
         if concept.did_you_know:
-            para = self.document.add_paragraph()
-            para.paragraph_format.left_indent = Inches(0.3)
-            para.paragraph_format.space_before = Pt(6)
+            # Create a table for the grey box
+            table = self.document.add_table(rows=1, cols=1)
+            table.alignment = 1
+            table.columns[0].width = Inches(6.0)
 
-            run = para.add_run("💡 Did You Know? ")
+            cell = table.cell(0, 0)
+            DocxHelpers.set_cell_background(cell, '#F3F4F6')  # Light grey
+            DocxHelpers.set_cell_padding(cell, 80)
+
+            para = cell.paragraphs[0]
+            run = para.add_run("Do You Know? ")
             run.font.name = Fonts.PRIMARY
             run.font.size = Pt(11)
             run.font.bold = True
-            run.font.color.rgb = Colors.hex_to_rgb('#D97706')  # Orange
+            run.font.color.rgb = Colors.hex_to_rgb(Colors.SUCCESS_GREEN)
 
             run = para.add_run(concept.did_you_know)
             run.font.name = Fonts.PRIMARY
             run.font.size = Pt(11)
+
+            self.document.add_paragraph()  # Spacing after box
 
     def _add_concept_content(self, content: str):
         """Add the main concept content with formatting."""
