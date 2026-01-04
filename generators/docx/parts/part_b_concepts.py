@@ -40,14 +40,14 @@ class PartBGenerator:
             self._add_important_dates()
 
     def _add_part_header(self):
-        """Add part header with blue background box."""
-        # Create a table for the blue header box
+        """Add part header with light red background box."""
+        # Create a table for the header box
         table = self.document.add_table(rows=1, cols=1)
         table.alignment = 1
         table.columns[0].width = Inches(6.5)
 
         cell = table.cell(0, 0)
-        DocxHelpers.set_cell_background(cell, Colors.HEADING_BLUE)
+        DocxHelpers.set_cell_background(cell, Colors.BG_WARNING)  # Light red background
         DocxHelpers.set_cell_padding(cell, 100)
 
         para = cell.paragraphs[0]
@@ -55,7 +55,7 @@ class PartBGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(18)
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb('#FFFFFF')  # White text
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.YEAR_RED)  # Red text
 
         self.document.add_paragraph()  # Spacing after header
 
@@ -128,7 +128,7 @@ class PartBGenerator:
             run.font.name = Fonts.PRIMARY
             run.font.size = Pt(11)
             run.font.bold = True
-            run.font.color.rgb = Colors.hex_to_rgb(Colors.SUCCESS_GREEN)
+            run.font.color.rgb = Colors.hex_to_rgb(Colors.YEAR_RED)  # Red label
 
             run = para.add_run(concept.did_you_know)
             run.font.name = Fonts.PRIMARY
