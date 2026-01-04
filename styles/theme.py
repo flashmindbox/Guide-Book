@@ -15,15 +15,17 @@ from docx.enum.table import WD_TABLE_ALIGNMENT
 class Colors:
     """Color constants used throughout the application."""
 
-    # Primary colors (3-color hierarchy)
-    PRIMARY_BLUE = '#1E40AF'      # Deeper blue, more professional - headers, titles
+    # Primary colors (3-color hierarchy) - BOOK STANDARD
+    PRIMARY_BLUE = '#1E40AF'      # Deeper blue, more professional - borders, accents
+    HEADING_BLUE = '#2563EB'      # Section headers (Heading 2, Heading 3) - BOOK STANDARD
     ACCENT_RED = '#B91C1C'        # Deep red for marks/warnings only
+    YEAR_RED = '#DC2626'          # Important years/dates - BOOK STANDARD
     BODY_TEXT = '#374151'         # Dark gray for all body text
 
     # Semantic colors (for backwards compatibility)
     DANGER_RED = '#B91C1C'        # Same as ACCENT_RED
-    SUCCESS_GREEN = '#059669'     # Only for checkmarks/answers
-    WARNING_ORANGE = '#D97706'    # Rarely used
+    SUCCESS_GREEN = '#059669'     # Memory tricks, checkmarks/answers - BOOK STANDARD
+    WARNING_ORANGE = '#D97706'    # Did You Know boxes
 
     # Legacy aliases
     DARK_GRAY = '#374151'         # Body text (alias for BODY_TEXT)
@@ -176,7 +178,7 @@ class Fonts:
 # =============================================================================
 
 class PageLayout:
-    """Page layout constants."""
+    """Page layout constants - BOOK STANDARD."""
 
     # Page sizes (width, height)
     SIZES = {
@@ -184,13 +186,14 @@ class PageLayout:
         'A5': (Inches(5.83), Inches(8.27)),
         'Letter': (Inches(8.5), Inches(11)),
         'Legal': (Inches(8.5), Inches(14)),
+        'A3': (Inches(11.69), Inches(16.54)),
     }
 
-    # Margins - reduced to 1.5cm (0.59 inches) to match HTML
-    MARGIN_TOP = Inches(0.59)
-    MARGIN_BOTTOM = Inches(0.59)
-    MARGIN_LEFT = Inches(0.59)
-    MARGIN_RIGHT = Inches(0.59)
+    # Margins - BOOK STANDARD (matches reference DOCX exactly)
+    MARGIN_TOP = Inches(0.83)
+    MARGIN_BOTTOM = Inches(0.69)
+    MARGIN_LEFT = Inches(0.83)
+    MARGIN_RIGHT = Inches(0.83)
 
     # Header/Footer
     HEADER_DISTANCE = Inches(0.5)
