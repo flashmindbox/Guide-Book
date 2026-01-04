@@ -267,10 +267,19 @@ class DocxHelpers:
         return DocxHelpers.create_styled_box(document, mapped[0], mapped[1], content)
 
     @staticmethod
-    def add_formatted_text(paragraph, text: str, default_color: str = None):
+    def add_formatted_text(paragraph, text: str, default_color: str = None, highlight_years: bool = False):
         """
         Add text with markdown-like formatting to a paragraph.
         Supports: **bold**, *italic*, ***bold-italic*** (green)
+
+        BOOK STANDARD formatting:
+        - **bold** = key terms (bold)
+        - *italic* = foreign terms (italic)
+        - ***bold-italic*** = memory tricks (green bold italic)
+        - {{year}} = important year (red bold) - when highlight_years=True
+
+        When highlight_years=True, 4-digit years (1789, 1821, etc.) are automatically
+        formatted in red bold per BOOK STANDARD.
         """
         if not text:
             return
@@ -282,6 +291,13 @@ class DocxHelpers:
             (r'\*\*(.+?)\*\*', {'bold': True, 'italic': False, 'color': None}),
             (r'\*(.+?)\*', {'bold': False, 'italic': True, 'color': None}),
         ]
+
+        # Add year pattern if highlighting is enabled
+        if highlight_years:
+            # Match 4-digit years (1700-2099)
+            patterns.append(
+                (r'\b(1[789]\d{2}|20\d{2})\b', {'bold': True, 'italic': False, 'color': Colors.YEAR_RED})
+            )
 
         # Simple approach: process text sequentially
         remaining = text
@@ -573,3 +589,293 @@ class DocxHelpers:
             run.font.size = Fonts.SIZE_BODY_SMALL
 
         DocxHelpers.remove_table_borders(table)
+
+    # =========================================================================
+    # BOOK STANDARD FORMATTING HELPERS
+    # =========================================================================
+
+    @staticmethod
+    def add_section_header(document: Document, text: str, level: int = 2):
+        """
+        Add a section header following BOOK STANDARD formatting.
+
+        Args:
+            document: The document to add to
+            text: Header text (e.g., "1. The French Revolution")
+            level: 2 for Heading 2 (16pt), 3 for Heading 3 (14pt)
+
+        BOOK STANDARD:
+        - Level 2: 16pt, blue (#2563EB), used for main section headers
+        - Level 3: 14pt, blue (#2563EB), used for subsection headers
+        """
+        para = document.add_paragraph()
+
+        run = para.add_run(text)
+        run.font.name = Fonts.PRIMARY
+
+        if level == 2:
+            run.font.size = Pt(16)
+        else:
+            run.font.size = Pt(14)
+
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)
+
+        para.paragraph_format.space_before = Spacing.PARA_BEFORE_LARGE
+        para.paragraph_format.space_after = Spacing.PARA_AFTER_SMALL
+
+        return para
+
+    @staticmethod
+    def add_memory_trick(document: Document, acronym: str, explanation: str):
+        """
+        Add a memory trick following BOOK STANDARD formatting.
+
+        BOOK STANDARD:
+        - Right-aligned
+        - Green color (#059669)
+        - "Memory Trick: " in italic
+        - Acronym in bold italic
+        - Explanation in italic
+
+        Example: Memory Trick: FLAT-CUN — Flag, Language, Assembly, Taxes...
+        """
+        para = document.add_paragraph()
+        para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+
+        # "Memory Trick: "
+        run = para.add_run("Memory Trick: ")
+        run.font.name = Fonts.PRIMARY
+        run.font.size = Fonts.SIZE_BODY
+        run.font.italic = True
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.SUCCESS_GREEN)
+
+        # Acronym (bold italic)
+        run = para.add_run(acronym)
+        run.font.name = Fonts.PRIMARY
+        run.font.size = Fonts.SIZE_BODY
+        run.font.bold = True
+        run.font.italic = True
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.SUCCESS_GREEN)
+
+        # " — " separator
+        run = para.add_run(" — ")
+        run.font.name = Fonts.PRIMARY
+        run.font.size = Fonts.SIZE_BODY
+        run.font.italic = True
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.SUCCESS_GREEN)
+
+        # Explanation (italic)
+        run = para.add_run(explanation)
+        run.font.name = Fonts.PRIMARY
+        run.font.size = Fonts.SIZE_BODY
+        run.font.italic = True
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.SUCCESS_GREEN)
+
+        return para
+
+    @staticmethod
+    def add_ncert_box(document: Document, content: str) -> Table:
+        """
+        Add an NCERT Exact Line box following BOOK STANDARD.
+
+        BOOK STANDARD:
+        - Light blue background (#EFF6FF)
+        - Blue left border (#1E40AF)
+        - Icon: 📌
+        - Title: "NCERT Exact Line"
+        """
+        table = document.add_table(rows=1, cols=1)
+        table.alignment = WD_TABLE_ALIGNMENT.CENTER
+        table.columns[0].width = Inches(6.5)
+
+        cell = table.cell(0, 0)
+
+        # Set background
+        DocxHelpers.set_cell_background(cell, Colors.BG_INFO)
+
+        # Set left border only
+        DocxHelpers.set_cell_left_border_only(cell, Colors.BORDER_INFO)
+
+        # Set padding
+        DocxHelpers.set_cell_padding(cell, 150)
+
+        # Title
+        para = cell.paragraphs[0]
+        run = para.add_run("📌 ")
+        run.font.size = Fonts.SIZE_BODY
+
+        run = para.add_run("NCERT Exact Line: ")
+        run.font.name = Fonts.PRIMARY
+        run.font.size = Fonts.SIZE_BODY
+        run.font.bold = True
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+
+        # Content (quoted)
+        run = para.add_run(f'"{content}"')
+        run.font.name = Fonts.PRIMARY
+        run.font.size = Fonts.SIZE_BODY
+        run.font.italic = True
+
+        return table
+
+    @staticmethod
+    def add_did_you_know_box(document: Document, content: str) -> Table:
+        """
+        Add a Did You Know box following BOOK STANDARD.
+
+        BOOK STANDARD:
+        - Light orange background (#FFF7ED)
+        - Orange left border (#D97706)
+        - Icon: 💡
+        - Title: "Did You Know?"
+        """
+        table = document.add_table(rows=1, cols=1)
+        table.alignment = WD_TABLE_ALIGNMENT.CENTER
+        table.columns[0].width = Inches(6.5)
+
+        cell = table.cell(0, 0)
+
+        # Set background
+        DocxHelpers.set_cell_background(cell, '#FFF7ED')
+
+        # Set left border only
+        DocxHelpers.set_cell_left_border_only(cell, Colors.WARNING_ORANGE)
+
+        # Set padding
+        DocxHelpers.set_cell_padding(cell, 150)
+
+        # Title
+        para = cell.paragraphs[0]
+        run = para.add_run("💡 ")
+        run.font.size = Fonts.SIZE_BODY
+
+        run = para.add_run("Did You Know? ")
+        run.font.name = Fonts.PRIMARY
+        run.font.size = Fonts.SIZE_BODY
+        run.font.bold = True
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.WARNING_ORANGE)
+
+        # Content
+        run = para.add_run(content)
+        run.font.name = Fonts.PRIMARY
+        run.font.size = Fonts.SIZE_BODY
+
+        return table
+
+    @staticmethod
+    def create_timeline_table(document: Document, events: List[Dict[str, str]]) -> Table:
+        """
+        Create a timeline table following BOOK STANDARD.
+
+        Args:
+            events: List of {'year': '1789', 'event': 'French Revolution begins'}
+
+        BOOK STANDARD:
+        - 2 columns: Year | Event
+        - Header row with blue background
+        - Years in bold
+        """
+        if not events:
+            return None
+
+        table = document.add_table(rows=1, cols=2)
+        table.alignment = WD_TABLE_ALIGNMENT.CENTER
+        DocxHelpers.set_table_borders(table, Colors.BORDER_GRAY)
+
+        # Set column widths
+        table.columns[0].width = Inches(1.0)
+        table.columns[1].width = Inches(5.5)
+
+        # Header row
+        header_row = table.rows[0]
+        for idx, header in enumerate(['Year', 'Event']):
+            cell = header_row.cells[idx]
+            DocxHelpers.set_cell_background(cell, Colors.TABLE_HEADER_BG)
+            DocxHelpers.set_cell_padding(cell, 80)
+            para = cell.paragraphs[0]
+            para.alignment = WD_ALIGN_PARAGRAPH.CENTER if idx == 0 else WD_ALIGN_PARAGRAPH.LEFT
+            run = para.add_run(header)
+            run.font.name = Fonts.PRIMARY
+            run.font.size = Fonts.SIZE_TABLE_HEADER
+            run.font.bold = True
+            run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)
+
+        # Data rows
+        for event in events:
+            row = table.add_row()
+
+            # Year cell
+            cell = row.cells[0]
+            DocxHelpers.set_cell_padding(cell, 80)
+            para = cell.paragraphs[0]
+            para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            run = para.add_run(event.get('year', ''))
+            run.font.name = Fonts.PRIMARY
+            run.font.size = Fonts.SIZE_BODY
+            run.font.bold = True
+
+            # Event cell
+            cell = row.cells[1]
+            DocxHelpers.set_cell_padding(cell, 80)
+            para = cell.paragraphs[0]
+            DocxHelpers.add_formatted_text(para, event.get('event', ''))
+
+        return table
+
+    @staticmethod
+    def create_key_terms_table(document: Document, terms: List[Dict[str, str]]) -> Table:
+        """
+        Create a key terms table following BOOK STANDARD.
+
+        Args:
+            terms: List of {'term': 'Nationalism', 'definition': 'A sense of...'}
+
+        BOOK STANDARD:
+        - 2 columns: Term | Definition
+        - Header row with blue background
+        - Terms in bold
+        """
+        if not terms:
+            return None
+
+        table = document.add_table(rows=1, cols=2)
+        table.alignment = WD_TABLE_ALIGNMENT.CENTER
+        DocxHelpers.set_table_borders(table, Colors.BORDER_GRAY)
+
+        # Set column widths
+        table.columns[0].width = Inches(2.0)
+        table.columns[1].width = Inches(4.5)
+
+        # Header row
+        header_row = table.rows[0]
+        for idx, header in enumerate(['Term', 'Definition']):
+            cell = header_row.cells[idx]
+            DocxHelpers.set_cell_background(cell, Colors.TABLE_HEADER_BG)
+            DocxHelpers.set_cell_padding(cell, 80)
+            para = cell.paragraphs[0]
+            run = para.add_run(header)
+            run.font.name = Fonts.PRIMARY
+            run.font.size = Fonts.SIZE_TABLE_HEADER
+            run.font.bold = True
+            run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)
+
+        # Data rows
+        for term_data in terms:
+            row = table.add_row()
+
+            # Term cell
+            cell = row.cells[0]
+            DocxHelpers.set_cell_padding(cell, 80)
+            para = cell.paragraphs[0]
+            run = para.add_run(term_data.get('term', ''))
+            run.font.name = Fonts.PRIMARY
+            run.font.size = Fonts.SIZE_BODY
+            run.font.bold = True
+
+            # Definition cell
+            cell = row.cells[1]
+            DocxHelpers.set_cell_padding(cell, 80)
+            para = cell.paragraphs[0]
+            DocxHelpers.add_formatted_text(para, term_data.get('definition', ''))
+
+        return table

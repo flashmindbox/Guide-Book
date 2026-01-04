@@ -31,7 +31,7 @@ class DocxStyles:
         self._setup_table_styles()
 
     def _setup_heading_styles(self):
-        """Set up heading styles."""
+        """Set up heading styles - BOOK STANDARD."""
         styles = self.document.styles
 
         # Chapter Title style (24pt, bold, centered, blue)
@@ -45,7 +45,7 @@ class DocxStyles:
             style.paragraph_format.space_before = Spacing.PARA_BEFORE_NORMAL
             style.paragraph_format.space_after = Spacing.PARA_AFTER_NORMAL
 
-        # Part Header style (16pt, bold, blue)
+        # Part Header style (16pt, bold, blue) - For "Part A:", "Part B:" etc.
         if 'PartHeader' not in [s.name for s in styles]:
             style = styles.add_style('PartHeader', WD_STYLE_TYPE.PARAGRAPH)
             style.font.name = Fonts.PRIMARY
@@ -55,13 +55,35 @@ class DocxStyles:
             style.paragraph_format.space_before = Spacing.PARA_BEFORE_SECTION
             style.paragraph_format.space_after = Spacing.PARA_AFTER_NORMAL
 
-        # Section Title style (14pt, bold)
+        # Heading 2 style (16pt, blue) - BOOK STANDARD for section headers
+        # Example: "1. The French Revolution and the Idea of the Nation"
+        if 'Heading2Custom' not in [s.name for s in styles]:
+            style = styles.add_style('Heading2Custom', WD_STYLE_TYPE.PARAGRAPH)
+            style.font.name = Fonts.PRIMARY
+            style.font.size = Fonts.SIZE_PART_HEADER  # 16pt
+            style.font.bold = False  # Reference shows normal weight
+            style.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # #2563EB
+            style.paragraph_format.space_before = Spacing.PARA_BEFORE_LARGE
+            style.paragraph_format.space_after = Spacing.PARA_AFTER_SMALL
+
+        # Heading 3 style (14pt, blue) - BOOK STANDARD for subsection headers
+        # Example: "Model Answers with Examiner's Marking Scheme"
+        if 'Heading3Custom' not in [s.name for s in styles]:
+            style = styles.add_style('Heading3Custom', WD_STYLE_TYPE.PARAGRAPH)
+            style.font.name = Fonts.PRIMARY
+            style.font.size = Fonts.SIZE_SECTION_TITLE  # 14pt
+            style.font.bold = False  # Reference shows normal weight
+            style.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # #2563EB
+            style.paragraph_format.space_before = Spacing.PARA_BEFORE_NORMAL
+            style.paragraph_format.space_after = Spacing.PARA_AFTER_SMALL
+
+        # Section Title style (14pt, bold) - Legacy, kept for compatibility
         if 'SectionTitle' not in [s.name for s in styles]:
             style = styles.add_style('SectionTitle', WD_STYLE_TYPE.PARAGRAPH)
             style.font.name = Fonts.PRIMARY
             style.font.size = Fonts.SIZE_SECTION_TITLE
             style.font.bold = True
-            style.font.color.rgb = Colors.hex_to_rgb(Colors.DARK_GRAY)
+            style.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # Updated to HEADING_BLUE
             style.paragraph_format.space_before = Spacing.PARA_BEFORE_LARGE
             style.paragraph_format.space_after = Spacing.PARA_AFTER_SMALL
 
@@ -71,20 +93,20 @@ class DocxStyles:
             style.font.name = Fonts.PRIMARY
             style.font.size = Fonts.SIZE_CONCEPT_TITLE
             style.font.bold = True
-            style.font.color.rgb = Colors.hex_to_rgb(Colors.PRIMARY_BLUE)
+            style.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)  # Updated to HEADING_BLUE
             style.paragraph_format.space_before = Spacing.PARA_BEFORE_LARGE
             style.paragraph_format.space_after = Spacing.PARA_AFTER_SMALL
 
     def _setup_paragraph_styles(self):
-        """Set up paragraph styles."""
+        """Set up paragraph styles - BOOK STANDARD."""
         styles = self.document.styles
 
-        # Body Text style
+        # Body Text style (black text for maximum readability)
         if 'BodyText' not in [s.name for s in styles]:
             style = styles.add_style('BodyText', WD_STYLE_TYPE.PARAGRAPH)
             style.font.name = Fonts.PRIMARY
             style.font.size = Fonts.SIZE_BODY
-            style.font.color.rgb = Colors.hex_to_rgb(Colors.DARK_GRAY)
+            style.font.color.rgb = Colors.hex_to_rgb(Colors.BLACK)  # Pure black for body
             style.paragraph_format.space_before = Spacing.PARA_BEFORE_SMALL
             style.paragraph_format.space_after = Spacing.PARA_AFTER_SMALL
             style.paragraph_format.line_spacing_rule = WD_LINE_SPACING.SINGLE
@@ -145,6 +167,31 @@ class DocxStyles:
             style.font.size = Fonts.SIZE_FOOTER
             style.font.color.rgb = Colors.hex_to_rgb(Colors.LIGHT_GRAY)
             style.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+        # BOOK STANDARD: Year style (red bold) for important dates
+        if 'YearText' not in [s.name for s in styles]:
+            style = styles.add_style('YearText', WD_STYLE_TYPE.CHARACTER)
+            style.font.name = Fonts.PRIMARY
+            style.font.size = Fonts.SIZE_BODY
+            style.font.bold = True
+            style.font.color.rgb = Colors.hex_to_rgb(Colors.YEAR_RED)  # #DC2626
+
+        # BOOK STANDARD: Key Term style (bold black)
+        if 'KeyTerm' not in [s.name for s in styles]:
+            style = styles.add_style('KeyTerm', WD_STYLE_TYPE.CHARACTER)
+            style.font.name = Fonts.PRIMARY
+            style.font.size = Fonts.SIZE_BODY
+            style.font.bold = True
+            style.font.color.rgb = Colors.hex_to_rgb(Colors.BLACK)
+
+        # BOOK STANDARD: Foreign Term style (bold italic)
+        if 'ForeignTerm' not in [s.name for s in styles]:
+            style = styles.add_style('ForeignTerm', WD_STYLE_TYPE.CHARACTER)
+            style.font.name = Fonts.PRIMARY
+            style.font.size = Fonts.SIZE_BODY
+            style.font.bold = True
+            style.font.italic = True
+            style.font.color.rgb = Colors.hex_to_rgb(Colors.BLACK)
 
     def _setup_table_styles(self):
         """Set up table styles."""
