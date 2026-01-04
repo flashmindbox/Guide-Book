@@ -3,6 +3,8 @@ Cover page generator for Guide Book Generator.
 Simplified design matching reference document style.
 """
 
+from io import BytesIO
+
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Pt
@@ -35,6 +37,10 @@ class CoverPageGenerator:
             self._add_learning_objectives()
 
         self._add_chapter_contents()
+
+        # Add QR codes if URLs are provided
+        if self.data.qr_practice_questions_url or self.data.qr_practice_with_answers_url:
+            self._add_qr_codes()
 
     def _add_header(self):
         """Add simple centered header."""
@@ -226,3 +232,78 @@ class CoverPageGenerator:
             run = para.add_run(description)
             run.font.name = Fonts.PRIMARY
             run.font.size = Pt(11)
+
+    def _add_qr_codes(self):
+        """Add QR codes for downloadable resources."""
+        try:
+            import qrcode
+        except ImportError:
+            return  # Skip if qrcode not installed
+
+        # Section header
+        para = self.document.add_paragraph()
+        para.paragraph_format.space_before = Pt(18)
+        para.paragraph_format.space_after = Pt(6)
+        run = para.add_run("📱 Scan QR Codes to Download Practice Materials")
+        run.font.name = Fonts.PRIMARY
+        run.font.size = Pt(12)
+        run.font.bold = True
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)
+
+        # Create a table for QR codes side by side
+        table = self.document.add_table(rows=2, cols=2)
+        table.alignment = 1
+
+        # Generate and add QR codes
+        if self.data.qr_practice_questions_url:
+            qr_img = self._generate_qr_image(self.data.qr_practice_questions_url)
+            if qr_img:
+                cell = table.cell(0, 0)
+                para = cell.paragraphs[0]
+                para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                run = para.add_run()
+                run.add_picture(qr_img, width=Inches(1.2))
+
+                # Label
+                label_cell = table.cell(1, 0)
+                label_para = label_cell.paragraphs[0]
+                label_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                run = label_para.add_run("Practice Questions")
+                run.font.name = Fonts.PRIMARY
+                run.font.size = Pt(9)
+                run.font.color.rgb = Colors.hex_to_rgb(Colors.DARK_GRAY)
+
+        if self.data.qr_practice_with_answers_url:
+            qr_img = self._generate_qr_image(self.data.qr_practice_with_answers_url)
+            if qr_img:
+                cell = table.cell(0, 1)
+                para = cell.paragraphs[0]
+                para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                run = para.add_run()
+                run.add_picture(qr_img, width=Inches(1.2))
+
+                # Label
+                label_cell = table.cell(1, 1)
+                label_para = label_cell.paragraphs[0]
+                label_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                run = label_para.add_run("With Answers")
+                run.font.name = Fonts.PRIMARY
+                run.font.size = Pt(9)
+                run.font.color.rgb = Colors.hex_to_rgb(Colors.DARK_GRAY)
+
+    def _generate_qr_image(self, url: str) -> BytesIO:
+        """Generate QR code image and return as BytesIO."""
+        try:
+            import qrcode
+
+            qr = qrcode.QRCode(version=1, box_size=8, border=2)
+            qr.add_data(url)
+            qr.make(fit=True)
+            img = qr.make_image(fill_color="black", back_color="white")
+
+            img_buffer = BytesIO()
+            img.save(img_buffer, format='PNG')
+            img_buffer.seek(0)
+            return img_buffer
+        except Exception:
+            return None

@@ -40,15 +40,24 @@ class PartBGenerator:
             self._add_important_dates()
 
     def _add_part_header(self):
-        """Add simple part header."""
-        para = self.document.add_paragraph()
-        para.paragraph_format.space_after = Pt(12)
+        """Add part header with blue background box."""
+        # Create a table for the blue header box
+        table = self.document.add_table(rows=1, cols=1)
+        table.alignment = 1
+        table.columns[0].width = Inches(6.5)
 
+        cell = table.cell(0, 0)
+        DocxHelpers.set_cell_background(cell, Colors.HEADING_BLUE)
+        DocxHelpers.set_cell_padding(cell, 100)
+
+        para = cell.paragraphs[0]
         run = para.add_run("Part B: Key Concepts")
         run.font.name = Fonts.PRIMARY
-        run.font.size = Pt(16)
+        run.font.size = Pt(18)
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb('#FFFFFF')  # White text
+
+        self.document.add_paragraph()  # Spacing after header
 
     def _add_concept(self, concept):
         """Add a single concept with all its elements."""
@@ -90,10 +99,11 @@ class PartBGenerator:
             para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
             para.paragraph_format.space_before = Pt(6)
 
-            run = para.add_run("💡 Memory: ")
+            run = para.add_run("Memory Trick: ")
             run.font.name = Fonts.PRIMARY
             run.font.size = Pt(10)
             run.font.bold = True
+            run.font.italic = True
             run.font.color.rgb = Colors.hex_to_rgb(Colors.SUCCESS_GREEN)
 
             run = para.add_run(concept.memory_trick)

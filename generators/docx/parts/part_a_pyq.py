@@ -38,15 +38,23 @@ class PartAGenerator:
             self._add_syllabus_note()
 
     def _add_part_header(self):
-        """Add simple part header."""
-        para = self.document.add_paragraph()
-        para.paragraph_format.space_after = Pt(12)
+        """Add part header with blue background box."""
+        table = self.document.add_table(rows=1, cols=1)
+        table.alignment = 1
+        table.columns[0].width = Inches(6.5)
 
+        cell = table.cell(0, 0)
+        DocxHelpers.set_cell_background(cell, Colors.HEADING_BLUE)
+        DocxHelpers.set_cell_padding(cell, 100)
+
+        para = cell.paragraphs[0]
         run = para.add_run(f"Part A: PYQ Analysis ({self.data.pyq_year_range})")
         run.font.name = Fonts.PRIMARY
-        run.font.size = Pt(16)
+        run.font.size = Pt(18)
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)
+        run.font.color.rgb = Colors.hex_to_rgb('#FFFFFF')
+
+        self.document.add_paragraph()
 
     def _add_pyq_table(self):
         """Add the PYQ analysis table."""
