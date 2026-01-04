@@ -28,6 +28,10 @@ from core.session import SessionManager
 from core.progress import ProgressTracker
 from styles.theme import Colors, Weightage, Importance, PYQFrequency
 from ui.components.preview import PreviewRenderer, show_preview_panel
+from ui.components.navigation import (
+    inject_custom_css, render_breadcrumb, render_next_prev_buttons,
+    PAGE_INFO, WORKFLOW_ORDER
+)
 
 # File upload security constants
 ALLOWED_EXTENSIONS = {'json', 'docx', 'pdf'}
@@ -76,7 +80,18 @@ def init_session():
 def render_sidebar():
     """Render the sidebar with navigation and progress."""
     with st.sidebar:
-        st.title("📚 Guide Book Generator")
+        # Title with unsaved indicator
+        is_dirty = SessionManager.is_dirty()
+        if is_dirty:
+            st.markdown(
+                f'<h1 style="font-size: 1.5rem;">📚 Guide Book Generator '
+                f'<span style="display: inline-block; width: 10px; height: 10px; '
+                f'background-color: #EF4444; border-radius: 50%; margin-left: 8px;" '
+                f'title="Unsaved changes"></span></h1>',
+                unsafe_allow_html=True
+            )
+        else:
+            st.title("📚 Guide Book Generator")
         st.caption(f"v{APP_VERSION}")
 
         st.divider()
@@ -109,8 +124,22 @@ def render_sidebar():
 
             st.divider()
 
-        # Navigation
+        # Navigation with progress indicators
         st.subheader("🧭 Navigation")
+
+        # Get progress data for badges
+        progress_map = {}
+        if data:
+            progress_map = {
+                'cover': tracker.calculate_cover_progress(),
+                'part_a': tracker.calculate_part_a_progress(),
+                'part_b': tracker.calculate_part_b_progress(),
+                'part_c': tracker.calculate_part_c_progress(),
+                'part_d': tracker.calculate_part_d_progress(),
+                'part_e': tracker.calculate_part_e_progress(),
+                'part_f': tracker.calculate_part_f_progress(),
+                'part_g': tracker.calculate_part_g_progress(),
+            }
 
         pages = [
             ("🏠 Home", "home"),
@@ -126,8 +155,26 @@ def render_sidebar():
             ("⚙️ Generate", "generate"),
         ]
 
+        current_page = st.session_state.get('current_page', 'home')
+
         for label, page_id in pages:
-            if st.button(label, key=f"nav_{page_id}", use_container_width=True):
+            # Add progress badge for applicable pages
+            progress = progress_map.get(page_id, None)
+            if progress is not None:
+                if progress >= 80:
+                    badge = "✅"
+                elif progress >= 1:
+                    badge = "🔶"
+                else:
+                    badge = "⬜"
+                display_label = f"{badge} {label.split(' ', 1)[1] if ' ' in label else label}"
+            else:
+                display_label = label
+
+            # Highlight current page
+            button_type = "primary" if page_id == current_page else "secondary"
+            if st.button(display_label, key=f"nav_{page_id}", use_container_width=True,
+                        type=button_type):
                 st.session_state.current_page = page_id
                 st.rerun()
 
@@ -136,9 +183,27 @@ def render_sidebar():
         # Quick actions
         if data:
             st.subheader("⚡ Quick Actions")
-            if st.button("💾 Save Now", use_container_width=True):
+
+            # Show save status
+            last_save = SessionManager.get_last_save_time()
+            if is_dirty:
+                st.markdown(
+                    '<p style="color: #EF4444; font-size: 12px; margin-bottom: 8px;">'
+                    '● Unsaved changes</p>',
+                    unsafe_allow_html=True
+                )
+            elif last_save:
+                st.markdown(
+                    f'<p style="color: #10B981; font-size: 12px; margin-bottom: 8px;">'
+                    f'✓ Saved {last_save.strftime("%H:%M")}</p>',
+                    unsafe_allow_html=True
+                )
+
+            save_label = "💾 Save Now" if not is_dirty else "💾 Save Now*"
+            if st.button(save_label, use_container_width=True, type="primary" if is_dirty else "secondary"):
                 save_chapter()
                 st.success("Saved!")
+                st.rerun()
 
             if st.button("🔄 Reset Chapter", use_container_width=True):
                 if st.session_state.get('confirm_reset'):
@@ -484,6 +549,13 @@ def render_cover_page():
     st.divider()
     show_preview_panel(data)
 
+    # Next/Previous navigation
+    st.divider()
+    new_page = render_next_prev_buttons('cover')
+    if new_page:
+        st.session_state.current_page = new_page
+        st.rerun()
+
 
 def render_part_a():
     """Render Part A: PYQ Analysis editor."""
@@ -573,6 +645,13 @@ def render_part_a():
     st.divider()
     show_preview_panel(data, part_id='A')
 
+    # Next/Previous navigation
+    st.divider()
+    new_page = render_next_prev_buttons('part_a')
+    if new_page:
+        st.session_state.current_page = new_page
+        st.rerun()
+
 
 def render_part_b():
     """Render Part B: Key Concepts editor."""
@@ -645,6 +724,13 @@ def render_part_b():
     st.divider()
     show_preview_panel(data, part_id='B')
 
+    # Next/Previous navigation
+    st.divider()
+    new_page = render_next_prev_buttons('part_b')
+    if new_page:
+        st.session_state.current_page = new_page
+        st.rerun()
+
 
 def render_part_c():
     """Render Part C: Model Answers editor."""
@@ -705,6 +791,13 @@ def render_part_c():
     st.divider()
     show_preview_panel(data, part_id='C')
 
+    # Next/Previous navigation
+    st.divider()
+    new_page = render_next_prev_buttons('part_c')
+    if new_page:
+        st.session_state.current_page = new_page
+        st.rerun()
+
 
 def render_part_d():
     """Render Part D: Practice Questions editor."""
@@ -737,6 +830,13 @@ def render_part_d():
     # Preview panel
     st.divider()
     show_preview_panel(data, part_id='D')
+
+    # Next/Previous navigation
+    st.divider()
+    new_page = render_next_prev_buttons('part_d')
+    if new_page:
+        st.session_state.current_page = new_page
+        st.rerun()
 
 
 def render_mcq_editor(data):
@@ -885,6 +985,13 @@ def render_part_e():
     st.divider()
     show_preview_panel(data, part_id='E')
 
+    # Next/Previous navigation
+    st.divider()
+    new_page = render_next_prev_buttons('part_e')
+    if new_page:
+        st.session_state.current_page = new_page
+        st.rerun()
+
 
 def render_part_f():
     """Render Part F: Quick Revision editor."""
@@ -941,6 +1048,13 @@ def render_part_f():
     # Preview panel
     st.divider()
     show_preview_panel(data, part_id='F')
+
+    # Next/Previous navigation
+    st.divider()
+    new_page = render_next_prev_buttons('part_f')
+    if new_page:
+        st.session_state.current_page = new_page
+        st.rerun()
 
 
 def render_part_g():
@@ -1025,6 +1139,13 @@ def render_part_g():
     # Preview panel
     st.divider()
     show_preview_panel(data, part_id='G')
+
+    # Next/Previous navigation
+    st.divider()
+    new_page = render_next_prev_buttons('part_g')
+    if new_page:
+        st.session_state.current_page = new_page
+        st.rerun()
 
 
 def render_generate_page():
@@ -1268,10 +1389,19 @@ def save_chapter():
 def main():
     """Main application entry point."""
     init_session()
+
+    # Inject custom CSS for improved styling
+    inject_custom_css()
+
     render_sidebar()
 
     # Route to correct page
     page = st.session_state.get('current_page', 'home')
+
+    # Render breadcrumb navigation for non-home pages
+    data = SessionManager.get_chapter_data()
+    if page != 'home':
+        render_breadcrumb(page, data.chapter_title if data else None)
 
     pages = {
         'home': render_home_page,
