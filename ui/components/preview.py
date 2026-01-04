@@ -132,18 +132,18 @@ class PreviewRenderer:
         .preview-part-header {{
             page-break-before: always;
             break-before: page;
-            background: var(--bg-neutral);
+            background: var(--bg-warning);
             border: 1px solid var(--border-neutral);
             padding: 10px 15px;
             margin: 20px 0 15px 0;
         }}
         .preview-part-label {{
-            color: var(--primary-blue);
+            color: #DC2626;
             font-weight: bold;
             font-size: 14pt;
         }}
         .preview-part-name {{
-            color: var(--primary-blue);
+            color: #DC2626;
             font-weight: bold;
             font-size: 14pt;
         }}
@@ -190,7 +190,7 @@ class PreviewRenderer:
             margin: 10px 0;
         }}
         .preview-dyk-label {{
-            color: var(--success-green);
+            color: #DC2626;
             font-weight: bold;
         }}
         .preview-pyq-table {{

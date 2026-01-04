@@ -45,13 +45,13 @@ class PartFGenerator:
         self._add_encouragement()
 
     def _add_part_header(self):
-        """Add part header with blue background box."""
+        """Add part header with light red background box."""
         table = self.document.add_table(rows=1, cols=1)
         table.alignment = 1
         table.columns[0].width = Inches(6.5)
 
         cell = table.cell(0, 0)
-        DocxHelpers.set_cell_background(cell, Colors.HEADING_BLUE)
+        DocxHelpers.set_cell_background(cell, Colors.BG_WARNING)  # Light red background
         DocxHelpers.set_cell_padding(cell, 100)
 
         para = cell.paragraphs[0]
@@ -59,7 +59,7 @@ class PartFGenerator:
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(18)
         run.font.bold = True
-        run.font.color.rgb = Colors.hex_to_rgb('#FFFFFF')
+        run.font.color.rgb = Colors.hex_to_rgb(Colors.YEAR_RED)  # Red text
 
         self.document.add_paragraph()
 
