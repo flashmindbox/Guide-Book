@@ -29,7 +29,7 @@ from ui.components.navigation import inject_custom_css, render_breadcrumb, rende
 from ui.components.preview import show_generate_docx_button, show_preview_panel
 
 # File upload security constants
-ALLOWED_EXTENSIONS = {'json', 'docx', 'pdf'}
+ALLOWED_EXTENSIONS = {'json', 'docx', 'pdf', 'md', 'markdown'}
 MAX_FILE_SIZE_MB = 10
 
 
@@ -1347,11 +1347,11 @@ def render_import_export():
     with col2:
         st.subheader("📥 Import")
 
-        # Accept JSON, DOCX, and PDF files
+        # Accept JSON, DOCX, PDF, and Markdown files
         uploaded = st.file_uploader(
             "Upload file",
-            type=['json', 'docx', 'pdf'],
-            help="Import from JSON (full data), DOCX, or PDF (extracts basic info)"
+            type=['json', 'docx', 'pdf', 'md'],
+            help="Import from JSON (full data), Markdown (structured), DOCX, or PDF"
         )
 
         if uploaded:
@@ -1421,6 +1421,58 @@ def render_import_export():
                         for error in preview_result.get('errors', ['Unknown error']):
                             st.error(f"• {error}")
 
+                elif file_type == 'md':
+                    # Markdown import with preview
+                    from core.parsers import MarkdownParser, parse_document
+
+                    file_bytes = uploaded.read()
+                    uploaded.seek(0)
+
+                    chapter_data = parse_document(file_bytes, file_type)
+
+                    if chapter_data:
+                        # Show preview summary
+                        summary = MarkdownParser.get_import_summary(chapter_data)
+                        st.success("✅ Markdown parsed successfully!")
+
+                        st.markdown("**Preview:**")
+                        preview_cols = st.columns(2)
+                        with preview_cols[0]:
+                            st.write(f"**Chapter:** {summary.get('chapter_number', '?')}")
+                            st.write(f"**Title:** {summary.get('chapter_title', 'Untitled')}")
+                        with preview_cols[1]:
+                            st.write(f"**Subject:** {summary.get('subject', '?').title() if summary.get('subject') else '?'}")
+                            st.write(f"**Class:** {summary.get('class_num', '?')}")
+
+                        # Show content counts
+                        content_info = []
+                        if summary.get('concepts_count'):
+                            content_info.append(f"{summary['concepts_count']} concepts")
+                        if summary.get('pyq_count'):
+                            content_info.append(f"{summary['pyq_count']} PYQs")
+                        if summary.get('mcq_count'):
+                            content_info.append(f"{summary['mcq_count']} MCQs")
+                        if summary.get('short_answer_count'):
+                            content_info.append(f"{summary['short_answer_count']} short answers")
+                        if summary.get('long_answer_count'):
+                            content_info.append(f"{summary['long_answer_count']} long answers")
+                        if summary.get('key_points_count'):
+                            content_info.append(f"{summary['key_points_count']} key points")
+                        if summary.get('key_terms_count'):
+                            content_info.append(f"{summary['key_terms_count']} key terms")
+
+                        if content_info:
+                            st.markdown("**Content found:**")
+                            st.write(", ".join(content_info))
+
+                        if st.button("Confirm Import", type="primary", use_container_width=True, key="md_import"):
+                            SessionManager.set_chapter_data(chapter_data)
+                            st.success("✅ Imported from Markdown!")
+                            st.session_state.current_page = 'cover'
+                            st.rerun()
+                    else:
+                        st.error("Failed to parse Markdown file. Check the format and try again.")
+
                 else:
                     # DOCX or PDF import
                     if st.button("Import", type="primary", use_container_width=True):
@@ -1464,6 +1516,7 @@ def render_import_export():
         st.caption("""
         **Import formats:**
         - **JSON**: Full chapter data with validation (recommended for backup/restore)
+        - **Markdown**: Structured content with headers, tables, and lists
         - **DOCX/PDF**: Extracts chapter metadata and basic content
         """)
 

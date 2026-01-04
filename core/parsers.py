@@ -722,13 +722,377 @@ class PdfParser:
             return None
 
 
+class MarkdownParser:
+    """Parse Markdown files to extract chapter data."""
+
+    @staticmethod
+    def parse(file_bytes: bytes) -> Optional[ChapterData]:
+        """
+        Parse a Markdown file and extract chapter data.
+
+        Args:
+            file_bytes: The Markdown file content as bytes
+
+        Returns:
+            ChapterData object if successful, None otherwise
+        """
+        try:
+            text = file_bytes.decode('utf-8')
+            return MarkdownParser._extract_chapter_data(text)
+        except Exception:
+            return None
+
+    @staticmethod
+    def _extract_chapter_data(text: str) -> ChapterData:
+        """Extract chapter data from markdown content."""
+        data = ChapterData()
+
+        # Extract chapter title from # heading
+        title_match = re.search(r'^#\s+(?:Chapter\s+)?(\d+)?[:\.\s]*(.+?)$', text, re.MULTILINE | re.IGNORECASE)
+        if title_match:
+            if title_match.group(1):
+                data.chapter_number = int(title_match.group(1))
+            data.chapter_title = title_match.group(2).strip()
+
+        # Extract chapter number if not in title
+        if not data.chapter_number:
+            ch_match = re.search(r'Chapter[:\s]*(\d+)', text, re.IGNORECASE)
+            if ch_match:
+                data.chapter_number = int(ch_match.group(1))
+
+        # Extract class number
+        class_match = re.search(r'Class[:\s]*(\d+)', text, re.IGNORECASE)
+        if class_match:
+            data.class_num = int(class_match.group(1))
+
+        # Extract subject from frontmatter or text
+        subject_patterns = [
+            r'Subject[:\s]*(History|Geography|Civics|Economics)',
+            r'\b(History|Geography|Civics|Economics)\b'
+        ]
+        for pattern in subject_patterns:
+            subject_match = re.search(pattern, text, re.IGNORECASE)
+            if subject_match:
+                data.subject = subject_match.group(1).lower()
+                break
+
+        # Extract metadata from YAML frontmatter if present
+        frontmatter_match = re.match(r'^---\s*\n(.*?)\n---', text, re.DOTALL)
+        if frontmatter_match:
+            frontmatter = frontmatter_match.group(1)
+            MarkdownParser._parse_frontmatter(frontmatter, data)
+
+        # Parse sections
+        MarkdownParser._parse_cover_section(text, data)
+        MarkdownParser._parse_pyq_section(text, data)
+        MarkdownParser._parse_concepts_section(text, data)
+        MarkdownParser._parse_practice_section(text, data)
+        MarkdownParser._parse_revision_section(text, data)
+
+        return data
+
+    @staticmethod
+    def _parse_frontmatter(frontmatter: str, data: ChapterData):
+        """Parse YAML-like frontmatter."""
+        # Simple key: value parsing
+        patterns = {
+            'title': r'title[:\s]*["\']?(.+?)["\']?\s*$',
+            'chapter': r'chapter[:\s]*(\d+)',
+            'class': r'class[:\s]*(\d+)',
+            'subject': r'subject[:\s]*["\']?(.+?)["\']?\s*$',
+            'weightage': r'weightage[:\s]*["\']?(.+?)["\']?\s*$',
+            'importance': r'importance[:\s]*["\']?(.+?)["\']?\s*$',
+            'map_work': r'map_work[:\s]*["\']?(.+?)["\']?\s*$',
+        }
+
+        for key, pattern in patterns.items():
+            match = re.search(pattern, frontmatter, re.MULTILINE | re.IGNORECASE)
+            if match:
+                value = match.group(1).strip()
+                if key == 'title':
+                    data.chapter_title = value
+                elif key == 'chapter':
+                    data.chapter_number = int(value)
+                elif key == 'class':
+                    data.class_num = int(value)
+                elif key == 'subject':
+                    data.subject = value.lower()
+                elif key == 'weightage':
+                    data.weightage = value
+                elif key == 'importance':
+                    data.importance = value
+                elif key == 'map_work':
+                    data.map_work = value
+
+    @staticmethod
+    def _parse_cover_section(text: str, data: ChapterData):
+        """Parse cover page elements from markdown."""
+        # Learning objectives - look for ## Learning Objectives or bullet list after it
+        obj_match = re.search(
+            r'##\s*Learning Objectives?\s*\n((?:[-*]\s*.+\n?)+)',
+            text, re.IGNORECASE
+        )
+        if obj_match:
+            objectives = re.findall(r'[-*]\s*(.+)', obj_match.group(1))
+            data.learning_objectives = '\n'.join(objectives)
+
+        # Syllabus alert
+        alert_match = re.search(
+            r'(?:>\s*\*\*?|##\s*)(?:⚠|!)?.*?Syllabus Alert[:\s]*(.+?)(?:\n\n|$)',
+            text, re.IGNORECASE | re.DOTALL
+        )
+        if alert_match:
+            data.syllabus_alert_text = alert_match.group(1).strip()
+            data.syllabus_alert_enabled = True
+
+        # Weightage, Importance, etc. from table or list
+        for field, attr in [('Weightage', 'weightage'), ('Importance', 'importance'),
+                            ('Map Work', 'map_work'), ('PYQ Frequency', 'pyq_frequency')]:
+            match = re.search(rf'{field}[:\s|]*([^\n|]+)', text, re.IGNORECASE)
+            if match and not getattr(data, attr):
+                setattr(data, attr, match.group(1).strip())
+
+    @staticmethod
+    def _parse_pyq_section(text: str, data: ChapterData):
+        """Parse Part A: PYQ Analysis from markdown."""
+        # Find Part A or PYQ section
+        part_a_match = re.search(
+            r'##\s*(?:Part A|PYQ|Previous Year).*?\n(.*?)(?=##\s*Part [B-G]|$)',
+            text, re.DOTALL | re.IGNORECASE
+        )
+        if not part_a_match:
+            return
+
+        section = part_a_match.group(1)
+
+        # Year range
+        range_match = re.search(r'(\d{4})\s*[-–]\s*(\d{4})', section)
+        if range_match:
+            data.pyq_year_range = f"{range_match.group(1)}-{range_match.group(2)}"
+
+        # PYQ items from table
+        # Look for | Question | Marks | Years | pattern
+        table_match = re.search(r'\|[^\n]+\|\s*\n\|[-:\s|]+\|\s*\n((?:\|[^\n]+\|\s*\n?)+)', section)
+        if table_match:
+            rows = table_match.group(1).strip().split('\n')
+            for row in rows:
+                cells = [c.strip() for c in row.split('|') if c.strip()]
+                if len(cells) >= 2:
+                    from .models.base import PYQItem
+                    item = PYQItem()
+                    item.question = cells[0][:200]
+                    if len(cells) >= 2:
+                        marks_match = re.search(r'(\d+)', cells[1])
+                        if marks_match:
+                            item.marks = marks_match.group(1)
+                    if len(cells) >= 3:
+                        item.years = cells[2]
+                    if item.question:
+                        data.pyq_items.append(item)
+
+        # Prediction
+        pred_match = re.search(r'(?:Prediction|🎯)[:\s]*(.+?)(?:\n|$)', section, re.IGNORECASE)
+        if pred_match:
+            data.pyq_prediction = pred_match.group(1).strip()
+
+        # Syllabus note
+        note_match = re.search(r'Syllabus Note[:\s]*(.+?)(?:\n\n|$)', section, re.IGNORECASE)
+        if note_match:
+            data.pyq_syllabus_note = note_match.group(1).strip()
+
+    @staticmethod
+    def _parse_concepts_section(text: str, data: ChapterData):
+        """Parse Part B: Key Concepts from markdown."""
+        # Find Part B or Concepts section
+        part_b_match = re.search(
+            r'##\s*(?:Part B|Key Concepts).*?\n(.*?)(?=##\s*Part [C-G]|$)',
+            text, re.DOTALL | re.IGNORECASE
+        )
+        if not part_b_match:
+            return
+
+        section = part_b_match.group(1)
+
+        # Find concepts by ### headers or numbered items
+        concept_headers = re.findall(
+            r'###\s*(\d+)?\.?\s*(.+?)\n(.*?)(?=###|\Z)',
+            section, re.DOTALL
+        )
+
+        from .models.base import ConceptItem
+
+        for i, (num, title, content) in enumerate(concept_headers, 1):
+            concept = ConceptItem()
+            concept.number = int(num) if num else i
+            concept.title = title.strip()
+
+            # Extract content (remove sub-sections)
+            content_lines = []
+            for line in content.split('\n'):
+                line = line.strip()
+                if line and not line.startswith(('#', '>', '**NCERT', '**Memory', '**Do You Know')):
+                    # Remove markdown formatting
+                    line = re.sub(r'\*\*(.+?)\*\*', r'\1', line)
+                    line = re.sub(r'\*(.+?)\*', r'\1', line)
+                    content_lines.append(line)
+            concept.content = '\n'.join(content_lines[:20])  # Limit lines
+
+            # NCERT line
+            ncert_match = re.search(r'(?:NCERT|📌)[:\s]*["\']?(.+?)["\']?(?:\n|$)', content, re.IGNORECASE)
+            if ncert_match:
+                concept.ncert_line = ncert_match.group(1).strip()
+
+            # Memory trick
+            memory_match = re.search(r'(?:Memory Trick|💡)[:\s]*(.+?)(?:\n|$)', content, re.IGNORECASE)
+            if memory_match:
+                concept.memory_trick = memory_match.group(1).strip()
+
+            # Did you know
+            dyk_match = re.search(r'(?:Do You Know|Did You Know)[:\s?]*(.+?)(?:\n\n|$)', content, re.IGNORECASE | re.DOTALL)
+            if dyk_match:
+                concept.did_you_know = dyk_match.group(1).strip()[:200]
+
+            if concept.title:
+                data.concepts.append(concept)
+
+        # Common mistakes
+        mistakes_match = re.search(r'(?:Common Mistakes|⚠)[:\s]*\n((?:[-*]\s*.+\n?)+)', section, re.IGNORECASE)
+        if mistakes_match:
+            mistakes = re.findall(r'[-*]\s*(.+)', mistakes_match.group(1))
+            data.common_mistakes = [m.strip() for m in mistakes if m.strip()]
+
+        # Important dates from table
+        dates_match = re.search(r'(?:Important Dates|Timeline).*?\n\|[^\n]+\|\s*\n\|[-:\s|]+\|\s*\n((?:\|[^\n]+\|\s*\n?)+)', section, re.IGNORECASE)
+        if dates_match:
+            rows = dates_match.group(1).strip().split('\n')
+            for row in rows:
+                cells = [c.strip() for c in row.split('|') if c.strip()]
+                if len(cells) >= 2:
+                    data.important_dates.append({
+                        'year': cells[0],
+                        'event': cells[1]
+                    })
+
+    @staticmethod
+    def _parse_practice_section(text: str, data: ChapterData):
+        """Parse Part D: Practice Questions from markdown."""
+        # Find Part D or Practice section
+        part_d_match = re.search(
+            r'##\s*(?:Part D|Practice Questions).*?\n(.*?)(?=##\s*Part [E-G]|$)',
+            text, re.DOTALL | re.IGNORECASE
+        )
+        if not part_d_match:
+            return
+
+        section = part_d_match.group(1)
+
+        from .models.base import QuestionItem
+
+        # Parse MCQs
+        mcq_section = re.search(r'(?:MCQ|Multiple Choice).*?\n(.*?)(?=###|Short Answer|Long Answer|$)',
+                                 section, re.DOTALL | re.IGNORECASE)
+        if mcq_section:
+            # Pattern: 1. Question\n   a) opt1\n   b) opt2\n   c) opt3\n   d) opt4
+            mcq_pattern = r'(\d+)\.\s*(.+?)\n\s*(?:a\)|A\.)\s*(.+?)\n\s*(?:b\)|B\.)\s*(.+?)\n\s*(?:c\)|C\.)\s*(.+?)\n\s*(?:d\)|D\.)\s*(.+?)(?=\n\d+\.|$)'
+            for match in re.finditer(mcq_pattern, mcq_section.group(1), re.DOTALL):
+                q = QuestionItem()
+                q.question = match.group(2).strip()[:200]
+                q.options = [
+                    match.group(3).strip()[:100],
+                    match.group(4).strip()[:100],
+                    match.group(5).strip()[:100],
+                    match.group(6).strip()[:100]
+                ]
+                q.difficulty = 'M'
+                if q.question:
+                    data.mcqs.append(q)
+
+        # Parse Short Answer
+        sa_section = re.search(r'(?:Short Answer|3 Marks?).*?\n(.*?)(?=###|Long Answer|5 Marks?|$)',
+                                section, re.DOTALL | re.IGNORECASE)
+        if sa_section:
+            questions = re.findall(r'(\d+)\.\s*(.+?)(?=\n\d+\.|$)', sa_section.group(1), re.DOTALL)
+            for _, q_text in questions:
+                q = QuestionItem()
+                q.question = q_text.strip()[:200]
+                q.marks = 3
+                if q.question and len(q.question) > 10:
+                    data.short_answer.append(q)
+
+        # Parse Long Answer
+        la_section = re.search(r'(?:Long Answer|5 Marks?).*?\n(.*?)(?=###|HOTS|$)',
+                                section, re.DOTALL | re.IGNORECASE)
+        if la_section:
+            questions = re.findall(r'(\d+)\.\s*(.+?)(?=\n\d+\.|$)', la_section.group(1), re.DOTALL)
+            for _, q_text in questions:
+                q = QuestionItem()
+                q.question = q_text.strip()[:300]
+                q.marks = 5
+                if q.question and len(q.question) > 10:
+                    data.long_answer.append(q)
+
+    @staticmethod
+    def _parse_revision_section(text: str, data: ChapterData):
+        """Parse Part F: Quick Revision from markdown."""
+        # Find Part F or Revision section
+        part_f_match = re.search(
+            r'##\s*(?:Part F|Quick Revision).*?\n(.*?)(?=##\s*Part G|$)',
+            text, re.DOTALL | re.IGNORECASE
+        )
+        if not part_f_match:
+            return
+
+        section = part_f_match.group(1)
+
+        # Key points
+        points_match = re.search(r'(?:Key Points?).*?\n((?:[-*\d]+\.\s*.+\n?)+)', section, re.IGNORECASE)
+        if points_match:
+            points = re.findall(r'[-*]|\d+\.\s*(.+)', points_match.group(1))
+            data.revision_key_points = [p.strip() for p in points if p and p.strip()]
+
+        # Key terms from table
+        terms_match = re.search(r'(?:Key Terms?).*?\n\|[^\n]+\|\s*\n\|[-:\s|]+\|\s*\n((?:\|[^\n]+\|\s*\n?)+)', section, re.IGNORECASE)
+        if terms_match:
+            rows = terms_match.group(1).strip().split('\n')
+            for row in rows:
+                cells = [c.strip() for c in row.split('|') if c.strip()]
+                if len(cells) >= 2:
+                    data.revision_key_terms.append({
+                        'term': cells[0][:50],
+                        'definition': cells[1][:200]
+                    })
+
+        # Memory tricks
+        tricks_match = re.search(r'(?:Memory Tricks?).*?\n((?:[-*>]\s*.+\n?)+)', section, re.IGNORECASE)
+        if tricks_match:
+            tricks = re.findall(r'[-*>]\s*(.+)', tricks_match.group(1))
+            data.revision_memory_tricks = [t.strip() for t in tricks if t.strip()]
+
+    @staticmethod
+    def get_import_summary(data: ChapterData) -> Dict[str, Any]:
+        """Get summary of what was extracted from markdown."""
+        return {
+            'chapter_title': data.chapter_title or 'Untitled',
+            'chapter_number': data.chapter_number,
+            'subject': data.subject,
+            'class_num': data.class_num,
+            'concepts_count': len(data.concepts),
+            'pyq_count': len(data.pyq_items),
+            'mcq_count': len(data.mcqs),
+            'short_answer_count': len(data.short_answer),
+            'long_answer_count': len(data.long_answer),
+            'key_points_count': len(data.revision_key_points),
+            'key_terms_count': len(data.revision_key_terms),
+        }
+
+
 def parse_document(file_bytes: bytes, file_type: str) -> Optional[ChapterData]:
     """
     Parse a document file and extract chapter data.
 
     Args:
         file_bytes: The file content as bytes
-        file_type: File extension ('json', 'docx', 'pdf')
+        file_type: File extension ('json', 'docx', 'pdf', 'md')
 
     Returns:
         ChapterData object if successful, None otherwise
@@ -737,6 +1101,8 @@ def parse_document(file_bytes: bytes, file_type: str) -> Optional[ChapterData]:
         return DocxParser.parse(file_bytes)
     elif file_type == 'pdf':
         return PdfParser.parse(file_bytes)
+    elif file_type in ('md', 'markdown'):
+        return MarkdownParser.parse(file_bytes)
     else:
         return None
 
