@@ -69,11 +69,11 @@ class PartBGenerator:
             para.paragraph_format.left_indent = Inches(0.3)
             para.paragraph_format.space_after = Pt(6)
 
-            run = para.add_run("📌 NCERT: ")
+            run = para.add_run("NCERT Exact Line: ")
             run.font.name = Fonts.PRIMARY
             run.font.size = Pt(11)
             run.font.bold = True
-            run.font.color.rgb = Colors.hex_to_rgb(Colors.HEADING_BLUE)
+            run.font.color.rgb = Colors.hex_to_rgb(Colors.ACCENT_RED)
 
             run = para.add_run(f'"{concept.ncert_line}"')
             run.font.name = Fonts.PRIMARY

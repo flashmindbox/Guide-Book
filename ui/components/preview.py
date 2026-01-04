@@ -723,7 +723,7 @@ class PreviewRenderer:
             '''
 
             if concept.ncert_line:
-                html += f'<div class="preview-ncert">"{concept.ncert_line}"</div>'
+                html += f'<div class="preview-ncert"><span style="color: var(--accent-red); font-weight: bold; font-style: normal;">NCERT Exact Line:</span> "{concept.ncert_line}"</div>'
 
             if concept.content:
                 content_html = cls._format_text(concept.content)
