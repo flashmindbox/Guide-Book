@@ -482,8 +482,7 @@ def render_cover_page():
 
     # Preview panel
     st.divider()
-    part_manager = SessionManager.get_part_manager()
-    show_preview_panel(data, part_manager=part_manager)
+    show_preview_panel(data)
 
 
 def render_part_a():
@@ -572,8 +571,7 @@ def render_part_a():
 
     # Preview panel
     st.divider()
-    part_manager = SessionManager.get_part_manager()
-    show_preview_panel(data, part_manager=part_manager, part_id='A')
+    show_preview_panel(data, part_id='A')
 
 
 def render_part_b():
@@ -645,8 +643,7 @@ def render_part_b():
 
     # Preview panel
     st.divider()
-    part_manager = SessionManager.get_part_manager()
-    show_preview_panel(data, part_manager=part_manager, part_id='B')
+    show_preview_panel(data, part_id='B')
 
 
 def render_part_c():
@@ -706,8 +703,7 @@ def render_part_c():
 
     # Preview panel
     st.divider()
-    part_manager = SessionManager.get_part_manager()
-    show_preview_panel(data, part_manager=part_manager, part_id='C')
+    show_preview_panel(data, part_id='C')
 
 
 def render_part_d():
@@ -740,8 +736,7 @@ def render_part_d():
 
     # Preview panel
     st.divider()
-    part_manager = SessionManager.get_part_manager()
-    show_preview_panel(data, part_manager=part_manager, part_id='D')
+    show_preview_panel(data, part_id='D')
 
 
 def render_mcq_editor(data):
@@ -888,8 +883,7 @@ def render_part_e():
 
     # Preview panel
     st.divider()
-    part_manager = SessionManager.get_part_manager()
-    show_preview_panel(data, part_manager=part_manager, part_id='E')
+    show_preview_panel(data, part_id='E')
 
 
 def render_part_f():
@@ -946,8 +940,7 @@ def render_part_f():
 
     # Preview panel
     st.divider()
-    part_manager = SessionManager.get_part_manager()
-    show_preview_panel(data, part_manager=part_manager, part_id='F')
+    show_preview_panel(data, part_id='F')
 
 
 def render_part_g():
@@ -1031,8 +1024,7 @@ def render_part_g():
 
     # Preview panel
     st.divider()
-    part_manager = SessionManager.get_part_manager()
-    show_preview_panel(data, part_manager=part_manager, part_id='G')
+    show_preview_panel(data, part_id='G')
 
 
 def render_generate_page():

@@ -1,9 +1,6 @@
 """
 Live Preview Component for Guide Book Generator.
 Renders chapter data as styled HTML matching the DOCX output.
-
-This module now uses the unified rendering system to ensure
-HTML preview matches DOCX output exactly.
 """
 
 import streamlit as st
@@ -12,39 +9,9 @@ from core.models.base import ChapterData
 from core.models.parts import PartManager
 from styles.theme import Colors, Fonts, Icons, BoxStyles
 
-# Import unified rendering system
-from generators.unified import ContentBuilder, HtmlRenderer
-
 
 class PreviewRenderer:
-    """Renders chapter data as HTML preview using unified rendering system."""
-
-    @classmethod
-    def render_unified(cls, data: ChapterData, part_manager: PartManager) -> str:
-        """
-        Render using unified system (recommended).
-        This ensures HTML preview matches DOCX output exactly.
-        """
-        builder = ContentBuilder(data, part_manager)
-        elements = builder.build_full_document()
-        return HtmlRenderer.render(elements)
-
-    @classmethod
-    def render_unified_cover(cls, data: ChapterData, part_manager: PartManager) -> str:
-        """Render only cover page using unified system."""
-        builder = ContentBuilder(data, part_manager)
-        elements = builder.build_cover_only()
-        return HtmlRenderer.render(elements)
-
-    @classmethod
-    def render_unified_part(cls, data: ChapterData, part_manager: PartManager, part_id: str) -> str:
-        """Render a specific part using unified system."""
-        builder = ContentBuilder(data, part_manager)
-        elements = builder.build_part_only(part_id)
-        return HtmlRenderer.render(elements)
-
-    # Legacy methods below - kept for backwards compatibility
-    # These will be deprecated in future versions
+    """Renders chapter data as HTML preview."""
 
     # CSS styles - xhtml2pdf compatible (no flex, no border-radius, simple styles)
     CSS = f"""
@@ -1247,13 +1214,12 @@ def show_preview_panel(data: ChapterData, part_manager: PartManager = None,
 
     with st.expander("👁️ Quick Preview", expanded=False):
         # Generate content HTML based on what to preview
-        # Use unified rendering for consistent output with DOCX
         if show_full and part_manager:
-            html = PreviewRenderer.render_unified(data, part_manager)
+            html = PreviewRenderer.render_full_preview(data, part_manager)
         elif part_id:
-            html = PreviewRenderer.render_unified_part(data, part_manager, part_id) if part_manager else PreviewRenderer.render_part_preview(data, part_id)
+            html = PreviewRenderer.render_part_preview(data, part_id)
         else:
-            html = PreviewRenderer.render_unified_cover(data, part_manager) if part_manager else PreviewRenderer.render_cover_preview(data)
+            html = PreviewRenderer.render_cover_preview(data)
 
         # Display the HTML preview with increased height
         components.html(html, height=1200, scrolling=True)
@@ -1300,7 +1266,7 @@ def show_pdf_preview(data: ChapterData, part_manager: PartManager):
     """
     import streamlit.components.v1 as components
     import base64
-    from generators.docx.base import UnifiedDocumentGenerator
+    from generators.docx.base import DocumentGenerator
     from generators.pdf.converter import PDFConverter
 
     st.subheader("📄 Document Preview & Download")
@@ -1330,8 +1296,8 @@ def show_pdf_preview(data: ChapterData, part_manager: PartManager):
     if generate_clicked:
         with st.spinner("Generating document..."):
             try:
-                # Generate DOCX using unified renderer
-                generator = UnifiedDocumentGenerator(data, part_manager)
+                # Generate DOCX
+                generator = DocumentGenerator(data, part_manager)
                 docx_bytes = generator.generate_to_bytes()
 
                 # Store DOCX in session state
@@ -1341,8 +1307,8 @@ def show_pdf_preview(data: ChapterData, part_manager: PartManager):
                 # Generate PDF from HTML (matches preview exactly)
                 if html_pdf_available:
                     with st.spinner("Generating PDF preview..."):
-                        # Generate HTML preview using unified renderer
-                        html_content = PreviewRenderer.render_unified(data, part_manager)
+                        # Generate HTML preview
+                        html_content = PreviewRenderer.render_full_preview(data, part_manager)
                         pdf_bytes = PDFConverter.convert_html_to_pdf(html_content)
 
                         if pdf_bytes:
@@ -1433,7 +1399,7 @@ def show_pdf_preview(data: ChapterData, part_manager: PartManager):
                 st.rerun()
 
 
-def show_section_preview(data: ChapterData, section: str = "cover", part_manager: PartManager = None):
+def show_section_preview(data: ChapterData, section: str = "cover"):
     """
     Quick HTML preview for individual sections during editing.
     This is a lightweight preview for immediate feedback while editing.
@@ -1441,23 +1407,15 @@ def show_section_preview(data: ChapterData, section: str = "cover", part_manager
     Args:
         data: Chapter data to preview
         section: Section to preview - 'cover', 'A', 'B', 'C', 'D', 'E', 'F', 'G'
-        part_manager: Optional PartManager for unified rendering
     """
     import streamlit.components.v1 as components
 
     with st.expander("👁️ Quick Preview", expanded=False):
-        # Use unified renderer for consistent output with DOCX
-        if part_manager:
-            if section == "cover":
-                html = PreviewRenderer.render_unified_cover(data, part_manager)
-            else:
-                html = PreviewRenderer.render_unified_part(data, part_manager, section)
+        # Use existing HTML renderer for quick feedback
+        if section == "cover":
+            html = PreviewRenderer.render_cover_preview(data)
         else:
-            # Fallback to old renderer if no part_manager
-            if section == "cover":
-                html = PreviewRenderer.render_cover_preview(data)
-            else:
-                html = PreviewRenderer.render_part_preview(data, section)
+            html = PreviewRenderer.render_part_preview(data, section)
 
         components.html(html, height=500, scrolling=True)
 
