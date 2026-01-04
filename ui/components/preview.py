@@ -1430,7 +1430,7 @@ def clear_preview_cache():
             del st.session_state[key]
 
 
-def show_generate_docx_button(data: ChapterData, part_manager: PartManager = None):
+def show_generate_docx_button(data: ChapterData, part_manager: PartManager = None, part_id: str = None):
     """
     Show a Generate DOCX button with download functionality.
     Can be placed on any page for quick document generation.
@@ -1438,6 +1438,7 @@ def show_generate_docx_button(data: ChapterData, part_manager: PartManager = Non
     Args:
         data: Chapter data to generate
         part_manager: Part manager (uses default if not provided)
+        part_id: Specific part to generate ('cover', 'A', 'B', etc.) or None for full document
     """
     from core.models.parts import PartManager as PM
     from generators.docx.base import DocumentGenerator
@@ -1445,35 +1446,55 @@ def show_generate_docx_button(data: ChapterData, part_manager: PartManager = Non
     if part_manager is None:
         part_manager = PM()
 
+    # Determine button label based on what we're generating
+    if part_id == 'cover':
+        button_label = "📥 Generate Cover Page DOCX"
+        file_suffix = "Cover"
+    elif part_id:
+        button_label = f"📥 Generate Part {part_id} DOCX"
+        file_suffix = f"Part_{part_id}"
+    else:
+        button_label = "📥 Generate Full DOCX"
+        file_suffix = "Full"
+
     col1, col2, col3 = st.columns([1, 2, 1])
 
     with col2:
-        if st.button("📥 Generate DOCX", type="primary", use_container_width=True,
-                     key=f"gen_docx_{st.session_state.get('current_page', 'unknown')}"):
+        # Use unique key based on part_id
+        key_suffix = part_id if part_id else 'full'
+        if st.button(button_label, type="primary", use_container_width=True,
+                     key=f"gen_docx_{key_suffix}_{st.session_state.get('current_page', 'unknown')}"):
             with st.spinner("Generating DOCX..."):
                 try:
                     generator = DocumentGenerator(data, part_manager)
-                    docx_bytes = generator.generate_to_bytes()
 
-                    # Store in session state for download
-                    st.session_state['quick_docx'] = docx_bytes
-                    st.session_state['quick_docx_ready'] = True
+                    # Generate based on part_id
+                    if part_id == 'cover':
+                        docx_bytes = generator.generate_cover_only_to_bytes()
+                    elif part_id:
+                        docx_bytes = generator.generate_part_only_to_bytes(part_id)
+                    else:
+                        docx_bytes = generator.generate_to_bytes()
+
+                    # Store in session state for download with unique key
+                    st.session_state[f'quick_docx_{key_suffix}'] = docx_bytes
+                    st.session_state[f'quick_docx_ready_{key_suffix}'] = True
                     st.rerun()
                 except Exception as e:
                     st.error(f"Error generating DOCX: {str(e)}")
 
         # Show download button if DOCX is ready
-        if st.session_state.get('quick_docx_ready') and st.session_state.get('quick_docx'):
+        if st.session_state.get(f'quick_docx_ready_{key_suffix}') and st.session_state.get(f'quick_docx_{key_suffix}'):
             safe_title = "".join(c for c in data.chapter_title[:20] if c.isalnum() or c in (' ', '-', '_')).strip()
             safe_title = safe_title.replace(' ', '_') if safe_title else 'Chapter'
-            filename = f"Ch{data.chapter_number}_{data.subject}_{safe_title}.docx"
+            filename = f"Ch{data.chapter_number}_{data.subject}_{safe_title}_{file_suffix}.docx"
 
             st.download_button(
                 "⬇️ Download DOCX",
-                data=st.session_state['quick_docx'],
+                data=st.session_state[f'quick_docx_{key_suffix}'],
                 file_name=filename,
                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 use_container_width=True,
-                key=f"download_docx_{st.session_state.get('current_page', 'unknown')}"
+                key=f"download_docx_{key_suffix}_{st.session_state.get('current_page', 'unknown')}"
             )
-            st.success("✅ DOCX generated! Click above to download.")
+            st.success(f"✅ {file_suffix} DOCX generated! Click above to download.")
