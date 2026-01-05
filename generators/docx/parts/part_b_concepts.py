@@ -126,13 +126,13 @@ class PartBGenerator:
             para = cell.paragraphs[0]
             run = para.add_run("Do You Know? ")
             run.font.name = Fonts.PRIMARY
-            run.font.size = Pt(11)
+            run.font.size = Pt(9)
             run.font.bold = True
             run.font.color.rgb = Colors.hex_to_rgb(Colors.YEAR_RED)  # Red label
 
             run = para.add_run(concept.did_you_know)
             run.font.name = Fonts.PRIMARY
-            run.font.size = Pt(11)
+            run.font.size = Pt(9)
 
             self.document.add_paragraph()  # Spacing after box
 

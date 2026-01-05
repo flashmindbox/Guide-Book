@@ -297,7 +297,10 @@ class PreviewRenderer:
         .preview-dyk-label {{
             color: #DC2626;
             font-weight: bold;
-            font-size: 11pt;
+            font-size: 9pt;
+        }}
+        .preview-dyk-content {{
+            font-size: 9pt;
         }}
 
         /* =================================================================
@@ -1006,7 +1009,7 @@ class PreviewRenderer:
                 html += f'''
             <div class="preview-dyk">
                 <span class="preview-dyk-label">Do You Know? </span>
-                <span>{concept.did_you_know}</span>
+                <span class="preview-dyk-content">{concept.did_you_know}</span>
             </div>
                 '''
 
