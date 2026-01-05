@@ -9,6 +9,20 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 
 
+class CustomBox(BaseModel):
+    """A custom colored box for concepts."""
+    title: str = Field(default="")
+    content: str = Field(default="")
+    background_color: str = Field(default="#F3F4F6")  # Light grey default
+
+
+class ConceptTable(BaseModel):
+    """A table within a concept."""
+    title: str = Field(default="")
+    headers: List[str] = Field(default_factory=lambda: ["Column 1", "Column 2"])
+    rows: List[List[str]] = Field(default_factory=list)
+
+
 class ConceptItem(BaseModel):
     """A single concept/topic in Part B."""
     number: int = Field(default=1, ge=1)
@@ -17,6 +31,8 @@ class ConceptItem(BaseModel):
     ncert_line: Optional[str] = Field(default=None, description="NCERT exact line quote")
     memory_trick: Optional[str] = Field(default=None)
     did_you_know: Optional[str] = Field(default=None)
+    custom_boxes: List['CustomBox'] = Field(default_factory=list)
+    tables: List['ConceptTable'] = Field(default_factory=list)
 
     def is_empty(self) -> bool:
         return not self.title and not self.content

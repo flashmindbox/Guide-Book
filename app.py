@@ -733,12 +733,118 @@ def render_part_b():
                                      placeholder="FLAT-CUN — Flag, Language, Assembly...")
                 concept.memory_trick = trick if trick else None
 
+                # Tables
+                st.markdown("**Tables**")
+
+                for tbl_idx, tbl in enumerate(concept.tables):
+                    with st.expander(f"📊 {tbl.title or 'Untitled Table'}", expanded=True):
+                        tbl.title = st.text_input("Table Title", value=tbl.title,
+                                                 key=f"tbl_title_{idx}_{tbl_idx}",
+                                                 placeholder="e.g., Comparison of Events")
+
+                        # Headers
+                        st.markdown("*Headers:*")
+                        header_cols = st.columns(len(tbl.headers) + 1)
+                        new_headers = []
+                        for h_idx, header in enumerate(tbl.headers):
+                            with header_cols[h_idx]:
+                                new_headers.append(st.text_input(f"Col {h_idx+1}", value=header,
+                                                                key=f"tbl_h_{idx}_{tbl_idx}_{h_idx}",
+                                                                label_visibility="collapsed"))
+                        with header_cols[-1]:
+                            col_btns = st.columns(2)
+                            with col_btns[0]:
+                                if st.button("➕", key=f"add_col_{idx}_{tbl_idx}", help="Add column"):
+                                    new_headers.append(f"Column {len(new_headers)+1}")
+                                    for row in tbl.rows:
+                                        row.append("")
+                                    tbl.headers = new_headers
+                                    st.rerun()
+                            with col_btns[1]:
+                                if len(tbl.headers) > 1 and st.button("➖", key=f"del_col_{idx}_{tbl_idx}", help="Remove last column"):
+                                    new_headers.pop()
+                                    for row in tbl.rows:
+                                        if row:
+                                            row.pop()
+                                    tbl.headers = new_headers
+                                    st.rerun()
+                        tbl.headers = new_headers
+
+                        # Rows
+                        st.markdown("*Rows:*")
+                        for r_idx, row in enumerate(tbl.rows):
+                            row_cols = st.columns(len(tbl.headers) + 1)
+                            for c_idx in range(len(tbl.headers)):
+                                with row_cols[c_idx]:
+                                    if c_idx < len(row):
+                                        row[c_idx] = st.text_input(f"R{r_idx}C{c_idx}", value=row[c_idx],
+                                                                  key=f"tbl_cell_{idx}_{tbl_idx}_{r_idx}_{c_idx}",
+                                                                  label_visibility="collapsed")
+                            with row_cols[-1]:
+                                if st.button("🗑️", key=f"del_row_{idx}_{tbl_idx}_{r_idx}"):
+                                    tbl.rows.pop(r_idx)
+                                    st.rerun()
+
+                        btn_cols = st.columns([1, 1, 4])
+                        with btn_cols[0]:
+                            if st.button("➕ Row", key=f"add_row_{idx}_{tbl_idx}"):
+                                tbl.rows.append([""] * len(tbl.headers))
+                                st.rerun()
+                        with btn_cols[1]:
+                            if st.button("🗑️ Table", key=f"del_tbl_{idx}_{tbl_idx}"):
+                                concept.tables.pop(tbl_idx)
+                                st.rerun()
+
+                if st.button("➕ Add Table", key=f"add_tbl_{idx}"):
+                    from core.models.base import ConceptTable
+                    concept.tables.append(ConceptTable())
+                    st.rerun()
+
             with col2:
                 # Did You Know
                 dyk = st.text_area("Did You Know? (optional)", value=concept.did_you_know or "",
                                   height=100, key=f"concept_dyk_{idx}",
                                   placeholder="Interesting fact...")
                 concept.did_you_know = dyk if dyk else None
+
+                # Custom Boxes
+                st.markdown("**Custom Boxes**")
+
+                COLOR_OPTIONS = {
+                    "Light Grey": "#F3F4F6",
+                    "Light Blue": "#DBEAFE",
+                    "Light Green": "#DCFCE7",
+                    "Light Yellow": "#FEF3C7",
+                    "Light Purple": "#F3E8FF",
+                    "Light Pink": "#FEE2E2",
+                }
+
+                for box_idx, box in enumerate(concept.custom_boxes):
+                    with st.container():
+                        box_cols = st.columns([3, 2, 1])
+                        with box_cols[0]:
+                            box.title = st.text_input("Box Title", value=box.title,
+                                                      key=f"box_title_{idx}_{box_idx}",
+                                                      placeholder="e.g., Important Note")
+                        with box_cols[1]:
+                            color_name = [k for k, v in COLOR_OPTIONS.items() if v == box.background_color]
+                            color_name = color_name[0] if color_name else "Light Grey"
+                            selected = st.selectbox("Color", list(COLOR_OPTIONS.keys()),
+                                                   index=list(COLOR_OPTIONS.keys()).index(color_name),
+                                                   key=f"box_color_{idx}_{box_idx}")
+                            box.background_color = COLOR_OPTIONS[selected]
+                        with box_cols[2]:
+                            if st.button("🗑️", key=f"del_box_{idx}_{box_idx}"):
+                                concept.custom_boxes.pop(box_idx)
+                                st.rerun()
+
+                        box.content = st.text_area("Box Content", value=box.content, height=80,
+                                                  key=f"box_content_{idx}_{box_idx}")
+
+                if st.button("➕ Add Box", key=f"add_box_{idx}"):
+                    from core.models.base import CustomBox
+                    concept.custom_boxes.append(CustomBox())
+                    st.rerun()
 
             st.caption(f"Word count: {concept.word_count()}")
 

@@ -302,6 +302,44 @@ class PreviewRenderer:
         .preview-dyk-content {{
             font-size: 9pt;
         }}
+        .preview-custom-box {{
+            width: 100%;
+            max-width: 6.0in;
+            border: 1pt solid #E5E7EB;
+            padding: 10pt 12pt;
+            margin: 12pt auto;
+            box-sizing: border-box;
+            font-size: 9pt;
+        }}
+        .preview-custom-box-title {{
+            font-weight: bold;
+            font-size: 9pt;
+        }}
+        .preview-concept-table {{
+            width: 100%;
+            max-width: 6.0in;
+            margin: 12pt auto;
+            border-collapse: collapse;
+        }}
+        .preview-concept-table th {{
+            background: #F3F4F6;
+            font-weight: bold;
+            font-size: 9pt;
+            padding: 6pt 8pt;
+            border: 1pt solid #D1D5DB;
+            text-align: left;
+        }}
+        .preview-concept-table td {{
+            font-size: 9pt;
+            padding: 6pt 8pt;
+            border: 1pt solid #D1D5DB;
+        }}
+        .preview-table-title {{
+            font-size: 10pt;
+            font-weight: bold;
+            font-style: italic;
+            margin: 12pt 0 6pt 0;
+        }}
 
         /* =================================================================
            PYQ TABLE - Matches DOCX part_a_pyq.py lines 74-144
@@ -1012,6 +1050,32 @@ class PreviewRenderer:
                 <span class="preview-dyk-content">{concept.did_you_know}</span>
             </div>
                 '''
+
+            # Custom Boxes
+            for box in concept.custom_boxes:
+                if box.title or box.content:
+                    title_html = f'<span class="preview-custom-box-title">{box.title}: </span>' if box.title else ''
+                    html += f'''
+            <div class="preview-custom-box" style="background: {box.background_color};">
+                {title_html}<span>{box.content}</span>
+            </div>
+                    '''
+
+            # Concept Tables
+            for tbl in concept.tables:
+                if tbl.headers and tbl.rows:
+                    if tbl.title:
+                        html += f'<div class="preview-table-title">{tbl.title}</div>'
+                    html += '<table class="preview-concept-table"><thead><tr>'
+                    for header in tbl.headers:
+                        html += f'<th>{header}</th>'
+                    html += '</tr></thead><tbody>'
+                    for row in tbl.rows:
+                        html += '<tr>'
+                        for cell in row:
+                            html += f'<td>{cell}</td>'
+                        html += '</tr>'
+                    html += '</tbody></table>'
 
         # Comparison Tables - matches DOCX _add_comparison_tables
         if data.comparison_tables:

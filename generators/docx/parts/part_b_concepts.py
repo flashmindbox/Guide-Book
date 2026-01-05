@@ -136,6 +136,71 @@ class PartBGenerator:
 
             self.document.add_paragraph()  # Spacing after box
 
+        # Custom Boxes (if present)
+        for box in concept.custom_boxes:
+            if box.title or box.content:
+                table = self.document.add_table(rows=1, cols=1)
+                table.alignment = 1
+                table.columns[0].width = Inches(6.0)
+
+                cell = table.cell(0, 0)
+                DocxHelpers.set_cell_background(cell, box.background_color)
+                DocxHelpers.set_cell_padding(cell, 80)
+
+                para = cell.paragraphs[0]
+                if box.title:
+                    run = para.add_run(f"{box.title}: ")
+                    run.font.name = Fonts.PRIMARY
+                    run.font.size = Pt(9)
+                    run.font.bold = True
+
+                run = para.add_run(box.content)
+                run.font.name = Fonts.PRIMARY
+                run.font.size = Pt(9)
+
+                self.document.add_paragraph()  # Spacing after box
+
+        # Concept Tables (if present)
+        for tbl in concept.tables:
+            if tbl.headers and tbl.rows:
+                # Table title
+                if tbl.title:
+                    para = self.document.add_paragraph()
+                    para.paragraph_format.space_before = Pt(6)
+                    run = para.add_run(tbl.title)
+                    run.font.name = Fonts.PRIMARY
+                    run.font.size = Pt(10)
+                    run.font.bold = True
+                    run.font.italic = True
+
+                # Create table
+                num_cols = len(tbl.headers)
+                num_rows = len(tbl.rows) + 1  # +1 for header row
+                table = self.document.add_table(rows=num_rows, cols=num_cols)
+                table.style = 'Table Grid'
+                table.alignment = 1
+
+                # Header row
+                for col_idx, header in enumerate(tbl.headers):
+                    cell = table.cell(0, col_idx)
+                    DocxHelpers.set_cell_background(cell, Colors.BG_LIGHT_GREY)
+                    para = cell.paragraphs[0]
+                    run = para.add_run(header)
+                    run.font.name = Fonts.PRIMARY
+                    run.font.size = Pt(9)
+                    run.font.bold = True
+
+                # Data rows
+                for row_idx, row in enumerate(tbl.rows):
+                    for col_idx, cell_text in enumerate(row):
+                        cell = table.cell(row_idx + 1, col_idx)
+                        para = cell.paragraphs[0]
+                        run = para.add_run(cell_text)
+                        run.font.name = Fonts.PRIMARY
+                        run.font.size = Pt(9)
+
+                self.document.add_paragraph()  # Spacing after table
+
     def _add_concept_content(self, content: str):
         """Add the main concept content with formatting."""
         lines = content.strip().split('\n')
