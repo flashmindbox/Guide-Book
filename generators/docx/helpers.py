@@ -270,13 +270,6 @@ class DocxHelpers:
     def add_formatted_text(paragraph, text: str, default_color: str = None, highlight_years: bool = False):
         """
         Add text with markdown formatting to a paragraph using robust HTML parsing.
-        Supports: **bold**, *italic*, ***bold-italic***
-        
-        Args:
-            paragraph: The docx paragraph object to add runs to.
-            text: The markdown text.
-            default_color: Hex color string (e.g., '#FF0000') for unstyled text.
-            highlight_years: If True, highlights 4-digit years in red.
         """
         if not text:
             return
@@ -284,7 +277,9 @@ class DocxHelpers:
         try:
             import markdown
             from bs4 import BeautifulSoup, NavigableString
-        except ImportError:
+            # print(f"DEBUG: Markdown/BS4 imported successfully for text: {text[:20]}...") 
+        except ImportError as e:
+            print(f"CRITICAL ERROR: Failed to import markdown/bs4: {e}")
             # Fallback to simple text if libraries are missing
             run = paragraph.add_run(text)
             if default_color:
@@ -292,10 +287,13 @@ class DocxHelpers:
             return
 
         # Convert markdown to HTML (fragments only)
-        # We replace newlines with <br> manually first to ensure they are preserved in basic text
-        # But markdown handles double-space as br. Let's just trust markdown.
-        html = markdown.markdown(text)
-        soup = BeautifulSoup(html, 'html.parser')
+        try:
+            html = markdown.markdown(text)
+            soup = BeautifulSoup(html, 'html.parser')
+        except Exception as e:
+            print(f"CRITICAL ERROR during markdown conversion: {e}")
+            run = paragraph.add_run(text)
+            return
 
         # Recursive function to traverse HTML and add runs
         def process_node(node, style_context=None):

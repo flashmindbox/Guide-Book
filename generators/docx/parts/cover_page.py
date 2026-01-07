@@ -170,8 +170,14 @@ class CoverPageGenerator:
         # Clean up bullets/dashes
         clean_objectives = []
         for obj in objectives:
-            if obj.startswith(('-', '•', '*')):
+            # Only strip if it's a clear list marker (space after)
+            # or if it's a single character bullet that isn't part of bold syntax
+            if obj.startswith(('- ', '• ', '* ')):
+                obj = obj[2:].strip()
+            elif obj.startswith(('•', '-')): # Allow no-space for standard bullets
                 obj = obj[1:].strip()
+            # Note: We do NOT strip '*' without space, as it might be *italic* or **bold**
+            
             clean_objectives.append(obj)
 
         # Section header
