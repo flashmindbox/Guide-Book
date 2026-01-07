@@ -177,9 +177,11 @@ class PartDGenerator:
                 para.paragraph_format.left_indent = Inches(0.5)
                 para.paragraph_format.space_after = Pt(1)
 
-                run = para.add_run(f"({option_letter}) {opt}")
+                run = para.add_run(f"({option_letter}) ")
                 run.font.name = Fonts.PRIMARY
                 run.font.size = Pt(11)
+                
+                DocxHelpers.add_formatted_text(para, opt)
 
     def _add_mcq_answers(self):
         """Add MCQ answer key."""
@@ -257,9 +259,7 @@ class PartDGenerator:
             assertion = q_text
             reason = ""
 
-        run = para.add_run(assertion)
-        run.font.name = Fonts.PRIMARY
-        run.font.size = Pt(11)
+        DocxHelpers.add_formatted_text(para, assertion)
 
         if reason:
             para = self.document.add_paragraph()
@@ -269,9 +269,7 @@ class PartDGenerator:
             run.font.size = Pt(11)
             run.font.bold = True
 
-            run = para.add_run(reason)
-            run.font.name = Fonts.PRIMARY
-            run.font.size = Pt(11)
+            DocxHelpers.add_formatted_text(para, reason)
 
     def _add_ar_answers(self):
         """Add AR answer key."""
@@ -318,7 +316,14 @@ class PartDGenerator:
         para.paragraph_format.left_indent = Inches(0.3)
         para.paragraph_format.space_after = Pt(6)
 
-        run = para.add_run(f'"{source_text}"')
+        run = para.add_run('"')
+        run.font.name = Fonts.PRIMARY
+        run.font.size = Pt(11)
+        run.font.italic = True
+        
+        DocxHelpers.add_formatted_text(para, source_text)
+        
+        run = para.add_run('"')
         run.font.name = Fonts.PRIMARY
         run.font.size = Pt(11)
         run.font.italic = True
@@ -335,9 +340,7 @@ class PartDGenerator:
             run.font.size = Pt(11)
             run.font.bold = True
 
-            run = para.add_run(f"{q.get('question', '')} ")
-            run.font.name = Fonts.PRIMARY
-            run.font.size = Pt(11)
+            DocxHelpers.add_formatted_text(para, q.get('question', ''))
 
             marks = q.get('marks', 1)
             run = para.add_run(f"[{marks}]")
@@ -384,9 +387,7 @@ class PartDGenerator:
             run.font.size = Pt(11)
             run.font.bold = True
 
-            run = para.add_run(f"{q.get('question', '')} ")
-            run.font.name = Fonts.PRIMARY
-            run.font.size = Pt(11)
+            DocxHelpers.add_formatted_text(para, q.get('question', ''))
 
             marks = q.get('marks', 1)
             run = para.add_run(f"[{marks}]")
@@ -444,11 +445,7 @@ class PartDGenerator:
                 run.font.bold = True
                 run.font.color.rgb = Colors.hex_to_rgb(Colors.SUCCESS_GREEN)
 
-                run = para.add_run(q.hint)
-                run.font.name = Fonts.PRIMARY
-                run.font.size = Pt(10)
-                run.font.italic = True
-                run.font.color.rgb = Colors.hex_to_rgb(Colors.SUCCESS_GREEN)
+                DocxHelpers.add_formatted_text(para, q.hint, default_color=Colors.SUCCESS_GREEN)
 
     def _roman(self, num: int) -> str:
         """Convert number to roman numeral."""

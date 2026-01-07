@@ -274,13 +274,14 @@ class DocxHelpers:
         if not text:
             return
 
+        # DEBUG: Log input
+        # print(f"Processing formatted text: '{text[:30]}...'")
+
         try:
             import markdown
             from bs4 import BeautifulSoup, NavigableString
-            # print(f"DEBUG: Markdown/BS4 imported successfully for text: {text[:20]}...") 
         except ImportError as e:
-            print(f"CRITICAL ERROR: Failed to import markdown/bs4: {e}")
-            # Fallback to simple text if libraries are missing
+            print(f"ERROR: Missing dependencies for markdown formatting: {e}")
             run = paragraph.add_run(text)
             if default_color:
                 run.font.color.rgb = Colors.hex_to_rgb(default_color)
@@ -288,10 +289,11 @@ class DocxHelpers:
 
         # Convert markdown to HTML (fragments only)
         try:
-            html = markdown.markdown(text)
+            # nl2br helps preserve single newlines
+            html = markdown.markdown(text, extensions=['nl2br', 'tables'])
             soup = BeautifulSoup(html, 'html.parser')
         except Exception as e:
-            print(f"CRITICAL ERROR during markdown conversion: {e}")
+            print(f"ERROR: Markdown conversion failed: {e}")
             run = paragraph.add_run(text)
             return
 
@@ -308,7 +310,6 @@ class DocxHelpers:
                 # Handle Year Highlighting (if enabled)
                 if highlight_years:
                     import re
-                    # Split by years
                     parts = re.split(r'\b(1[789]\d{2}|20\d{2})\b', text_content)
                     for i, part in enumerate(parts):
                         if not part: continue
@@ -319,15 +320,12 @@ class DocxHelpers:
                         run.font.bold = style_context['bold']
                         run.font.italic = style_context['italic']
                         
-                        # Apply color
-                        if i % 2 == 1: # It's a year match
-                            run.font.bold = True # Years are always bold
+                        if i % 2 == 1: # Year match
+                            run.font.bold = True
                             run.font.color.rgb = Colors.hex_to_rgb(Colors.YEAR_RED)
-                        else:
-                            if default_color:
-                                run.font.color.rgb = Colors.hex_to_rgb(default_color)
+                        elif default_color:
+                            run.font.color.rgb = Colors.hex_to_rgb(default_color)
                 else:
-                    # Standard Text
                     run = paragraph.add_run(text_content)
                     run.font.name = Fonts.PRIMARY
                     run.font.size = Fonts.SIZE_BODY
@@ -336,13 +334,13 @@ class DocxHelpers:
                     if default_color:
                         run.font.color.rgb = Colors.hex_to_rgb(default_color)
 
-            elif node.name == 'strong' or node.name == 'b':
+            elif node.name in ['strong', 'b']:
                 new_context = style_context.copy()
                 new_context['bold'] = True
                 for child in node.children:
                     process_node(child, new_context)
             
-            elif node.name == 'em' or node.name == 'i':
+            elif node.name in ['em', 'i']:
                 new_context = style_context.copy()
                 new_context['italic'] = True
                 for child in node.children:
@@ -352,19 +350,24 @@ class DocxHelpers:
                 paragraph.add_run('\n')
                 
             elif node.name in ['p', 'div', 'span']:
-                # Block/Wrapper tags - just process children
+                # If this isn't the first child, add a newline
+                # (but since we're usually in a single-purpose call, 
+                # we just process children)
                 for child in node.children:
                     process_node(child, style_context)
                     
-            elif node.name in ['ul', 'ol', 'li']:
-                # Lists inside a paragraph are tricky. Flatten them.
+            elif node.name == 'li':
+                paragraph.add_run('\n• ')
                 for child in node.children:
                     process_node(child, style_context)
-                    # Add a pseudo-break for list items if needed
-                    if node.name == 'li':
-                        paragraph.add_run('\n• ')
+            
+            elif node.name in ['ul', 'ol']:
+                for child in node.children:
+                    process_node(child, style_context)
 
         # Process the soup
+        # If there are multiple paragraphs, we flattened them above.
+        # Note: This method is designed to add content to an EXISTING paragraph.
         for child in soup.children:
             process_node(child)
 
