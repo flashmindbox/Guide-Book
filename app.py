@@ -409,7 +409,7 @@ def render_cover_page():
         st.subheader("🎯 Learning Objectives")
         st.caption("Enter each objective on a new line. They will be displayed as bullet points.")
         
-        render_markdown_toolbar("tb_obj")
+        render_markdown_toolbar("objectives")
         objectives = st.text_area("Learning Objectives", value=data.learning_objectives,
                                  height=200, placeholder="After studying this chapter, you will be able to:\n- Understand...\n- Analyse...\n- Explain...",
                                  key="objectives", label_visibility="collapsed")
@@ -647,7 +647,7 @@ def render_part_b():
 
                 # Content
                 st.caption("Main explanation (supports markdown)")
-                render_markdown_toolbar(f"tb_content_{idx}")
+                render_markdown_toolbar(f"concept_content_{idx}")
                 content = st.text_area("Content", value=concept.content, height=200,
                                       key=f"concept_content_{idx}",
                                       label_visibility="collapsed",
@@ -809,48 +809,59 @@ def render_part_c():
         return
 
     # Add new answer
-    if st.button("➕ Add New Model Answer", type="primary"):
-        data.model_answers.append(ModelAnswer())
-        st.rerun()
-
-    st.divider()
+    col_head, col_btn = st.columns([4, 1])
+    with col_btn:
+        if st.button("➕ Add Answer", type="primary", use_container_width=True):
+            data.model_answers.append(ModelAnswer())
+            st.rerun()
+    
+    st.markdown("<br>", unsafe_allow_html=True)
 
     for idx, answer in enumerate(data.model_answers):
         with st.expander(f"Q{idx+1}: {answer.question[:50] or 'New Question'}...", expanded=idx == 0):
+            # Top Row: Question and Meta
             col1, col2 = st.columns([5, 1])
-
             with col1:
-                q = st.text_area("Question", value=answer.question, key=f"ans_q_{idx}")
+                q = st.text_area("Question", value=answer.question, key=f"ans_q_{idx}", height=70,
+                                placeholder="Enter the question here...")
                 answer.question = q
-
             with col2:
                 m = st.number_input("Marks", min_value=1, max_value=10,
                                    value=answer.marks, key=f"ans_m_{idx}")
                 answer.marks = m
-
-                if st.button("🗑️", key=f"del_ans_{idx}"):
+                
+                if st.button("🗑️", key=f"del_ans_{idx}", use_container_width=True):
                     data.model_answers.pop(idx)
                     st.rerun()
 
-            # Answer
-            ans = st.text_area("Answer (use **bold** for keywords)", value=answer.answer,
-                              height=200, key=f"ans_a_{idx}")
-            answer.answer = ans
-
-            # Marking points
-            st.caption("Marking Points (one per line, each worth 1 mark)")
-            points_text = "\n".join(answer.marking_points) if answer.marking_points else ""
-            points = st.text_area("Marking Points", value=points_text, height=150,
-                                 key=f"ans_points_{idx}")
-            answer.marking_points = [p.strip() for p in points.split("\n") if p.strip()]
+            # Content Tabs
+            tab_ans, tab_scheme = st.tabs(["📝 Model Answer", "📋 Marking Scheme"])
+            
+            with tab_ans:
+                st.caption("Write the ideal answer using markdown.")
+                # Toolbar targets the text area below
+                render_markdown_toolbar(f"ans_a_{idx}")
+                ans = st.text_area("Answer", value=answer.answer,
+                                  height=200, key=f"ans_a_{idx}", label_visibility="collapsed",
+                                  placeholder="Step-by-step answer...")
+                answer.answer = ans
+            
+            with tab_scheme:
+                st.info("Break down the answer into value points (1 mark each).")
+                points_text = "\n".join(answer.marking_points) if answer.marking_points else ""
+                points = st.text_area("Marking Points (one per line)", value=points_text, height=150,
+                                     key=f"ans_points_{idx}")
+                answer.marking_points = [p.strip() for p in points.split("\n") if p.strip()]
 
     # Examiner Tips
     st.divider()
-    st.subheader("📋 Examiner's Marking Scheme Tips")
-    tips = st.text_area("Examiner Tips", value=data.examiner_tips or "",
-                       placeholder="- 3-mark questions: 3 distinct points...",
-                       key="examiner_tips")
-    data.examiner_tips = tips if tips else None
+    with st.container(border=True):
+        st.subheader("📋 Examiner's Marking Scheme Tips")
+        render_markdown_toolbar("examiner_tips")
+        tips = st.text_area("Examiner Tips", value=data.examiner_tips or "",
+                           placeholder="- 3-mark questions: 3 distinct points...",
+                           key="examiner_tips", height=100)
+        data.examiner_tips = tips if tips else None
 
     SessionManager.set_chapter_data(data)
 
@@ -918,69 +929,81 @@ def render_mcq_editor(data):
     """Render MCQ editor."""
     st.subheader("Multiple Choice Questions")
 
-    if st.button("➕ Add MCQ", key="add_mcq"):
-        data.mcqs.append(QuestionItem(
-            marks=1,
-            difficulty='M',
-            options=['', '', '', ''],
-            answer='a'
-        ))
-        st.rerun()
+    col_head, col_btn = st.columns([4, 1])
+    with col_btn:
+        if st.button("➕ Add MCQ", key="add_mcq", type="primary", use_container_width=True):
+            data.mcqs.append(QuestionItem(
+                marks=1,
+                difficulty='M',
+                options=['', '', '', ''],
+                answer='a'
+            ))
+            st.rerun()
 
     for idx, mcq in enumerate(data.mcqs):
         with st.expander(f"MCQ {idx+1}: {mcq.question[:40] or 'New'}...", expanded=idx == 0):
+            # Question Row
             col1, col2, col3 = st.columns([4, 1, 1])
-
             with col1:
                 q = st.text_input("Question", value=mcq.question, key=f"mcq_q_{idx}")
                 mcq.question = q
-
             with col2:
-                d = st.selectbox("Difficulty", ["E", "M", "H"],
+                d = st.selectbox("Diff", ["E", "M", "H"],
                                 index=["E", "M", "H"].index(mcq.difficulty) if mcq.difficulty in ["E", "M", "H"] else 1,
-                                key=f"mcq_d_{idx}")
+                                key=f"mcq_d_{idx}", label_visibility="collapsed")
                 mcq.difficulty = d
-
             with col3:
                 if st.button("🗑️", key=f"del_mcq_{idx}"):
                     data.mcqs.pop(idx)
                     st.rerun()
 
-            # Options
-            cols = st.columns(2)
+            # Options Grid
+            st.caption("Options")
             options = mcq.options or ['', '', '', '']
-            for i in range(4):
-                with cols[i % 2]:
-                    opt = st.text_input(f"({chr(97+i)})", value=options[i] if i < len(options) else "",
-                                       key=f"mcq_opt_{idx}_{i}")
-                    if len(options) > i:
-                        options[i] = opt
+            
+            with st.container(border=True):
+                opt_col1, opt_col2 = st.columns(2)
+                for i in range(4):
+                    col = opt_col1 if i < 2 else opt_col2
+                    with col:
+                        opt = st.text_input(f"Option ({chr(97+i)})", value=options[i] if i < len(options) else "",
+                                           key=f"mcq_opt_{idx}_{i}")
+                        if len(options) > i:
+                            options[i] = opt
             mcq.options = options
 
             # Answer
-            ans = st.selectbox("Correct Answer", ['a', 'b', 'c', 'd'],
-                              index=['a', 'b', 'c', 'd'].index(mcq.answer) if mcq.answer in ['a', 'b', 'c', 'd'] else 0,
-                              key=f"mcq_ans_{idx}")
-            mcq.answer = ans
+            st.markdown(f"**Correct Answer:**")
+            ans_cols = st.columns(4)
+            current_ans = mcq.answer if mcq.answer in ['a', 'b', 'c', 'd'] else 'a'
+            
+            # Custom radio style using columns
+            for i, opt_char in enumerate(['a', 'b', 'c', 'd']):
+                with ans_cols[i]:
+                    if st.checkbox(f"Option {opt_char}", value=(current_ans == opt_char), key=f"mcq_ans_chk_{idx}_{i}"):
+                        mcq.answer = opt_char
 
 
 def render_ar_editor(data):
     """Render Assertion-Reason editor."""
     st.subheader("Assertion-Reason Questions")
 
-    if st.button("➕ Add A-R", key="add_ar"):
-        data.assertion_reason.append(QuestionItem(
-            marks=1,
-            difficulty='M',
-            answer='a'
-        ))
-        st.rerun()
+    col_head, col_btn = st.columns([4, 1])
+    with col_btn:
+        if st.button("➕ Add A-R", key="add_ar", type="primary", use_container_width=True):
+            data.assertion_reason.append(QuestionItem(
+                marks=1,
+                difficulty='M',
+                answer='a'
+            ))
+            st.rerun()
 
     for idx, ar in enumerate(data.assertion_reason):
         with st.expander(f"A-R {idx+1}", expanded=idx == 0):
             col1, col2 = st.columns([5, 1])
 
             with col1:
+                render_markdown_toolbar(f"tb_ar_{idx}")
                 q = st.text_area("Assertion and Reason",
                                 value=ar.question,
                                 placeholder="Assertion: ...\nReason: ...",
@@ -992,7 +1015,9 @@ def render_ar_editor(data):
                     data.assertion_reason.pop(idx)
                     st.rerun()
 
-            ans = st.selectbox("Answer", ['a', 'b', 'c', 'd'],
+            st.write("Correct Answer:")
+            st.caption("a) Both A and R are true and R is correct explanation...")
+            ans = st.selectbox("Select Option", ['a', 'b', 'c', 'd'],
                               index=['a', 'b', 'c', 'd'].index(ar.answer) if ar.answer in ['a', 'b', 'c', 'd'] else 0,
                               key=f"ar_ans_{idx}")
             ar.answer = ans
@@ -1000,18 +1025,21 @@ def render_ar_editor(data):
 
 def render_question_list_editor(questions, title, prefix):
     """Render a generic question list editor."""
-    st.subheader(title)
-
-    if st.button(f"➕ Add {title.split()[0]}", key=f"add_{prefix}"):
-        questions.append(QuestionItem(marks=3 if 'Short' in title else 5))
-        st.rerun()
+    col_h, col_b = st.columns([4, 1])
+    with col_h:
+        st.subheader(title)
+    with col_b:
+        if st.button(f"➕ Add", key=f"add_{prefix}", use_container_width=True):
+            questions.append(QuestionItem(marks=3 if 'Short' in title else 5))
+            st.rerun()
 
     for idx, q in enumerate(questions):
         with st.expander(f"{idx+1}. {q.question[:40] or 'New'}...", expanded=idx == 0):
             col1, col2 = st.columns([5, 1])
 
             with col1:
-                question = st.text_area("Question", value=q.question, key=f"{prefix}_q_{idx}")
+                render_markdown_toolbar(f"{prefix}_q_{idx}")
+                question = st.text_area("Question", value=q.question, key=f"{prefix}_q_{idx}", height=100)
                 q.question = question
 
             with col2:
@@ -1019,7 +1047,7 @@ def render_question_list_editor(questions, title, prefix):
                     questions.pop(idx)
                     st.rerun()
 
-            hint = st.text_input("Hint (optional)", value=q.hint or "", key=f"{prefix}_h_{idx}")
+            hint = st.text_input("💡 Hint / Key Value Points (optional)", value=q.hint or "", key=f"{prefix}_h_{idx}")
             q.hint = hint if hint else None
 
 
@@ -1082,45 +1110,49 @@ def render_part_f():
         return
 
     # Key Points
-    st.subheader("📝 Key Points Summary")
-    st.caption("One point per line. Use **bold** for keywords.")
-
-    points_text = "\n".join(data.revision_key_points) if data.revision_key_points else ""
-    points = st.text_area("Key Points", value=points_text, height=200)
-    data.revision_key_points = [p.strip() for p in points.split("\n") if p.strip()]
+    with st.container(border=True):
+        st.subheader("📝 Key Points Summary")
+        st.caption("One point per line. Use **bold** for keywords.")
+        render_markdown_toolbar("key_points")
+        
+        points_text = "\n".join(data.revision_key_points) if data.revision_key_points else ""
+        points = st.text_area("Key Points", value=points_text, height=200, key="key_points", label_visibility="collapsed")
+        data.revision_key_points = [p.strip() for p in points.split("\n") if p.strip()]
 
     st.divider()
 
     # Key Terms
     st.subheader("📖 Key Terms")
-
-    if st.button("➕ Add Term", key="add_term"):
-        data.revision_key_terms.append({'term': '', 'definition': ''})
-        st.rerun()
+    
+    col_h, col_b = st.columns([4, 1])
+    with col_b:
+        if st.button("➕ Add Term", key="add_term", use_container_width=True):
+            data.revision_key_terms.append({'term': '', 'definition': ''})
+            st.rerun()
 
     for idx, item in enumerate(data.revision_key_terms):
-        col1, col2, col3 = st.columns([2, 4, 1])
-
-        with col1:
-            term = st.text_input("Term", value=item.get('term', ''), key=f"term_{idx}")
-            item['term'] = term
-
-        with col2:
-            definition = st.text_input("Definition", value=item.get('definition', ''), key=f"def_{idx}")
-            item['definition'] = definition
-
-        with col3:
-            if st.button("🗑️", key=f"del_term_{idx}"):
-                data.revision_key_terms.pop(idx)
-                st.rerun()
+        with st.container(border=True):
+            col1, col2, col3 = st.columns([2, 4, 1])
+            with col1:
+                term = st.text_input("Term", value=item.get('term', ''), key=f"term_{idx}", placeholder="Term")
+                item['term'] = term
+            with col2:
+                definition = st.text_input("Definition", value=item.get('definition', ''), key=f"def_{idx}", placeholder="Definition")
+                item['definition'] = definition
+            with col3:
+                if st.button("🗑️", key=f"del_term_{idx}"):
+                    data.revision_key_terms.pop(idx)
+                    st.rerun()
 
     st.divider()
 
     # Memory Tricks
-    st.subheader("🧠 Memory Tricks Compilation")
-    tricks_text = "\n".join(data.revision_memory_tricks) if data.revision_memory_tricks else ""
-    tricks = st.text_area("Memory Tricks", value=tricks_text, height=150)
-    data.revision_memory_tricks = [t.strip() for t in tricks.split("\n") if t.strip()]
+    with st.container(border=True):
+        st.subheader("🧠 Memory Tricks Compilation")
+        render_markdown_toolbar("mem_tricks")
+        tricks_text = "\n".join(data.revision_memory_tricks) if data.revision_memory_tricks else ""
+        tricks = st.text_area("Memory Tricks", value=tricks_text, height=150, key="mem_tricks", label_visibility="collapsed")
+        data.revision_memory_tricks = [t.strip() for t in tricks.split("\n") if t.strip()]
 
     SessionManager.set_chapter_data(data)
 
@@ -1152,70 +1184,81 @@ def render_part_g():
     # Time Allocation
     st.subheader("⏱️ Time Allocation")
 
-    if st.button("➕ Add Row", key="add_time"):
-        data.time_allocation.append({'type': '', 'marks': '', 'time': ''})
-        st.rerun()
+    col_h, col_b = st.columns([4, 1])
+    with col_b:
+        if st.button("➕ Add Row", key="add_time", use_container_width=True):
+            data.time_allocation.append({'type': '', 'marks': '', 'time': ''})
+            st.rerun()
 
-    for idx, item in enumerate(data.time_allocation):
-        col1, col2, col3, col4 = st.columns([3, 1, 2, 1])
+    if data.time_allocation:
+        with st.container(border=True):
+            # Header Row
+            h1, h2, h3, h4 = st.columns([3, 1, 2, 0.5])
+            h1.markdown("**Question Type**")
+            h2.markdown("**Marks**")
+            h3.markdown("**Time (mins)**")
+            
+            for idx, item in enumerate(data.time_allocation):
+                col1, col2, col3, col4 = st.columns([3, 1, 2, 0.5])
 
-        with col1:
-            t = st.text_input("Question Type", value=item.get('type', ''), key=f"time_type_{idx}")
-            item['type'] = t
-
-        with col2:
-            m = st.text_input("Marks", value=item.get('marks', ''), key=f"time_marks_{idx}")
-            item['marks'] = m
-
-        with col3:
-            time = st.text_input("Time", value=item.get('time', ''), key=f"time_time_{idx}")
-            item['time'] = time
-
-        with col4:
-            if st.button("🗑️", key=f"del_time_{idx}"):
-                data.time_allocation.pop(idx)
-                st.rerun()
+                with col1:
+                    t = st.text_input("Type", value=item.get('type', ''), key=f"time_type_{idx}", label_visibility="collapsed")
+                    item['type'] = t
+                with col2:
+                    m = st.text_input("Marks", value=item.get('marks', ''), key=f"time_marks_{idx}", label_visibility="collapsed")
+                    item['marks'] = m
+                with col3:
+                    time = st.text_input("Time", value=item.get('time', ''), key=f"time_time_{idx}", label_visibility="collapsed")
+                    item['time'] = time
+                with col4:
+                    if st.button("🗑️", key=f"del_time_{idx}"):
+                        data.time_allocation.pop(idx)
+                        st.rerun()
 
     st.divider()
 
     # Common Mistakes
     st.subheader("❌ What Loses Marks")
-
-    if st.button("➕ Add Mistake", key="add_mistake"):
-        data.common_mistakes_exam.append({'mistake': '', 'correction': ''})
-        st.rerun()
+    
+    col_h, col_b = st.columns([4, 1])
+    with col_b:
+        if st.button("➕ Add Mistake", key="add_mistake", use_container_width=True):
+            data.common_mistakes_exam.append({'mistake': '', 'correction': ''})
+            st.rerun()
 
     for idx, item in enumerate(data.common_mistakes_exam):
-        col1, col2, col3 = st.columns([3, 3, 1])
-
-        with col1:
-            m = st.text_input("Mistake", value=item.get('mistake', ''), key=f"mistake_{idx}")
-            item['mistake'] = m
-
-        with col2:
-            c = st.text_input("What to do instead", value=item.get('correction', ''), key=f"correction_{idx}")
-            item['correction'] = c
-
-        with col3:
-            if st.button("🗑️", key=f"del_mistake_{idx}"):
-                data.common_mistakes_exam.pop(idx)
-                st.rerun()
+        with st.container(border=True):
+            col1, col2, col3 = st.columns([3, 3, 0.5])
+            with col1:
+                m = st.text_input("Mistake", value=item.get('mistake', ''), key=f"mistake_{idx}", placeholder="Common Mistake")
+                item['mistake'] = m
+            with col2:
+                c = st.text_input("Correction", value=item.get('correction', ''), key=f"correction_{idx}", placeholder="What to do instead")
+                item['correction'] = c
+            with col3:
+                if st.button("🗑️", key=f"del_mistake_{idx}"):
+                    data.common_mistakes_exam.pop(idx)
+                    st.rerun()
 
     st.divider()
 
     # Pro Tips
-    st.subheader("✅ Examiner's Pro Tips")
-    tips_text = "\n".join(data.examiner_pro_tips) if data.examiner_pro_tips else ""
-    tips = st.text_area("Pro Tips (one per line)", value=tips_text, height=150)
-    data.examiner_pro_tips = [t.strip() for t in tips.split("\n") if t.strip()]
+    with st.container(border=True):
+        st.subheader("✅ Examiner's Pro Tips")
+        render_markdown_toolbar("pro_tips")
+        tips_text = "\n".join(data.examiner_pro_tips) if data.examiner_pro_tips else ""
+        tips = st.text_area("Pro Tips (one per line)", value=tips_text, height=150, key="pro_tips", label_visibility="collapsed")
+        data.examiner_pro_tips = [t.strip() for t in tips.split("\n") if t.strip()]
 
     st.divider()
 
     # Self-Assessment
-    st.subheader("☑️ Self-Assessment Checklist")
-    checklist_text = "\n".join(data.self_assessment_checklist) if data.self_assessment_checklist else ""
-    checklist = st.text_area("Checklist Items (one per line)", value=checklist_text, height=150)
-    data.self_assessment_checklist = [c.strip() for c in checklist.split("\n") if c.strip()]
+    with st.container(border=True):
+        st.subheader("☑️ Self-Assessment Checklist")
+        render_markdown_toolbar("checklist")
+        checklist_text = "\n".join(data.self_assessment_checklist) if data.self_assessment_checklist else ""
+        checklist = st.text_area("Checklist Items (one per line)", value=checklist_text, height=150, key="checklist", label_visibility="collapsed")
+        data.self_assessment_checklist = [c.strip() for c in checklist.split("\n") if c.strip()]
 
     SessionManager.set_chapter_data(data)
 
