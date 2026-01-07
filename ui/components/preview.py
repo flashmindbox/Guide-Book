@@ -1504,22 +1504,20 @@ class PreviewRenderer:
 
     @classmethod
     def _format_text(cls, text: str) -> str:
-        """Format text with markdown-like syntax."""
+        """Format text with robust markdown conversion."""
         if not text:
             return ''
 
-        import re
-
-        # Bold: **text**
-        text = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', text)
-
-        # Italic: *text*
-        text = re.sub(r'\*(.+?)\*', r'<em>\1</em>', text)
-
-        # Line breaks (xhtml2pdf prefers self-closing tags)
-        text = text.replace('\n', '<br/>')
-
-        return text
+        import markdown
+        
+        # Convert markdown to HTML
+        # We use extensions for tables and lists
+        html = markdown.markdown(text, extensions=['tables', 'nl2br'])
+        
+        # Post-process for xhtml2pdf compatibility (convert <p> to <div> or similar if needed)
+        # but usually markdown is fine. We just need to make sure tags are closed.
+        
+        return html
 
     @staticmethod
     def _pdf_safe_text(text: str) -> str:

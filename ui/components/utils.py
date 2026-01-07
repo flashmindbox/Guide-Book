@@ -3,40 +3,38 @@ Utility components for UI enhancement.
 """
 import streamlit as st
 
-def insert_at_cursor(key: str, text_to_insert: str):
+def insert_at_cursor(key: str, text_to_insert: str, is_block: bool = False):
     """
     Helper to append text to a session state variable.
-    Note: Streamlit doesn't support cursor-position insertion natively yet,
-    so we append to the end.
     """
     if key in st.session_state:
-        current_text = st.session_state[key]
-        # Add a space if not empty and not ending with newline
-        prefix = ""
-        if current_text and not current_text.endswith(('\n', ' ')):
-            prefix = " "
+        current_text = st.session_state[key] or ""
         
-        st.session_state[key] = current_text + prefix + text_to_insert
+        # Ensure block elements (lists, tables) start on a new line
+        if is_block and current_text and not current_text.endswith('\n'):
+            current_text += '\n'
+        
+        # Add a space for inline elements if not at start/newline
+        if not is_block and current_text and not current_text.endswith(('\n', ' ')):
+            current_text += ' '
+            
+        st.session_state[key] = current_text + text_to_insert
 
 def render_markdown_toolbar(target_key: str):
     """
     Render a functional markdown toolbar for a specific text area.
-    Target key must match the key of the st.text_area.
     """
-    # Use small columns for a compact toolbar
-    cols = st.columns([0.6, 0.6, 0.6, 0.6, 0.6, 6])
+    # Use extra small columns for a very tight toolbar
+    cols = st.columns([0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 6])
     
     # Define tool buttons
     tools = [
-        {"label": "𝐁", "help": "Bold", "insert": "**bold**"},
-        {"label": "𝐼", "help": "Italic", "insert": "*italic*"},
-        {"label": "•", "help": "Bullet List", "insert": "\n- "},
-        {"label": "1.", "help": "Numbered List", "insert": "\n1. "},
-        {"label": "▦", "help": "Table", "insert": "\n| Col 1 | Col 2 |\n|---|---|\n| Val 1 | Val 2 |"},
+        {"label": "𝐁", "help": "Bold", "insert": "**BOLD**", "block": False},
+        {"label": "𝐼", "help": "Italic", "insert": "*italic*", "block": False},
+        {"label": "•", "help": "Bullet List", "insert": "- Item", "block": True},
+        {"label": "1.", "help": "Numbered List", "insert": "1. Item", "block": True},
+        {"label": "▦", "help": "Table", "insert": "| Header 1 | Header 2 |\n|---|---|\n| Cell 1 | Cell 2 |", "block": True},
     ]
-    
-    # CSS to make buttons smaller/compact is handled in navigation.py (global styles)
-    # We render standard buttons but they trigger the callback
     
     for i, tool in enumerate(tools):
         with cols[i]:
@@ -44,8 +42,14 @@ def render_markdown_toolbar(target_key: str):
                         key=f"btn_{target_key}_{i}", 
                         help=tool["help"],
                         use_container_width=True):
-                insert_at_cursor(target_key, tool["insert"])
+                insert_at_cursor(target_key, tool["insert"], tool["block"])
                 st.rerun()
+    
+    # Add a Clear button as the 6th element
+    with cols[5]:
+        if st.button("⌫", key=f"btn_{target_key}_clear", help="Clear Field"):
+            st.session_state[target_key] = ""
+            st.rerun()
 
 def get_markdown_help_caption():
     return "Supported formatting: **bold**, *italic*, - bullet point, 1. numbered list"
