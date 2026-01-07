@@ -799,7 +799,7 @@ class PreviewRenderer:
             html += f'''
         <div style="margin: 12pt 0;">
             <span style="font-size: 11pt; font-weight: bold; color: #B91C1C;">! SYLLABUS NOTE:</span>
-            <span style="font-size: 11pt;"> {data.syllabus_alert_text}</span>
+            <span style="font-size: 11pt;"> {cls._format_text(data.syllabus_alert_text)}</span>
         </div>
             '''
 
@@ -826,7 +826,7 @@ class PreviewRenderer:
             # Bullet points - matches DOCX lines 197-203: 0.25in left indent, bullet
             for obj in clean_objectives:
                 html += f'''
-        <div style="margin: 3pt 0; padding-left: 18pt; font-size: 11pt;">• {obj}</div>
+        <div style="margin: 3pt 0; padding-left: 18pt; font-size: 11pt;">• {cls._format_text(obj)}</div>
                 '''
 
         # Chapter Contents - matches DOCX _add_chapter_contents (lines 205-234)
@@ -1038,7 +1038,7 @@ class PreviewRenderer:
                 html += f'''
             <div class="preview-memory-trick">
                 <span class="preview-memory-label">Memory Trick: </span>
-                <span>{concept.memory_trick}</span>
+                <span>{cls._format_text(concept.memory_trick)}</span>
             </div>
                 '''
 
@@ -1047,7 +1047,7 @@ class PreviewRenderer:
                 html += f'''
             <div class="preview-dyk">
                 <span class="preview-dyk-label">Do You Know? </span>
-                <span class="preview-dyk-content">{concept.did_you_know}</span>
+                <span class="preview-dyk-content">{cls._format_text(concept.did_you_know)}</span>
             </div>
                 '''
 
@@ -1057,7 +1057,7 @@ class PreviewRenderer:
                     title_html = f'<span class="preview-custom-box-title">{box.title}: </span>' if box.title else ''
                     html += f'''
             <div class="preview-custom-box" style="background: {box.background_color};">
-                {title_html}<span>{box.content}</span>
+                {title_html}<span>{cls._format_text(box.content)}</span>
             </div>
                     '''
 
@@ -1233,7 +1233,7 @@ class PreviewRenderer:
                         letter = chr(97 + i)
                         is_answer = letter == mcq.answer
                         style = 'color: var(--success-green); font-weight: bold;' if is_answer else ''
-                        html += f'<div style="{style}">({letter}) {opt}</div>'
+                        html += f'<div style="{style}">({letter}) {cls._format_text(opt)}</div>'
                 html += '</div></div>'
             # MCQ Answer Key Box
             mcq_answers = [f"{idx}({mcq.answer})" for idx, mcq in enumerate(data.mcqs, 1) if mcq.answer]
@@ -1267,7 +1267,7 @@ class PreviewRenderer:
                     continue
                 html += f'''
                 <div class="preview-mcq">
-                    <strong>Q{idx}.</strong><br>{ar.question.replace(chr(10), '<br>')}
+                    <strong>Q{idx}.</strong><br>{cls._format_text(ar.question)}
                     <div style="margin-top: 5px; color: var(--success-green);">
                         <strong>Answer: ({ar.answer})</strong>
                     </div>
@@ -1288,23 +1288,23 @@ class PreviewRenderer:
             html += '<div class="preview-section-title">Short Answer Questions (3 Marks)</div>'
             for idx, q in enumerate(data.short_answer, 1):
                 if q.question:
-                    html += f'<div class="preview-map-item"><strong>Q{idx}.</strong> {q.question}</div>'
+                    html += f'<div class="preview-map-item"><strong>Q{idx}.</strong> {cls._format_text(q.question)}</div>'
 
         # Long Answer
         if data.long_answer:
             html += '<div class="preview-section-title">Long Answer Questions (5 Marks)</div>'
             for idx, q in enumerate(data.long_answer, 1):
                 if q.question:
-                    html += f'<div class="preview-map-item"><strong>Q{idx}.</strong> {q.question}</div>'
+                    html += f'<div class="preview-map-item"><strong>Q{idx}.</strong> {cls._format_text(q.question)}</div>'
 
         # HOTS Questions
         if data.hots:
             html += '<div class="preview-section-title">Higher Order Thinking Skills (HOTS)</div>'
             for idx, question in enumerate(data.hots, 1):
                 if question.question:
-                    html += f'<div class="preview-map-item"><strong>Q{idx}.</strong> {question.question}'
+                    html += f'<div class="preview-map-item"><strong>Q{idx}.</strong> {cls._format_text(question.question)}'
                     if question.hint:
-                        html += f'<div style="color: var(--success-green); font-style: italic; margin-top: 5px;">{Icons.TIP} Hint: {question.hint}</div>'
+                        html += f'<div style="color: var(--success-green); font-style: italic; margin-top: 5px;">{Icons.TIP} Hint: {cls._format_text(question.hint)}</div>'
                     html += '</div>'
 
         # Source-Based Questions
@@ -1317,7 +1317,7 @@ class PreviewRenderer:
                 html += f'''
                 <div class="preview-concept-box">
                     <div style="font-weight: bold; font-style: italic;">Source {chr(64 + idx)}:</div>
-                    <div style="font-style: italic;">"{source_text}"</div>
+                    <div style="font-style: italic;">"{cls._format_text(source_text)}"</div>
                 </div>
                 '''
                 # Sub-questions
@@ -1325,7 +1325,7 @@ class PreviewRenderer:
                     q_text = q.get('question', '')
                     q_marks = q.get('marks', 1)
                     roman = cls._roman(q_idx)
-                    html += f'<div class="preview-map-item">({roman}) {q_text} <span class="preview-marks">[{q_marks}]</span></div>'
+                    html += f'<div class="preview-map-item">({roman}) {cls._format_text(q_text)} <span class="preview-marks">[{q_marks}]</span></div>'
 
         # Case Study Questions
         if data.case_study:
@@ -1339,7 +1339,7 @@ class PreviewRenderer:
                 # Passage box
                 html += f'''
                 <div class="preview-concept-box">
-                    {passage}
+                    {cls._format_text(passage)}
                 </div>
                 '''
                 # Sub-questions
@@ -1347,16 +1347,16 @@ class PreviewRenderer:
                     q_text = q.get('question', '')
                     q_marks = q.get('marks', 1)
                     roman = cls._roman(q_idx)
-                    html += f'<div class="preview-map-item">({roman}) {q_text} <span class="preview-marks">[{q_marks}]</span></div>'
+                    html += f'<div class="preview-map-item">({roman}) {cls._format_text(q_text)} <span class="preview-marks">[{q_marks}]</span></div>'
 
         # Competency-Based Questions
         if data.competency_based:
             html += '<div class="preview-section-title">Competency-Based Questions (CBQs)</div>'
             for idx, question in enumerate(data.competency_based, 1):
                 if question.question:
-                    html += f'<div class="preview-map-item"><strong>Q{idx}.</strong> {question.question}'
+                    html += f'<div class="preview-map-item"><strong>Q{idx}.</strong> {cls._format_text(question.question)}'
                     if question.hint:
-                        html += f'<div style="color: var(--success-green); font-style: italic; margin-top: 5px;">{Icons.TIP} Hint: {question.hint}</div>'
+                        html += f'<div style="color: var(--success-green); font-style: italic; margin-top: 5px;">{Icons.TIP} Hint: {cls._format_text(question.hint)}</div>'
                     html += '</div>'
 
         # Value-Based Questions
@@ -1364,9 +1364,9 @@ class PreviewRenderer:
             html += '<div class="preview-section-title">Value-Based Questions</div>'
             for idx, question in enumerate(data.value_based, 1):
                 if question.question:
-                    html += f'<div class="preview-map-item"><strong>Q{idx}.</strong> {question.question}'
+                    html += f'<div class="preview-map-item"><strong>Q{idx}.</strong> {cls._format_text(question.question)}'
                     if question.hint:
-                        html += f'<div style="color: var(--success-green); font-style: italic; margin-top: 5px;">{Icons.TIP} Hint: {question.hint}</div>'
+                        html += f'<div style="color: var(--success-green); font-style: italic; margin-top: 5px;">{Icons.TIP} Hint: {cls._format_text(question.hint)}</div>'
                     html += '</div>'
 
         return html
