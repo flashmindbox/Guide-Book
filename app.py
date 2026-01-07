@@ -27,6 +27,7 @@ from core.session import SessionManager
 from styles.theme import Importance, PYQFrequency, Weightage
 from ui.components.navigation import inject_custom_css, render_breadcrumb, render_next_prev_buttons
 from ui.components.preview import show_generate_docx_button, show_preview_panel
+from ui.components.utils import render_markdown_toolbar, get_markdown_help_caption
 
 # File upload security constants
 ALLOWED_EXTENSIONS = {'json', 'docx', 'pdf', 'md', 'markdown'}
@@ -77,28 +78,57 @@ def render_sidebar():
     with st.sidebar:
         # Title with unsaved indicator
         is_dirty = SessionManager.is_dirty()
-        if is_dirty:
-            st.markdown(
-                '<h1 style="font-size: 1.5rem;">📚 Guide Book Generator '
-                '<span style="display: inline-block; width: 10px; height: 10px; '
-                'background-color: #EF4444; border-radius: 50%; margin-left: 8px;" '
-                'title="Unsaved changes"></span></h1>',
-                unsafe_allow_html=True
-            )
-        else:
-            st.title("📚 Guide Book Generator")
-        st.caption(f"v{APP_VERSION}")
+        
+        st.markdown(
+            f"""
+            <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                <div style="font-size: 2rem; margin-right: 10px;">📚</div>
+                <div>
+                    <h1 style="font-size: 1.2rem; margin: 0; padding: 0;">Guide Book</h1>
+                    <div style="font-size: 0.8rem; color: #6B7280;">Generator v{APP_VERSION}</div>
+                </div>
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
 
-        st.divider()
+        # Quick Actions (Top for easy access)
+        if SessionManager.get_chapter_data():
+            col1, col2 = st.columns(2)
+            with col1:
+                # Save Button
+                save_type = "primary" if is_dirty else "secondary"
+                save_label = "💾 Save" if not is_dirty else "💾 Save*"
+                if st.button(save_label, key="quick_save", type=save_type, use_container_width=True):
+                    save_chapter()
+                    st.toast("Project saved successfully!", icon="✅")
+                    st.rerun()
+            
+            with col2:
+                # Reset Button
+                if st.button("🔄 Reset", key="quick_reset", use_container_width=True):
+                    if st.session_state.get('confirm_reset'):
+                        SessionManager.reset()
+                        st.session_state.confirm_reset = False
+                        st.rerun()
+                    else:
+                        st.session_state.confirm_reset = True
+                        st.warning("Confirm?")
+
+            # Status Text
+            last_save = SessionManager.get_last_save_time()
+            if is_dirty:
+                st.markdown('<div class="status-unsaved">● Unsaved changes</div>', unsafe_allow_html=True)
+            elif last_save:
+                st.markdown(f'<div class="status-saved">✓ Saved {last_save.strftime("%H:%M")}</div>', unsafe_allow_html=True)
+            
+            st.divider()
 
         # Current chapter info
         data = SessionManager.get_chapter_data()
         if data:
-            st.subheader("📖 Current Chapter")
-            subject_icon = get_subject_icon(data.subject)
-            subject_name = get_subject_display_name(data.subject)
-            st.write(f"**Class {data.class_num}** | {subject_icon} {subject_name}")
-            st.write(f"**Ch {data.chapter_number}:** {data.chapter_title[:30]}...")
+            st.markdown(f"**Class {data.class_num}** | {get_subject_icon(data.subject)} {get_subject_display_name(data.subject)}")
+            st.caption(f"Ch {data.chapter_number}: {data.chapter_title[:30] if data.chapter_title else 'Untitled'}")
 
             # Progress
             part_manager = SessionManager.get_part_manager()
@@ -106,22 +136,15 @@ def render_sidebar():
             progress = tracker.get_overall_progress()
 
             st.progress(progress / 100)
-            st.caption(f"Overall: {progress:.0f}% complete")
+            
+            # Compact section progress
+            with st.expander("📊 Detailed Progress"):
+                for name, status, pct in tracker.get_sidebar_display():
+                    st.markdown(f"<div style='display:flex; justify-content:space-between; font-size:0.85rem'><span>{status} {name}</span><span>{pct:.0f}%</span></div>", unsafe_allow_html=True)
 
             st.divider()
 
-            # Section progress
-            st.subheader("📊 Section Progress")
-            for name, status, pct in tracker.get_sidebar_display():
-                col1, col2 = st.columns([3, 1])
-                with col1:
-                    st.write(f"{status} {name}")
-                with col2:
-                    st.caption(f"{pct:.0f}%")
-
-            st.divider()
-
-        # Navigation with progress indicators
+        # Navigation
         st.subheader("🧭 Navigation")
 
         # Get progress data for badges
@@ -157,110 +180,35 @@ def render_sidebar():
         for label, page_id in pages:
             # Add progress badge for applicable pages
             progress = progress_map.get(page_id, None)
-            if progress is not None:
-                if progress >= 80:
-                    badge = "✅"
-                elif progress >= 1:
-                    badge = "🔶"
-                else:
-                    badge = "⬜"
-                display_label = f"{badge} {label.split(' ', 1)[1] if ' ' in label else label}"
-            else:
-                display_label = label
-
+            display_label = label
+            
             # Highlight current page
             button_type = "primary" if page_id == current_page else "secondary"
-            if st.button(display_label, key=f"nav_{page_id}", use_container_width=True,
-                        type=button_type):
+            
+            # Simple button for nav
+            if st.button(display_label, key=f"nav_{page_id}", use_container_width=True, type=button_type):
                 st.session_state.current_page = page_id
                 st.rerun()
 
         st.divider()
 
-        # Quick actions
-        if data:
-            st.subheader("⚡ Quick Actions")
-
-            # Show save status
-            last_save = SessionManager.get_last_save_time()
-            if is_dirty:
-                st.markdown(
-                    '<p style="color: #EF4444; font-size: 12px; margin-bottom: 8px;">'
-                    '● Unsaved changes</p>',
-                    unsafe_allow_html=True
-                )
-            elif last_save:
-                st.markdown(
-                    f'<p style="color: #10B981; font-size: 12px; margin-bottom: 8px;">'
-                    f'✓ Saved {last_save.strftime("%H:%M")}</p>',
-                    unsafe_allow_html=True
-                )
-
-            save_label = "💾 Save Now" if not is_dirty else "💾 Save Now*"
-            if st.button(save_label, use_container_width=True, type="primary" if is_dirty else "secondary"):
-                save_chapter()
-                st.success("Saved!")
-                st.rerun()
-
-            if st.button("🔄 Reset Chapter", use_container_width=True):
-                if st.session_state.get('confirm_reset'):
-                    SessionManager.reset()
-                    st.session_state.confirm_reset = False
-                    st.rerun()
-                else:
-                    st.session_state.confirm_reset = True
-                    st.warning("Click again to confirm reset")
-
-        st.divider()
-
         # Page Setup
-        st.subheader("📄 Page Setup")
-
-        page_size = st.selectbox(
-            "Page Size",
-            ["A4", "A5", "Letter", "Legal", "A3"],
-            index=["A4", "A5", "Letter", "Legal", "A3"].index(
-                st.session_state.get('preview_page_size', 'A4')
-            ),
-            key="sidebar_page_size"
-        )
-        st.session_state['preview_page_size'] = page_size
-
-        orientation = st.selectbox(
-            "Orientation",
-            ["Portrait", "Landscape"],
-            index=["Portrait", "Landscape"].index(
-                st.session_state.get('preview_orientation', 'Portrait')
-            ),
-            key="sidebar_orientation"
-        )
-        st.session_state['preview_orientation'] = orientation
-
-        add_page_numbers = st.checkbox(
-            "Add Page Numbers",
-            value=st.session_state.get('preview_add_page_numbers', True),
-            key="sidebar_add_page_numbers"
-        )
-        st.session_state['preview_add_page_numbers'] = add_page_numbers
-
-        if add_page_numbers:
-            page_number_position = st.selectbox(
-                "Page Number Position",
-                ["Bottom Center", "Bottom Left", "Bottom Right"],
-                index=["Bottom Center", "Bottom Left", "Bottom Right"].index(
-                    st.session_state.get('preview_page_number_position', 'Bottom Center')
-                ),
-                key="sidebar_page_number_position"
-            )
-            st.session_state['preview_page_number_position'] = page_number_position
-        else:
-            page_number_position = st.session_state.get('preview_page_number_position', 'Bottom Center')
-
-        # Sync page settings to ChapterData if data exists
         if data:
-            data.page_size = page_size
-            data.add_page_numbers = add_page_numbers
-            data.page_number_position = page_number_position
+            with st.expander("📄 Page Setup"):
+                page_size = st.selectbox(
+                    "Size",
+                    ["A4", "A5", "Letter", "Legal"],
+                    index=["A4", "A5", "Letter", "Legal"].index(data.page_size),
+                    key="sidebar_page_size"
+                )
+                data.page_size = page_size
+
+                add_page_numbers = st.checkbox(
+                    "Page Numbers",
+                    value=data.add_page_numbers,
+                    key="sidebar_add_page_numbers"
+                )
+                data.add_page_numbers = add_page_numbers
 
 
 def render_home_page():
@@ -394,98 +342,79 @@ def render_cover_page():
         return
 
     # Chapter Title Section
-    st.subheader("📝 Chapter Information")
+    with st.container(border=True):
+        st.subheader("📝 Chapter Information")
+        col1, col2 = st.columns([3, 1])
 
-    col1, col2 = st.columns(2)
+        with col1:
+            new_title = st.text_input("Chapter Title", value=data.chapter_title, key="ch_title")
+            if new_title != data.chapter_title:
+                data.chapter_title = new_title
 
-    with col1:
-        new_title = st.text_input("Chapter Title", value=data.chapter_title, key="ch_title")
-        if new_title != data.chapter_title:
-            data.chapter_title = new_title
+            new_subtitle = st.text_input("Subtitle (optional)", value=data.subtitle or "", key="ch_subtitle")
+            data.subtitle = new_subtitle if new_subtitle else None
 
-        new_subtitle = st.text_input("Subtitle (optional)", value=data.subtitle or "", key="ch_subtitle")
-        data.subtitle = new_subtitle if new_subtitle else None
-
-    with col2:
-        new_num = st.number_input("Chapter Number", min_value=1, max_value=50,
-                                  value=data.chapter_number, key="ch_num")
-        data.chapter_number = new_num
-
-    st.divider()
+        with col2:
+            new_num = st.number_input("Chapter Number", min_value=1, max_value=50,
+                                      value=data.chapter_number, key="ch_num")
+            data.chapter_number = new_num
 
     # Metadata Section
-    st.subheader("📊 Chapter Metadata")
+    with st.container(border=True):
+        st.subheader("📊 Chapter Metadata")
+        col1, col2, col3, col4 = st.columns(4)
 
-    col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            weightage_options = Weightage.OPTIONS + ["Custom"]
+            is_custom = data.weightage not in Weightage.OPTIONS
+            weightage_idx = len(weightage_options) - 1 if is_custom else Weightage.OPTIONS.index(data.weightage)
+            
+            selected_weightage = st.selectbox("Weightage", weightage_options, index=weightage_idx, key="ch_weightage")
 
-    with col1:
-        weightage_options = Weightage.OPTIONS + ["Custom"]
-        # Check if current value is custom
-        is_custom = data.weightage not in Weightage.OPTIONS
-        if is_custom:
-            weightage_idx = len(weightage_options) - 1  # Select "Custom"
-        else:
-            weightage_idx = Weightage.OPTIONS.index(data.weightage)
+            if selected_weightage == "Custom":
+                custom_weightage = st.text_input("Enter marks", value=data.weightage if is_custom else "", 
+                                               placeholder="e.g., 8-10 Marks", key="ch_weightage_custom")
+                data.weightage = custom_weightage if custom_weightage else "4-5 Marks"
+            else:
+                data.weightage = selected_weightage
 
-        selected_weightage = st.selectbox("Weightage", weightage_options, index=weightage_idx, key="ch_weightage")
+        with col2:
+            map_idx = 0 if data.map_work == "Yes" else 1
+            new_map = st.selectbox("Map Work", ["Yes", "No"], index=map_idx, key="ch_map")
+            data.map_work = new_map
 
-        if selected_weightage == "Custom":
-            custom_weightage = st.text_input(
-                "Enter marks",
-                value=data.weightage if is_custom else "",
-                placeholder="e.g., 8-10 Marks",
-                key="ch_weightage_custom"
-            )
-            data.weightage = custom_weightage if custom_weightage else "4-5 Marks"
-        else:
-            data.weightage = selected_weightage
+        with col3:
+            imp_idx = Importance.OPTIONS.index(data.importance) if data.importance in Importance.OPTIONS else 0
+            new_importance = st.selectbox("Importance", Importance.OPTIONS, index=imp_idx, key="ch_importance")
+            data.importance = new_importance
 
-    with col2:
-        map_work_options = ["Yes", "No"]
-        map_idx = 0 if data.map_work == "Yes" else 1
-        new_map = st.selectbox("Map Work", map_work_options, index=map_idx, key="ch_map")
-        data.map_work = new_map
-
-    with col3:
-        importance_options = Importance.OPTIONS
-        imp_idx = importance_options.index(data.importance) if data.importance in importance_options else 0
-        new_importance = st.selectbox("Importance", importance_options, index=imp_idx, key="ch_importance")
-        data.importance = new_importance
-
-    with col4:
-        freq_options = PYQFrequency.OPTIONS
-        freq_idx = freq_options.index(data.pyq_frequency) if data.pyq_frequency in freq_options else 0
-        new_freq = st.selectbox("PYQ Frequency", freq_options, index=freq_idx, key="ch_freq")
-        data.pyq_frequency = new_freq
-
-    st.divider()
+        with col4:
+            freq_idx = PYQFrequency.OPTIONS.index(data.pyq_frequency) if data.pyq_frequency in PYQFrequency.OPTIONS else 0
+            new_freq = st.selectbox("PYQ Frequency", PYQFrequency.OPTIONS, index=freq_idx, key="ch_freq")
+            data.pyq_frequency = new_freq
 
     # Syllabus Alert
-    st.subheader("⚠️ Syllabus Alert")
+    with st.container(border=True):
+        st.subheader("⚠️ Syllabus Alert")
+        alert_enabled = st.checkbox("Enable Syllabus Alert", value=data.syllabus_alert_enabled, key="alert_enabled")
+        data.syllabus_alert_enabled = alert_enabled
 
-    alert_enabled = st.checkbox("Enable Syllabus Alert", value=data.syllabus_alert_enabled, key="alert_enabled")
-    data.syllabus_alert_enabled = alert_enabled
-
-    if alert_enabled:
-        alert_text = st.text_area("Alert Text", value=data.syllabus_alert_text,
-                                  placeholder="Enter syllabus alert message...", key="alert_text")
-        data.syllabus_alert_text = alert_text
-
-    st.divider()
+        if alert_enabled:
+            alert_text = st.text_area("Alert Text", value=data.syllabus_alert_text,
+                                      placeholder="Enter syllabus alert message...", key="alert_text")
+            data.syllabus_alert_text = alert_text
 
     # Learning Objectives
-    st.subheader("🎯 Learning Objectives")
-    st.caption("Enter each objective on a new line. They will be displayed as bullet points.")
-
-    objectives = st.text_area("Learning Objectives", value=data.learning_objectives,
-                             height=200, placeholder="After studying this chapter, you will be able to:\n- Understand...\n- Analyse...\n- Explain...",
-                             key="objectives")
-    data.learning_objectives = objectives
-
-    word_count = len(objectives.split()) if objectives else 0
-    st.caption(f"Word count: {word_count}")
-
-    st.divider()
+    with st.container(border=True):
+        st.subheader("🎯 Learning Objectives")
+        st.caption("Enter each objective on a new line. They will be displayed as bullet points.")
+        
+        render_markdown_toolbar("tb_obj")
+        objectives = st.text_area("Learning Objectives", value=data.learning_objectives,
+                                 height=200, placeholder="After studying this chapter, you will be able to:\n- Understand...\n- Analyse...\n- Explain...",
+                                 key="objectives", label_visibility="collapsed")
+        data.learning_objectives = objectives
+        st.caption(f"Word count: {len(objectives.split()) if objectives else 0}")
 
     # Part Descriptions
     with st.expander("📑 Part Descriptions (for Chapter Contents box)"):
@@ -495,68 +424,57 @@ def render_cover_page():
                                 key=f"part_desc_{part_id}")
             data.part_descriptions[part_id] = desc
 
-    st.divider()
-
     # QR Codes Section
-    st.subheader("📱 QR Codes for Downloadable Resources")
-    st.caption("Enter URLs for PDF files. QR codes will be generated and shown below the Chapter Contents box.")
+    with st.container(border=True):
+        st.subheader("📱 QR Codes for Downloadable Resources")
+        st.caption("Enter URLs for PDF files. QR codes will be generated and shown below the Chapter Contents box.")
 
-    col1, col2 = st.columns(2)
+        col1, col2 = st.columns(2)
+        with col1:
+            qr_url_1 = st.text_input("Practice Questions PDF URL", value=data.qr_practice_questions_url or "",
+                                    placeholder="https://drive.google.com/...", key="qr_practice_url")
+            data.qr_practice_questions_url = qr_url_1 if qr_url_1 else None
 
-    with col1:
-        qr_url_1 = st.text_input(
-            "Practice Questions PDF URL",
-            value=data.qr_practice_questions_url or "",
-            placeholder="https://drive.google.com/...",
-            key="qr_practice_url"
-        )
-        data.qr_practice_questions_url = qr_url_1 if qr_url_1 else None
+        with col2:
+            qr_url_2 = st.text_input("Practice Questions with Answers PDF URL", value=data.qr_practice_with_answers_url or "",
+                                    placeholder="https://drive.google.com/...", key="qr_answers_url")
+            data.qr_practice_with_answers_url = qr_url_2 if qr_url_2 else None
 
-    with col2:
-        qr_url_2 = st.text_input(
-            "Practice Questions with Answers PDF URL",
-            value=data.qr_practice_with_answers_url or "",
-            placeholder="https://drive.google.com/...",
-            key="qr_answers_url"
-        )
-        data.qr_practice_with_answers_url = qr_url_2 if qr_url_2 else None
+        # QR Preview logic remains same...
+        if data.qr_practice_questions_url or data.qr_practice_with_answers_url:
+            st.divider()
+            st.caption("QR Code Preview:")
+            qr_col1, qr_col2 = st.columns(2)
+            # ... (rendering code for QR remains)
+            with qr_col1:
+                if data.qr_practice_questions_url:
+                    try:
+                        from io import BytesIO
+                        import qrcode
+                        qr = qrcode.QRCode(version=1, box_size=5, border=2)
+                        qr.add_data(data.qr_practice_questions_url)
+                        qr.make(fit=True)
+                        img = qr.make_image(fill_color="black", back_color="white")
+                        buf = BytesIO()
+                        img.save(buf, format='PNG')
+                        st.image(buf.getvalue(), caption="Practice Questions", width=150)
+                    except Exception as e:
+                        st.error(f"QR Error: {e}")
 
-    # Show QR code preview if URLs are provided
-    if data.qr_practice_questions_url or data.qr_practice_with_answers_url:
-        st.caption("QR Code Preview:")
-        qr_col1, qr_col2 = st.columns(2)
-
-        with qr_col1:
-            if data.qr_practice_questions_url:
-                try:
-                    from io import BytesIO
-
-                    import qrcode
-                    qr = qrcode.QRCode(version=1, box_size=5, border=2)
-                    qr.add_data(data.qr_practice_questions_url)
-                    qr.make(fit=True)
-                    img = qr.make_image(fill_color="black", back_color="white")
-                    buf = BytesIO()
-                    img.save(buf, format='PNG')
-                    st.image(buf.getvalue(), caption="Practice Questions", width=150)
-                except Exception as e:
-                    st.error(f"QR Error: {e}")
-
-        with qr_col2:
-            if data.qr_practice_with_answers_url:
-                try:
-                    from io import BytesIO
-
-                    import qrcode
-                    qr = qrcode.QRCode(version=1, box_size=5, border=2)
-                    qr.add_data(data.qr_practice_with_answers_url)
-                    qr.make(fit=True)
-                    img = qr.make_image(fill_color="black", back_color="white")
-                    buf = BytesIO()
-                    img.save(buf, format='PNG')
-                    st.image(buf.getvalue(), caption="With Answers", width=150)
-                except Exception as e:
-                    st.error(f"QR Error: {e}")
+            with qr_col2:
+                if data.qr_practice_with_answers_url:
+                    try:
+                        from io import BytesIO
+                        import qrcode
+                        qr = qrcode.QRCode(version=1, box_size=5, border=2)
+                        qr.add_data(data.qr_practice_with_answers_url)
+                        qr.make(fit=True)
+                        img = qr.make_image(fill_color="black", back_color="white")
+                        buf = BytesIO()
+                        img.save(buf, format='PNG')
+                        st.image(buf.getvalue(), caption="With Answers", width=150)
+                    except Exception as e:
+                        st.error(f"QR Error: {e}")
 
     # Save data
     SessionManager.set_chapter_data(data)
@@ -686,92 +604,98 @@ def render_part_b():
         st.warning("Please create or load a chapter first.")
         return
 
-    # Add new concept
-    if st.button("➕ Add New Concept", type="primary"):
-        new_num = len(data.concepts) + 1
-        data.concepts.append(ConceptItem(number=new_num))
-        st.rerun()
+    # Header with Add Button
+    col_head, col_btn = st.columns([4, 1])
+    with col_btn:
+        if st.button("➕ Add Concept", type="primary", use_container_width=True):
+            new_num = len(data.concepts) + 1
+            data.concepts.append(ConceptItem(number=new_num))
+            st.rerun()
 
-    st.divider()
+    st.markdown("<br>", unsafe_allow_html=True)
 
     # Display concepts
     for idx, concept in enumerate(data.concepts):
-        with st.expander(f"📌 Concept {concept.number}: {concept.title or 'Untitled'}", expanded=idx == 0):
-            col1, col2 = st.columns([4, 1])
-
+        # Determine expander title
+        expander_title = f"#{concept.number} {concept.title}" if concept.title else f"Concept #{concept.number}"
+        
+        with st.expander(expander_title, expanded=idx == 0):
+            # Top row: Title and Delete
+            col1, col2 = st.columns([5, 1])
             with col1:
-                title = st.text_input("Title", value=concept.title, key=f"concept_title_{idx}",
+                title = st.text_input("Concept Title", value=concept.title, key=f"concept_title_{idx}",
                                      placeholder="e.g., The French Revolution")
                 concept.title = title
-
             with col2:
-                if st.button("🗑️ Delete", key=f"del_concept_{idx}"):
+                if st.button("🗑️", key=f"del_concept_{idx}", help="Delete this concept"):
                     data.concepts.pop(idx)
                     # Renumber
                     for i, c in enumerate(data.concepts):
                         c.number = i + 1
                     st.rerun()
 
-            # NCERT Line
-            ncert = st.text_input("NCERT Exact Line (optional)", value=concept.ncert_line or "",
-                                 key=f"concept_ncert_{idx}",
-                                 placeholder="The first clear expression of nationalism came with...")
-            concept.ncert_line = ncert if ncert else None
+            # Tabs for different content types
+            tab_main, tab_tables, tab_extras = st.tabs(["📝 Main Content", "📊 Tables", "✨ Extras"])
 
-            # Content
-            content = st.text_area("Content", value=concept.content, height=200,
-                                  key=f"concept_content_{idx}",
-                                  placeholder="Main content with **bold**, *italic*, and bullet points (-)")
-            concept.content = content
+            # --- Main Content Tab ---
+            with tab_main:
+                # NCERT Line
+                ncert = st.text_input("NCERT Exact Line (optional)", value=concept.ncert_line or "",
+                                     key=f"concept_ncert_{idx}",
+                                     placeholder="The first clear expression of nationalism came with...")
+                concept.ncert_line = ncert if ncert else None
 
-            col1, col2 = st.columns(2)
+                # Content
+                st.caption("Main explanation (supports markdown)")
+                render_markdown_toolbar(f"tb_content_{idx}")
+                content = st.text_area("Content", value=concept.content, height=200,
+                                      key=f"concept_content_{idx}",
+                                      label_visibility="collapsed",
+                                      placeholder="Main content with **bold**, *italic*, and bullet points (-)")
+                concept.content = content
+                
+                st.caption(f"Word count: {concept.word_count()}")
 
-            with col1:
-                # Memory Trick
-                trick = st.text_input("Memory Trick (optional)", value=concept.memory_trick or "",
-                                     key=f"concept_trick_{idx}",
-                                     placeholder="FLAT-CUN — Flag, Language, Assembly...")
-                concept.memory_trick = trick if trick else None
-
-                # Tables
-                st.markdown("**Tables**")
-
+            # --- Tables Tab ---
+            with tab_tables:
+                st.info("Add comparison tables or data charts for this concept.")
+                
                 for tbl_idx, tbl in enumerate(concept.tables):
-                    with st.expander(f"📊 {tbl.title or 'Untitled Table'}", expanded=True):
+                    with st.container():
+                        st.markdown(f"**Table {tbl_idx + 1}**")
                         tbl.title = st.text_input("Table Title", value=tbl.title,
                                                  key=f"tbl_title_{idx}_{tbl_idx}",
                                                  placeholder="e.g., Comparison of Events")
 
-                        # Headers
-                        st.markdown("*Headers:*")
-                        header_cols = st.columns(len(tbl.headers) + 1)
-                        new_headers = []
-                        for h_idx, header in enumerate(tbl.headers):
-                            with header_cols[h_idx]:
-                                new_headers.append(st.text_input(f"Col {h_idx+1}", value=header,
-                                                                key=f"tbl_h_{idx}_{tbl_idx}_{h_idx}",
-                                                                label_visibility="collapsed"))
-                        with header_cols[-1]:
+                        # Headers management
+                        col_h_disp, col_h_act = st.columns([4, 1])
+                        with col_h_disp:
+                            st.caption(f"Columns: {len(tbl.headers)}")
+                        with col_h_act:
                             col_btns = st.columns(2)
                             with col_btns[0]:
                                 if st.button("➕", key=f"add_col_{idx}_{tbl_idx}", help="Add column"):
-                                    new_headers.append(f"Column {len(new_headers)+1}")
+                                    tbl.headers.append(f"Col {len(tbl.headers)+1}")
                                     for row in tbl.rows:
                                         row.append("")
-                                    tbl.headers = new_headers
                                     st.rerun()
                             with col_btns[1]:
                                 if len(tbl.headers) > 1 and st.button("➖", key=f"del_col_{idx}_{tbl_idx}", help="Remove last column"):
-                                    new_headers.pop()
+                                    tbl.headers.pop()
                                     for row in tbl.rows:
-                                        if row:
-                                            row.pop()
-                                    tbl.headers = new_headers
+                                        if row: row.pop()
                                     st.rerun()
-                        tbl.headers = new_headers
+                        
+                        # Headers Inputs
+                        header_cols = st.columns(len(tbl.headers))
+                        for h_idx, header in enumerate(tbl.headers):
+                            with header_cols[h_idx]:
+                                tbl.headers[h_idx] = st.text_input(f"H{h_idx+1}", value=header, 
+                                                                 key=f"tbl_h_{idx}_{tbl_idx}_{h_idx}", 
+                                                                 label_visibility="collapsed")
 
                         # Rows
-                        st.markdown("*Rows:*")
+                        st.markdown("Rows")
                         for r_idx, row in enumerate(tbl.rows):
                             row_cols = st.columns(len(tbl.headers) + 1)
                             for c_idx in range(len(tbl.headers)):
@@ -785,68 +709,77 @@ def render_part_b():
                                     tbl.rows.pop(r_idx)
                                     st.rerun()
 
-                        btn_cols = st.columns([1, 1, 4])
+                        # Row Actions
+                        btn_cols = st.columns([1, 4])
                         with btn_cols[0]:
                             if st.button("➕ Row", key=f"add_row_{idx}_{tbl_idx}"):
                                 tbl.rows.append([""] * len(tbl.headers))
                                 st.rerun()
                         with btn_cols[1]:
-                            if st.button("🗑️ Table", key=f"del_tbl_{idx}_{tbl_idx}"):
+                            if st.button("Delete Table", key=f"del_tbl_{idx}_{tbl_idx}"):
                                 concept.tables.pop(tbl_idx)
                                 st.rerun()
+                        
+                        st.divider()
 
                 if st.button("➕ Add Table", key=f"add_tbl_{idx}"):
                     from core.models.base import ConceptTable
                     concept.tables.append(ConceptTable())
                     st.rerun()
 
-            with col2:
-                # Did You Know
-                dyk = st.text_area("Did You Know? (optional)", value=concept.did_you_know or "",
-                                  height=100, key=f"concept_dyk_{idx}",
-                                  placeholder="Interesting fact...")
-                concept.did_you_know = dyk if dyk else None
+            # --- Extras Tab ---
+            with tab_extras:
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.markdown("**🧠 Memory Trick**")
+                    trick = st.text_area("Mnemonic/Trick", value=concept.memory_trick or "",
+                                         key=f"concept_trick_{idx}", height=100,
+                                         placeholder="FLAT-CUN — Flag, Language, Assembly...")
+                    concept.memory_trick = trick if trick else None
 
-                # Custom Boxes
-                st.markdown("**Custom Boxes**")
+                with col2:
+                    st.markdown("**💡 Did You Know?**")
+                    dyk = st.text_area("Interesting Fact", value=concept.did_you_know or "",
+                                      height=100, key=f"concept_dyk_{idx}",
+                                      placeholder="Interesting fact...")
+                    concept.did_you_know = dyk if dyk else None
+
+                st.divider()
+                st.markdown("**🎨 Custom Colored Boxes**")
 
                 COLOR_OPTIONS = {
-                    "Light Grey": "#F3F4F6",
-                    "Light Blue": "#DBEAFE",
-                    "Light Green": "#DCFCE7",
-                    "Light Yellow": "#FEF3C7",
-                    "Light Purple": "#F3E8FF",
-                    "Light Pink": "#FEE2E2",
+                    "Light Grey": "#F3F4F6", "Light Blue": "#DBEAFE", 
+                    "Light Green": "#DCFCE7", "Light Yellow": "#FEF3C7",
+                    "Light Purple": "#F3E8FF", "Light Pink": "#FEE2E2",
                 }
 
                 for box_idx, box in enumerate(concept.custom_boxes):
                     with st.container():
-                        box_cols = st.columns([3, 2, 1])
-                        with box_cols[0]:
+                        c1, c2, c3 = st.columns([3, 2, 1])
+                        with c1:
                             box.title = st.text_input("Box Title", value=box.title,
                                                       key=f"box_title_{idx}_{box_idx}",
                                                       placeholder="e.g., Important Note")
-                        with box_cols[1]:
-                            color_name = [k for k, v in COLOR_OPTIONS.items() if v == box.background_color]
-                            color_name = color_name[0] if color_name else "Light Grey"
+                        with c2:
+                            color_name = next((k for k, v in COLOR_OPTIONS.items() if v == box.background_color), "Light Grey")
                             selected = st.selectbox("Color", list(COLOR_OPTIONS.keys()),
                                                    index=list(COLOR_OPTIONS.keys()).index(color_name),
                                                    key=f"box_color_{idx}_{box_idx}")
                             box.background_color = COLOR_OPTIONS[selected]
-                        with box_cols[2]:
+                        with c3:
                             if st.button("🗑️", key=f"del_box_{idx}_{box_idx}"):
                                 concept.custom_boxes.pop(box_idx)
                                 st.rerun()
 
                         box.content = st.text_area("Box Content", value=box.content, height=80,
                                                   key=f"box_content_{idx}_{box_idx}")
+                        st.divider()
 
-                if st.button("➕ Add Box", key=f"add_box_{idx}"):
+                if st.button("➕ Add Colored Box", key=f"add_box_{idx}"):
                     from core.models.base import CustomBox
                     concept.custom_boxes.append(CustomBox())
                     st.rerun()
-
-            st.caption(f"Word count: {concept.word_count()}")
 
     SessionManager.set_chapter_data(data)
 

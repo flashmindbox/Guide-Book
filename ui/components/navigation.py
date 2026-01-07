@@ -33,82 +33,96 @@ def inject_custom_css():
     """Inject custom CSS for improved UI styling."""
     st.markdown("""
     <style>
+    /* Global Font & Reset */
+    .stApp {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
     /* Unsaved indicator pulsing animation */
     @keyframes pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
+        0% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(1.1); }
+        100% { opacity: 1; transform: scale(1); }
     }
 
     .unsaved-indicator {
         display: inline-block;
-        width: 10px;
-        height: 10px;
+        width: 12px;
+        height: 12px;
         background-color: #EF4444;
         border-radius: 50%;
         margin-left: 8px;
-        animation: pulse 1.5s infinite;
+        box-shadow: 0 0 4px rgba(239, 68, 68, 0.4);
+        animation: pulse 2s infinite ease-in-out;
     }
 
     /* Progress badge styles */
     .progress-badge {
         display: inline-block;
-        padding: 2px 8px;
-        border-radius: 12px;
+        padding: 4px 10px;
+        border-radius: 99px;
         font-size: 11px;
         font-weight: 600;
-        margin-left: 8px;
+        margin-left: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
     .badge-complete {
         background-color: #D1FAE5;
         color: #065F46;
+        border: 1px solid #A7F3D0;
     }
 
     .badge-partial {
         background-color: #FEF3C7;
         color: #92400E;
+        border: 1px solid #FDE68A;
     }
 
     .badge-empty {
         background-color: #F3F4F6;
         color: #6B7280;
+        border: 1px solid #E5E7EB;
     }
 
     /* Breadcrumb navigation */
     .breadcrumb-nav {
-        padding: 8px 0;
-        margin-bottom: 16px;
-        border-bottom: 1px solid #E5E7EB;
+        padding: 12px 16px;
+        margin-bottom: 24px;
+        background: #FFFFFF;
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
 
     .breadcrumb-nav a {
-        color: #2563EB;
+        color: #6B7280;
         text-decoration: none;
         font-size: 14px;
+        font-weight: 500;
+        transition: color 0.2s;
     }
 
     .breadcrumb-nav a:hover {
-        text-decoration: underline;
+        color: #2563EB;
     }
 
     .breadcrumb-separator {
-        color: #9CA3AF;
-        margin: 0 8px;
+        color: #D1D5DB;
+        margin: 0 12px;
+        font-size: 12px;
     }
 
     .breadcrumb-current {
-        color: #374151;
-        font-weight: 500;
-    }
-
-    /* Navigation button improvements */
-    .nav-button-complete {
-        border-left: 3px solid #10B981 !important;
-    }
-
-    .nav-button-partial {
-        border-left: 3px solid #F59E0B !important;
+        color: #111827;
+        font-weight: 600;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
 
     /* Section header styling */
@@ -116,60 +130,68 @@ def inject_custom_css():
         display: flex;
         align-items: center;
         gap: 12px;
-        padding: 12px 0;
-        border-bottom: 2px solid #2563EB;
-        margin-bottom: 20px;
+        padding: 16px 24px;
+        background: white;
+        border-radius: 10px;
+        border: 1px solid #E5E7EB;
+        border-left: 5px solid #2563EB;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        margin-bottom: 24px;
     }
 
     .section-header h1 {
         margin: 0;
-        font-size: 24px;
-    }
-
-    /* Form field improvements */
-    .required-field::after {
-        content: " *";
-        color: #EF4444;
+        font-size: 20px;
+        font-weight: 700;
+        color: #1F2937;
     }
 
     /* Workflow step indicator */
     .workflow-steps {
         display: flex;
-        gap: 4px;
         align-items: center;
-        padding: 8px 0;
+        justify-content: center;
+        padding: 20px 0;
+        margin-bottom: 24px;
     }
 
     .workflow-step {
-        width: 24px;
-        height: 24px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 12px;
+        font-size: 14px;
         font-weight: 600;
+        z-index: 2;
+        transition: all 0.3s ease;
     }
 
     .step-complete {
         background-color: #10B981;
         color: white;
+        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
     }
 
     .step-current {
         background-color: #2563EB;
         color: white;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
     }
 
     .step-pending {
-        background-color: #E5E7EB;
-        color: #6B7280;
+        background-color: white;
+        border: 2px solid #E5E7EB;
+        color: #9CA3AF;
     }
 
     .step-connector {
-        width: 16px;
-        height: 2px;
+        width: 40px;
+        height: 3px;
         background-color: #E5E7EB;
+        margin: 0 -4px;
+        z-index: 1;
     }
 
     .step-connector-complete {
@@ -177,28 +199,72 @@ def inject_custom_css():
     }
 
     /* Card style for sections */
-    .section-card {
+    .stExpander {
+        border: none !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border-radius: 8px !important;
+        background-color: white !important;
+        margin-bottom: 12px !important;
+        overflow: hidden;
+    }
+    
+    .streamlit-expanderHeader {
+        background-color: #F9FAFB !important;
+        border-bottom: 1px solid #F3F4F6;
+        font-weight: 600;
+        color: #374151;
+    }
+
+    /* Custom Form Styling */
+    .stTextInput input, .stTextArea textarea, .stSelectbox div[data-baseweb="select"] {
+        border-radius: 6px;
+        border-color: #E5E7EB;
+    }
+    
+    .stTextInput input:focus, .stTextArea textarea:focus {
+        border-color: #2563EB;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+    }
+
+    /* Markdown Toolbar Buttons */
+    .md-toolbar-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
         background: white;
         border: 1px solid #E5E7EB;
-        border-radius: 8px;
-        padding: 16px;
-        margin-bottom: 16px;
+        border-radius: 4px;
+        color: #4B5563;
+        font-size: 14px;
+        cursor: default; /* Not clickable for now */
+        margin-bottom: 4px;
+        font-family: monospace;
     }
-
-    /* Better spacing for form groups */
-    .form-group {
-        margin-bottom: 16px;
-    }
-
-    /* Status indicators */
+    
     .status-saved {
         color: #10B981;
-        font-size: 12px;
+        font-weight: 600;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 8px;
+        background: #ECFDF5;
+        border-radius: 4px;
     }
 
     .status-unsaved {
         color: #EF4444;
-        font-size: 12px;
+        font-weight: 600;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 8px;
+        background: #FEF2F2;
+        border-radius: 4px;
     }
     </style>
     """, unsafe_allow_html=True)
