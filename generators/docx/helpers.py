@@ -269,80 +269,106 @@ class DocxHelpers:
     @staticmethod
     def add_formatted_text(paragraph, text: str, default_color: str = None, highlight_years: bool = False):
         """
-        Add text with markdown-like formatting to a paragraph.
-        Supports: **bold**, *italic*, ***bold-italic*** (green)
-
-        BOOK STANDARD formatting:
-        - **bold** = key terms (bold)
-        - *italic* = foreign terms (italic)
-        - ***bold-italic*** = memory tricks (green bold italic)
-        - {{year}} = important year (red bold) - when highlight_years=True
-
-        When highlight_years=True, 4-digit years (1789, 1821, etc.) are automatically
-        formatted in red bold per BOOK STANDARD.
+        Add text with markdown formatting to a paragraph using robust HTML parsing.
+        Supports: **bold**, *italic*, ***bold-italic***
+        
+        Args:
+            paragraph: The docx paragraph object to add runs to.
+            text: The markdown text.
+            default_color: Hex color string (e.g., '#FF0000') for unstyled text.
+            highlight_years: If True, highlights 4-digit years in red.
         """
         if not text:
             return
 
-        # Pattern to match formatting
-        # Order matters: check bold-italic first
-        patterns = [
-            (r'\*\*\*(.+?)\*\*\*', {'bold': True, 'italic': True, 'color': Colors.SUCCESS_GREEN}),
-            (r'\*\*(.+?)\*\*', {'bold': True, 'italic': False, 'color': None}),
-            (r'\*(.+?)\*', {'bold': False, 'italic': True, 'color': None}),
-        ]
+        try:
+            import markdown
+            from bs4 import BeautifulSoup, NavigableString
+        except ImportError:
+            # Fallback to simple text if libraries are missing
+            run = paragraph.add_run(text)
+            if default_color:
+                run.font.color.rgb = Colors.hex_to_rgb(default_color)
+            return
 
-        # Add year pattern if highlighting is enabled
-        if highlight_years:
-            # Match 4-digit years (1700-2099)
-            patterns.append(
-                (r'\b(1[789]\d{2}|20\d{2})\b', {'bold': True, 'italic': False, 'color': Colors.YEAR_RED})
-            )
+        # Convert markdown to HTML (fragments only)
+        # We replace newlines with <br> manually first to ensure they are preserved in basic text
+        # But markdown handles double-space as br. Let's just trust markdown.
+        html = markdown.markdown(text)
+        soup = BeautifulSoup(html, 'html.parser')
 
-        # Simple approach: process text sequentially
-        remaining = text
-        while remaining:
-            # Find the earliest match
-            earliest_match = None
-            earliest_pos = len(remaining)
-            earliest_format = None
+        # Recursive function to traverse HTML and add runs
+        def process_node(node, style_context=None):
+            if style_context is None:
+                style_context = {'bold': False, 'italic': False}
 
-            for pattern, fmt in patterns:
-                match = re.search(pattern, remaining)
-                if match and match.start() < earliest_pos:
-                    earliest_match = match
-                    earliest_pos = match.start()
-                    earliest_format = fmt
+            if isinstance(node, NavigableString):
+                text_content = str(node)
+                if not text_content:
+                    return
 
-            if earliest_match:
-                # Add text before match
-                if earliest_pos > 0:
-                    run = paragraph.add_run(remaining[:earliest_pos])
+                # Handle Year Highlighting (if enabled)
+                if highlight_years:
+                    import re
+                    # Split by years
+                    parts = re.split(r'\b(1[789]\d{2}|20\d{2})\b', text_content)
+                    for i, part in enumerate(parts):
+                        if not part: continue
+                        
+                        run = paragraph.add_run(part)
+                        run.font.name = Fonts.PRIMARY
+                        run.font.size = Fonts.SIZE_BODY
+                        run.font.bold = style_context['bold']
+                        run.font.italic = style_context['italic']
+                        
+                        # Apply color
+                        if i % 2 == 1: # It's a year match
+                            run.font.bold = True # Years are always bold
+                            run.font.color.rgb = Colors.hex_to_rgb(Colors.YEAR_RED)
+                        else:
+                            if default_color:
+                                run.font.color.rgb = Colors.hex_to_rgb(default_color)
+                else:
+                    # Standard Text
+                    run = paragraph.add_run(text_content)
                     run.font.name = Fonts.PRIMARY
                     run.font.size = Fonts.SIZE_BODY
+                    run.font.bold = style_context['bold']
+                    run.font.italic = style_context['italic']
                     if default_color:
                         run.font.color.rgb = Colors.hex_to_rgb(default_color)
 
-                # Add formatted text
-                run = paragraph.add_run(earliest_match.group(1))
-                run.font.name = Fonts.PRIMARY
-                run.font.size = Fonts.SIZE_BODY
-                run.font.bold = earliest_format['bold']
-                run.font.italic = earliest_format['italic']
-                if earliest_format['color']:
-                    run.font.color.rgb = Colors.hex_to_rgb(earliest_format['color'])
-                elif default_color:
-                    run.font.color.rgb = Colors.hex_to_rgb(default_color)
+            elif node.name == 'strong' or node.name == 'b':
+                new_context = style_context.copy()
+                new_context['bold'] = True
+                for child in node.children:
+                    process_node(child, new_context)
+            
+            elif node.name == 'em' or node.name == 'i':
+                new_context = style_context.copy()
+                new_context['italic'] = True
+                for child in node.children:
+                    process_node(child, new_context)
+            
+            elif node.name == 'br':
+                paragraph.add_run('\n')
+                
+            elif node.name in ['p', 'div', 'span']:
+                # Block/Wrapper tags - just process children
+                for child in node.children:
+                    process_node(child, style_context)
+                    
+            elif node.name in ['ul', 'ol', 'li']:
+                # Lists inside a paragraph are tricky. Flatten them.
+                for child in node.children:
+                    process_node(child, style_context)
+                    # Add a pseudo-break for list items if needed
+                    if node.name == 'li':
+                        paragraph.add_run('\n• ')
 
-                remaining = remaining[earliest_match.end():]
-            else:
-                # No more matches, add remaining text
-                run = paragraph.add_run(remaining)
-                run.font.name = Fonts.PRIMARY
-                run.font.size = Fonts.SIZE_BODY
-                if default_color:
-                    run.font.color.rgb = Colors.hex_to_rgb(default_color)
-                break
+        # Process the soup
+        for child in soup.children:
+            process_node(child)
 
     @staticmethod
     def create_metadata_table(document: Document, data: Dict[str, Tuple[str, str]], styles=None) -> Table:
