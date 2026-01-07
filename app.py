@@ -347,16 +347,20 @@ def render_cover_page():
         col1, col2 = st.columns([3, 1])
 
         with col1:
-            new_title = st.text_input("Chapter Title", value=data.chapter_title, key="ch_title")
-            if new_title != data.chapter_title:
-                data.chapter_title = new_title
+            if "ch_title" not in st.session_state:
+                st.session_state.ch_title = data.chapter_title
+            new_title = st.text_input("Chapter Title", key="ch_title")
+            data.chapter_title = new_title
 
-            new_subtitle = st.text_input("Subtitle (optional)", value=data.subtitle or "", key="ch_subtitle")
+            if "ch_subtitle" not in st.session_state:
+                st.session_state.ch_subtitle = data.subtitle or ""
+            new_subtitle = st.text_input("Subtitle (optional)", key="ch_subtitle")
             data.subtitle = new_subtitle if new_subtitle else None
 
         with col2:
-            new_num = st.number_input("Chapter Number", min_value=1, max_value=50,
-                                      value=data.chapter_number, key="ch_num")
+            if "ch_num" not in st.session_state:
+                st.session_state.ch_num = data.chapter_number
+            new_num = st.number_input("Chapter Number", min_value=1, max_value=50, key="ch_num")
             data.chapter_number = new_num
 
     # Metadata Section
@@ -369,39 +373,51 @@ def render_cover_page():
             is_custom = data.weightage not in Weightage.OPTIONS
             weightage_idx = len(weightage_options) - 1 if is_custom else Weightage.OPTIONS.index(data.weightage)
             
-            selected_weightage = st.selectbox("Weightage", weightage_options, index=weightage_idx, key="ch_weightage")
+            if "ch_weightage" not in st.session_state:
+                st.session_state.ch_weightage = weightage_options[weightage_idx]
+            selected_weightage = st.selectbox("Weightage", weightage_options, key="ch_weightage")
 
             if selected_weightage == "Custom":
-                custom_weightage = st.text_input("Enter marks", value=data.weightage if is_custom else "", 
-                                               placeholder="e.g., 8-10 Marks", key="ch_weightage_custom")
+                if "ch_weightage_custom" not in st.session_state:
+                    st.session_state.ch_weightage_custom = data.weightage if is_custom else ""
+                custom_weightage = st.text_input("Enter marks", placeholder="e.g., 8-10 Marks", key="ch_weightage_custom")
                 data.weightage = custom_weightage if custom_weightage else "4-5 Marks"
             else:
                 data.weightage = selected_weightage
 
         with col2:
             map_idx = 0 if data.map_work == "Yes" else 1
-            new_map = st.selectbox("Map Work", ["Yes", "No"], index=map_idx, key="ch_map")
+            if "ch_map" not in st.session_state:
+                st.session_state.ch_map = ["Yes", "No"][map_idx]
+            new_map = st.selectbox("Map Work", ["Yes", "No"], key="ch_map")
             data.map_work = new_map
 
         with col3:
             imp_idx = Importance.OPTIONS.index(data.importance) if data.importance in Importance.OPTIONS else 0
-            new_importance = st.selectbox("Importance", Importance.OPTIONS, index=imp_idx, key="ch_importance")
+            if "ch_importance" not in st.session_state:
+                st.session_state.ch_importance = Importance.OPTIONS[imp_idx]
+            new_importance = st.selectbox("Importance", Importance.OPTIONS, key="ch_importance")
             data.importance = new_importance
 
         with col4:
             freq_idx = PYQFrequency.OPTIONS.index(data.pyq_frequency) if data.pyq_frequency in PYQFrequency.OPTIONS else 0
-            new_freq = st.selectbox("PYQ Frequency", PYQFrequency.OPTIONS, index=freq_idx, key="ch_freq")
+            if "ch_freq" not in st.session_state:
+                st.session_state.ch_freq = PYQFrequency.OPTIONS[freq_idx]
+            new_freq = st.selectbox("PYQ Frequency", PYQFrequency.OPTIONS, key="ch_freq")
             data.pyq_frequency = new_freq
 
     # Syllabus Alert
     with st.container(border=True):
         st.subheader("⚠️ Syllabus Alert")
-        alert_enabled = st.checkbox("Enable Syllabus Alert", value=data.syllabus_alert_enabled, key="alert_enabled")
+        if "alert_enabled" not in st.session_state:
+            st.session_state.alert_enabled = data.syllabus_alert_enabled
+        alert_enabled = st.checkbox("Enable Syllabus Alert", key="alert_enabled")
         data.syllabus_alert_enabled = alert_enabled
 
         if alert_enabled:
-            alert_text = st.text_area("Alert Text", value=data.syllabus_alert_text,
-                                      placeholder="Enter syllabus alert message...", key="alert_text")
+            if "alert_text" not in st.session_state:
+                st.session_state.alert_text = data.syllabus_alert_text
+            alert_text = st.text_area("Alert Text", placeholder="Enter syllabus alert message...", key="alert_text")
             data.syllabus_alert_text = alert_text
 
     # Learning Objectives
@@ -410,7 +426,9 @@ def render_cover_page():
         st.caption("Enter each objective on a new line. They will be displayed as bullet points.")
         
         render_markdown_toolbar("objectives")
-        objectives = st.text_area("Learning Objectives", value=data.learning_objectives,
+        if "objectives" not in st.session_state:
+            st.session_state.objectives = data.learning_objectives
+        objectives = st.text_area("Learning Objectives", 
                                  height=200, placeholder="After studying this chapter, you will be able to:\n- Understand...\n- Analyse...\n- Explain...",
                                  key="objectives", label_visibility="collapsed")
         data.learning_objectives = objectives
@@ -640,7 +658,9 @@ def render_part_b():
             # --- Main Content Tab ---
             with tab_main:
                 # NCERT Line
-                ncert = st.text_input("NCERT Exact Line (optional)", value=concept.ncert_line or "",
+                if f"concept_ncert_{idx}" not in st.session_state:
+                    st.session_state[f"concept_ncert_{idx}"] = concept.ncert_line or ""
+                ncert = st.text_input("NCERT Exact Line (optional)",
                                      key=f"concept_ncert_{idx}",
                                      placeholder="The first clear expression of nationalism came with...")
                 concept.ncert_line = ncert if ncert else None
@@ -648,7 +668,9 @@ def render_part_b():
                 # Content
                 st.caption("Main explanation (supports markdown)")
                 render_markdown_toolbar(f"concept_content_{idx}")
-                content = st.text_area("Content", value=concept.content, height=200,
+                if f"concept_content_{idx}" not in st.session_state:
+                    st.session_state[f"concept_content_{idx}"] = concept.content
+                content = st.text_area("Content", height=200,
                                       key=f"concept_content_{idx}",
                                       label_visibility="collapsed",
                                       placeholder="Main content with **bold**, *italic*, and bullet points (-)")
@@ -663,7 +685,9 @@ def render_part_b():
                 for tbl_idx, tbl in enumerate(concept.tables):
                     with st.container():
                         st.markdown(f"**Table {tbl_idx + 1}**")
-                        tbl.title = st.text_input("Table Title", value=tbl.title,
+                        if f"tbl_title_{idx}_{tbl_idx}" not in st.session_state:
+                            st.session_state[f"tbl_title_{idx}_{tbl_idx}"] = tbl.title
+                        tbl.title = st.text_input("Table Title",
                                                  key=f"tbl_title_{idx}_{tbl_idx}",
                                                  placeholder="e.g., Comparison of Events")
 
@@ -690,7 +714,9 @@ def render_part_b():
                         header_cols = st.columns(len(tbl.headers))
                         for h_idx, header in enumerate(tbl.headers):
                             with header_cols[h_idx]:
-                                tbl.headers[h_idx] = st.text_input(f"H{h_idx+1}", value=header, 
+                                if f"tbl_h_{idx}_{tbl_idx}_{h_idx}" not in st.session_state:
+                                    st.session_state[f"tbl_h_{idx}_{tbl_idx}_{h_idx}"] = header
+                                tbl.headers[h_idx] = st.text_input(f"H{h_idx+1}", 
                                                                  key=f"tbl_h_{idx}_{tbl_idx}_{h_idx}", 
                                                                  label_visibility="collapsed")
 
@@ -701,7 +727,9 @@ def render_part_b():
                             for c_idx in range(len(tbl.headers)):
                                 with row_cols[c_idx]:
                                     if c_idx < len(row):
-                                        row[c_idx] = st.text_input(f"R{r_idx}C{c_idx}", value=row[c_idx],
+                                        if f"tbl_cell_{idx}_{tbl_idx}_{r_idx}_{c_idx}" not in st.session_state:
+                                            st.session_state[f"tbl_cell_{idx}_{tbl_idx}_{r_idx}_{c_idx}"] = row[c_idx]
+                                        row[c_idx] = st.text_input(f"R{r_idx}C{c_idx}",
                                                                   key=f"tbl_cell_{idx}_{tbl_idx}_{r_idx}_{c_idx}",
                                                                   label_visibility="collapsed")
                             with row_cols[-1]:
@@ -733,15 +761,17 @@ def render_part_b():
                 
                 with col1:
                     st.markdown("**🧠 Memory Trick**")
-                    trick = st.text_area("Mnemonic/Trick", value=concept.memory_trick or "",
-                                         key=f"concept_trick_{idx}", height=100,
+                    if f"concept_trick_{idx}" not in st.session_state:
+                        st.session_state[f"concept_trick_{idx}"] = concept.memory_trick or ""
+                    trick = st.text_area("Mnemonic/Trick", key=f"concept_trick_{idx}", height=100,
                                          placeholder="FLAT-CUN — Flag, Language, Assembly...")
                     concept.memory_trick = trick if trick else None
 
                 with col2:
                     st.markdown("**💡 Did You Know?**")
-                    dyk = st.text_area("Interesting Fact", value=concept.did_you_know or "",
-                                      height=100, key=f"concept_dyk_{idx}",
+                    if f"concept_dyk_{idx}" not in st.session_state:
+                        st.session_state[f"concept_dyk_{idx}"] = concept.did_you_know or ""
+                    dyk = st.text_area("Interesting Fact", height=100, key=f"concept_dyk_{idx}",
                                       placeholder="Interesting fact...")
                     concept.did_you_know = dyk if dyk else None
 
@@ -758,13 +788,16 @@ def render_part_b():
                     with st.container():
                         c1, c2, c3 = st.columns([3, 2, 1])
                         with c1:
-                            box.title = st.text_input("Box Title", value=box.title,
+                            if f"box_title_{idx}_{box_idx}" not in st.session_state:
+                                st.session_state[f"box_title_{idx}_{box_idx}"] = box.title
+                            box.title = st.text_input("Box Title",
                                                       key=f"box_title_{idx}_{box_idx}",
                                                       placeholder="e.g., Important Note")
                         with c2:
                             color_name = next((k for k, v in COLOR_OPTIONS.items() if v == box.background_color), "Light Grey")
+                            if f"box_color_{idx}_{box_idx}" not in st.session_state:
+                                st.session_state[f"box_color_{idx}_{box_idx}"] = color_name
                             selected = st.selectbox("Color", list(COLOR_OPTIONS.keys()),
-                                                   index=list(COLOR_OPTIONS.keys()).index(color_name),
                                                    key=f"box_color_{idx}_{box_idx}")
                             box.background_color = COLOR_OPTIONS[selected]
                         with c3:
@@ -772,7 +805,9 @@ def render_part_b():
                                 concept.custom_boxes.pop(box_idx)
                                 st.rerun()
 
-                        box.content = st.text_area("Box Content", value=box.content, height=80,
+                        if f"box_content_{idx}_{box_idx}" not in st.session_state:
+                            st.session_state[f"box_content_{idx}_{box_idx}"] = box.content
+                        box.content = st.text_area("Box Content", height=80,
                                                   key=f"box_content_{idx}_{box_idx}")
                         st.divider()
 
