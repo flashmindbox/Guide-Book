@@ -12,6 +12,7 @@ from docx.shared import Inches, Pt
 from core.models.base import ChapterData
 from core.models.parts import PartManager
 from styles.theme import Colors, Fonts, Icons
+from ..helpers import DocxHelpers
 
 
 class CoverPageGenerator:
@@ -160,9 +161,7 @@ class CoverPageGenerator:
         run.font.bold = True
         run.font.color.rgb = Colors.hex_to_rgb(Colors.ACCENT_RED)
 
-        run = para.add_run(self.data.syllabus_alert_text)
-        run.font.name = Fonts.PRIMARY
-        run.font.size = Pt(11)
+        DocxHelpers.add_formatted_text(para, self.data.syllabus_alert_text)
 
     def _add_learning_objectives(self):
         """Add learning objectives as a simple bulleted list."""
@@ -198,9 +197,14 @@ class CoverPageGenerator:
             para = self.document.add_paragraph()
             para.paragraph_format.left_indent = Inches(0.25)
             para.paragraph_format.space_after = Pt(3)
-            run = para.add_run(f"• {obj}")
+            
+            # Add bullet symbol manually first
+            run = para.add_run("• ")
             run.font.name = Fonts.PRIMARY
             run.font.size = Pt(11)
+            
+            # Add formatted text content
+            DocxHelpers.add_formatted_text(para, obj)
 
     def _add_chapter_contents(self):
         """Add chapter contents as a simple list."""

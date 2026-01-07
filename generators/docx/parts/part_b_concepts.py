@@ -106,11 +106,7 @@ class PartBGenerator:
             run.font.italic = True
             run.font.color.rgb = Colors.hex_to_rgb(Colors.SUCCESS_GREEN)
 
-            run = para.add_run(concept.memory_trick)
-            run.font.name = Fonts.PRIMARY
-            run.font.size = Pt(10)
-            run.font.italic = True
-            run.font.color.rgb = Colors.hex_to_rgb(Colors.SUCCESS_GREEN)
+            DocxHelpers.add_formatted_text(para, concept.memory_trick, default_color=Colors.SUCCESS_GREEN)
 
         # Do You Know (if present) - light grey background box
         if concept.did_you_know:
@@ -130,9 +126,7 @@ class PartBGenerator:
             run.font.bold = True
             run.font.color.rgb = Colors.hex_to_rgb(Colors.YEAR_RED)  # Red label
 
-            run = para.add_run(concept.did_you_know)
-            run.font.name = Fonts.PRIMARY
-            run.font.size = Pt(9)
+            DocxHelpers.add_formatted_text(para, concept.did_you_know)
 
             self.document.add_paragraph()  # Spacing after box
 
@@ -154,9 +148,7 @@ class PartBGenerator:
                     run.font.size = Pt(9)
                     run.font.bold = True
 
-                run = para.add_run(box.content)
-                run.font.name = Fonts.PRIMARY
-                run.font.size = Pt(9)
+                DocxHelpers.add_formatted_text(para, box.content)
 
                 self.document.add_paragraph()  # Spacing after box
 
